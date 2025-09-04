@@ -53,6 +53,7 @@ class RolesAndPermissionsSeeder extends Seeder
         ];*/
 
         $modules = [ 
+            'managerdashboards' => ['view'],
             'managercatalog' => ['view'],
             'managerusers' => ['view'],
             'managersuppliers' => ['view'],
@@ -62,6 +63,22 @@ class RolesAndPermissionsSeeder extends Seeder
             'managershopping' => ['view'],
             'managerrecipes' => ['view'],
             'manageraudits' => ['view'],
+            'user'       => ['view','create','edit','delete','export','print'],
+            'roles'       => ['view','create','edit','delete','export','print'],
+            'permissions'       => ['view','create','edit','delete','export','print'],
+            'category' => ['view','create','edit','delete','export','print'],
+            'status' => ['view','create','edit','delete','export','print'],
+            'denominations' => ['view','create','edit','delete','export','print'],
+            'laboratories' => ['view','create','edit','delete','export','print'],
+            'saletypes'  => ['view','create','edit','delete','export','print'],
+            'pharmaceuticalforms' => ['view','create','edit','delete','export','print'],
+            'symptoms' => ['view','create','edit','delete','export','print'],
+            'suppliers' => ['view','create','edit','delete','export','print'],
+            'products' => ['view','create','edit','delete','export','print'],
+            'batches' => ['view','create','edit','delete','export','print'],
+            'sales'         => ['view','create','edit','delete','print','annular'],
+            'returns'   => ['view','create','edit','delete','print','authorize'],
+            'report'       => ['view','export','print'],
 
         ];
 
@@ -80,11 +97,11 @@ class RolesAndPermissionsSeeder extends Seeder
         $admin->givePermissionTo(Permission::all());
 
         $cajero->givePermissionTo([
-            'ventas-list','ventas-create','ventas-edit','ventas-imprimir','ventas-anular',
-            'devoluciones-list','devoluciones-create','devoluciones-edit','devoluciones-imprimir'
+            'sales-view','sales-create','sales-edit','sales-print','sales-annular',
+            'returns-view','returns-create','returns-edit','returns-print'
         ]);
 
-        $almacen->givePermissionTo([
+        /*$almacen->givePermissionTo([
             'recepciones-list','recepciones-create','recepciones-edit','recepciones-imprimir',
             'transferencias-list','transferencias-create','transferencias-edit','transferencias-imprimir',
             'ajustes-list','ajustes-create','ajustes-edit','ajustes-imprimir'
@@ -98,7 +115,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $auditor->givePermissionTo(Permission::where('name', 'like', '%list%')
             ->orWhere('name', 'like', '%exportar%')
-            ->orWhere('name', 'like', '%imprimir%')->get());
+            ->orWhere('name', 'like', '%imprimir%')->get()); */
 
         // --------------------------------
         // Crear usuarios de ejemplo
@@ -109,6 +126,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name'=>'Almacén','email'=>'almacen@farmacia.com','password'=>'password123','role'=>$almacen],
             ['name'=>'Compras','email'=>'compras@farmacia.com','password'=>'password123','role'=>$compras],
             ['name'=>'Auditor','email'=>'auditor@farmacia.com','password'=>'password123','role'=>$auditor],
+            
         ];
 
         foreach ($users as $u) {

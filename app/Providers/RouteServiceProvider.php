@@ -2,46 +2,63 @@
 
 namespace App\Providers;
 
-use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {
     /**
-     * La ruta a la "home" para redirecciones después del login.
+     * Path to the "home" route for your application.
      *
      * @var string
      */
     public const HOME = '/home';
 
     /**
-     * Define la configuración de enrutamiento para la aplicación.
+     * Define your route model bindings, pattern filters, etc.
      */
     public function boot(): void
     {
-        // Puedes agregar bindings o patrones de rutas aquí si es necesario
         $this->configureRateLimiting();
 
         $this->routes(function () {
-            // Rutas Web
-            Route::middleware('web')
-                 ->group(base_path('routes/web.php'));
+            // API versionadas
+            foreach ($this->getApiVersions() as $version) {
+                Route::prefix("api/{$version}")
+                    ->middleware('api')
+                    ->namespace($this->namespaceForVersion($version))
+                    ->group(base_path("routes/api/{$version}.php"));
+            }
 
-            // Rutas API
-            Route::middleware('api')        // aplica middleware api
-                 ->prefix('api')            // todas las rutas comienzan con /api
-                 ->group(base_path('routes/api.php'));
-            Route::aliasMiddleware('jwt.verify', JwtMiddleware::class);
+            // Web routes
+            Route::middleware('web')
+                ->group(base_path('routes/web.php'));
         });
     }
 
     /**
-     * Configura limitación de velocidad para rutas API si quieres.
+     * Devuelve un array con las versiones de la API disponibles.
+     */
+    protected function getApiVersions(): array
+    {
+        // Puedes agregar nuevas versiones aquí sin tocar la lógica principal
+        return ['v1'];
+    }
+
+    /**
+     * Devuelve el namespace del controlador para cada versión de API.
+     */
+    protected function namespaceForVersion(string $version): ?string
+    {
+        return "App\\Http\\Controllers\\Api\\" . strtoupper($version);
+    }
+
+    /**
+     * Configuración de rate limiting (opcional)
      */
     protected function configureRateLimiting(): void
     {
-        // ejemplo de rate limit
+        // Por ejemplo, 60 requests por minuto por usuario/IP
         // RateLimiter::for('api', function (Request $request) {
         //     return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         // });

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -15,9 +16,21 @@ class JwtMiddleware
     public function handle($request, Closure $next)
     {
         try {
-            JWTAuth::parseToken()->authenticate();
+            // Intenta autenticar el token
+            $user = JWTAuth::parseToken()->authenticate();
+            if (!$user) {
+                return $this->errorResponse('Usuario no encontrado', [], Response::HTTP_UNAUTHORIZED);
+            }
         } catch (TokenExpiredException $e) {
-            return $this->errorResponse('Token expirado', [], Response::HTTP_UNAUTHORIZED);
+            try {
+                // Token expirado: intentar refresh
+                $newToken = JWTAuth::refresh(JWTAuth::getToken());
+                // Opcional: agregar nuevo token en el header
+                $response = $next($request);
+                return $response->header('Authorization', 'Bearer ' . $newToken);
+            } catch (JWTException $e) {
+                return $this->errorResponse('Token expirado y no se pudo refrescar', [], Response::HTTP_UNAUTHORIZED);
+            }
         } catch (JWTException $e) {
             return $this->errorResponse('Token inválido', [], Response::HTTP_UNAUTHORIZED);
         }

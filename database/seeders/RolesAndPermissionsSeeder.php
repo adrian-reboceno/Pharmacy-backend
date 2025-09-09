@@ -20,17 +20,17 @@ class RolesAndPermissionsSeeder extends Seeder
         $roles = ['admin','cajero','almacen','compras','auditor'];
         foreach ($roles as $role) {
             Role::updateOrCreate(
-                ['name' => $role, 'guard_name' => 'web'],
-                ['name' => $role, 'guard_name' => 'web']
+                ['name' => $role, 'guard_name' => 'api'],
+                ['name' => $role, 'guard_name' => 'api']
             );
         }
 
         // Obtener roles
-        $admin   = Role::where('name','admin')->where('guard_name','web')->firstOrFail();
-        $cajero  = Role::where('name','cajero')->where('guard_name','web')->firstOrFail();
-        $almacen = Role::where('name','almacen')->where('guard_name','web')->firstOrFail();
-        $compras = Role::where('name','compras')->where('guard_name','web')->firstOrFail();
-        $auditor = Role::where('name','auditor')->where('guard_name','web')->firstOrFail();
+        $admin   = Role::where('name','admin')->where('guard_name','api')->firstOrFail();
+        $cajero  = Role::where('name','cajero')->where('guard_name','api')->firstOrFail();
+        $almacen = Role::where('name','almacen')->where('guard_name','api')->firstOrFail();
+        $compras = Role::where('name','compras')->where('guard_name','api')->firstOrFail();
+        $auditor = Role::where('name','auditor')->where('guard_name','api')->firstOrFail();
 
         // --------------------------------
         // Definir permisos CRUD + subpermisos por módulo
@@ -52,41 +52,32 @@ class RolesAndPermissionsSeeder extends Seeder
             'reportes'       => ['list','exportar','imprimir'],
         ];*/
 
-        $modules = [ 
-            'managerdashboards' => ['view'],
-            'managercatalog' => ['view'],
-            'managerusers' => ['view'],
-            'managersuppliers' => ['view'],
-            'managerproduct' => ['view'],
-            'managerreport' => ['view'],
-            'managersales' => ['view'],
-            'managershopping' => ['view'],
-            'managerrecipes' => ['view'],
-            'manageraudits' => ['view'],
-            'user'       => ['view','create','edit','delete','export','print'],
-            'roles'       => ['view','create','edit','delete','export','print'],
-            'permissions'       => ['view','create','edit','delete','export','print'],
-            'category' => ['view','create','edit','delete','export','print'],
-            'status' => ['view','create','edit','delete','export','print'],
-            'denominations' => ['view','create','edit','delete','export','print'],
-            'laboratories' => ['view','create','edit','delete','export','print'],
-            'saletypes'  => ['view','create','edit','delete','export','print'],
-            'pharmaceuticalforms' => ['view','create','edit','delete','export','print'],
-            'symptoms' => ['view','create','edit','delete','export','print'],
-            'suppliers' => ['view','create','edit','delete','export','print'],
-            'products' => ['view','create','edit','delete','export','print'],
-            'batches' => ['view','create','edit','delete','export','print'],
-            'sales'         => ['view','create','edit','delete','print','annular'],
-            'returns'   => ['view','create','edit','delete','print','authorize'],
-            'report'       => ['view','export','print'],
+        $modules = [         
+            'manager' => ['dashboards','catalogs','users','suppliers','products','reports','sales','shoppings','recipes','audits','permissions'],
+            'user'       => ['list','view','create','edit','delete','export','print'],
+            'roles'       => ['list','view','create','edit','delete','export','print'],
+            'permissions'       => ['list','view','create','edit','delete','export','print'],
+            'category' => ['list','view','create','edit','delete','export','print'],
+            'status' => ['list','view','create','edit','delete','export','print'],
+            'denominations' => ['list','view','create','edit','delete','export','print'],
+            'laboratories' => ['list','view','create','edit','delete','export','print'],
+            'saletypes'  => ['list','view','create','edit','delete','export','print'],
+            'pharmaceuticalforms' => ['list','view','create','edit','delete','export','print'],
+            'symptoms' => ['list','view','create','edit','delete','export','print'],
+            'suppliers' => ['list','view','create','edit','delete','export','print'],
+            'products' => ['list','view','create','edit','delete','export','print'],
+            'batches' => ['list','view','create','edit','delete','export','print'],
+            'sales'         => ['list','view','create','edit','delete','print','annular'],
+            'returns'   => ['list','view','create','edit','delete','print','authorize'],
+            'report'       => ['list','view','export','print'],
 
         ];
 
         foreach ($modules as $module => $actions) {
             foreach ($actions as $action) {
                 Permission::updateOrCreate(
-                    ['name' => "$module-$action", 'guard_name' => 'web'],
-                    ['name' => "$module-$action", 'guard_name' => 'web']
+                    ['name' => "$module-$action", 'guard_name' => 'api'],
+                    ['name' => "$module-$action", 'guard_name' => 'api']
                 );
             }
         }

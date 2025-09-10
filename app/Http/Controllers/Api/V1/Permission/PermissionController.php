@@ -12,6 +12,7 @@ use App\Exceptions\V1\PermissionException;
 use App\Traits\ApiResponseTrait;
 use App\Traits\ExceptionHandlerTrait;
 use App\Http\Resources\V1\Permission\PermissionResource;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class PermissionController extends Controller
@@ -34,8 +35,10 @@ class PermissionController extends Controller
     public static function middleware(): array
     {
         return [           
-            new Middleware('permission:role-list', only: ['index']),
-           
+            new Middleware('permission:permissions-list', only: ['index']),
+            new Middleware('permission:permissions-create', only: ['store']),
+            new Middleware('permission:permissions-edit', only: ['update']),
+            new Middleware('permission:permissions-delete', only: ['destroy']),
         ];
     }
     
@@ -59,7 +62,7 @@ class PermissionController extends Controller
         return $this->successResponse(
             message: 'Permiso creado correctamente',
             data: (new PermissionResource($permission))->resolve(),
-             code: Response::HTTP_CREATED
+            code: Response::HTTP_CREATED
         );
     }
 
@@ -75,18 +78,19 @@ class PermissionController extends Controller
         );
     }
 
-    // ACTUALIZAR PERMISO
+    // ACTUALIZAR PERMISO → 200 OK
     public function update(PermissionUpdateRequest $request, int $id)
     {
         $dto = PermissionDTO::fromArray($request->validated());
         $permission = $this->service->update($id, $dto);
 
         return $this->successResponse(
-            message: 'Permiso actualizado correctamente',
             data: (new PermissionResource($permission))->resolve(),
-            code: Response::HTTP_OK // 200
+            message: 'Permiso actualizado correctamente',
+            code: Response::HTTP_OK
         );
     }
+
 
     // ELIMINAR PERMISO
     public function destroy(int $id)
@@ -100,6 +104,6 @@ class PermissionController extends Controller
                 'message'     => 'Permiso eliminado correctamente',
                 'data'        => []
             ], Response::HTTP_NO_CONTENT);
-        }
+    }
 
 }

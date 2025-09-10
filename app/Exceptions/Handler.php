@@ -45,6 +45,14 @@ class Handler extends ExceptionHandler
                 );
             }
 
+            if ($exception instanceof \App\Exceptions\V1\Permission\PermissionException) {
+                return $this->errorResponse(
+                    $exception->getMessage(),
+                    [],
+                    $exception->getCode() ?: Response::HTTP_BAD_REQUEST
+                );
+            }
+
             if (method_exists($exception, 'errors')) {
                 return $this->errorResponse(
                     'Errores de validación',

@@ -2,9 +2,9 @@
 #app/Services/V1/PermissionService.php
 namespace App\Services\V1;
 
-use App\DTOs\V1\PermissionDTO;
+use App\DTOs\V1\Permission\PermissionDTO;
 use App\Repositories\V1\Permission\PermissionRepository;
-use App\Exceptions\V1\PermissionException;
+use App\Exceptions\V1\Permission\PermissionException;
 use Spatie\Permission\Models\Permission;
 
 class PermissionService
@@ -44,6 +44,9 @@ class PermissionService
     public function update(int $id, PermissionDTO $dto): Permission
     {
         $permission = $this->find($id);
+        if (Permission::where('name', $dto->name)->exists()) {
+            throw PermissionException::alreadyExists($dto->name);
+        }
 
         return $this->repository->update($permission, [
             'name' => $dto->name,

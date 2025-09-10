@@ -17,8 +17,18 @@ class PermissionUpdateRequest extends FormRequest
         $id = $this->route('permission');
 
         return [
-            'name' => 'required|string|unique:permissions,name,' . $id,
-            'guard_name' => 'nullable|string|in:api,web',
+            'name' => 'required|string|max:150' . $id,
+            'guard_name' => 'nullable|string|max:50|in:api,web',
+        ];       
+    }
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'El campo nombre es obligatorio.',
+            'name.string'   => 'El campo nombre debe ser un texto válido.',
+            'name.max'      => 'El nombre no puede tener más de 150 caracteres.',
+            'guard_name.string' => 'El guard debe ser un texto válido.',
+            'guard_name.max'    => 'El guard no puede tener más de 50 caracteres.',
         ];
     }
 }

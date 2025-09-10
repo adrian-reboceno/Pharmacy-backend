@@ -6,9 +6,9 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionRepository
 {
-    public function all()
+    public function all(int $perPage = 15)
     {
-        return Permission::all();
+         return Permission::orderBy('id', 'asc')->paginate($perPage);
     }
 
     public function find(int $id): ?Permission

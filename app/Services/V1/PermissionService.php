@@ -13,9 +13,9 @@ class PermissionService
         private PermissionRepository $repository
     ) {}
 
-    public function list()
+    public function list(int $perPage = 15)
     {
-        return $this->repository->all();
+       return $this->repository->all($perPage);
     }
 
     public function create(PermissionDTO $dto): Permission

@@ -7,27 +7,20 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 
 class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * Path to the "home" route for your application.
-     *
-     * @var string
-     */
     public const HOME = '/home';
 
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     */
     public function boot(): void
     {
-        $this->configureRateLimiting();
-
         $this->routes(function () {
-            // API versionadas
+            // API versionadas dinámicamente
             foreach ($this->getApiVersions() as $version) {
-                Route::prefix("api/{$version}")
-                    ->middleware('api')
-                    ->namespace($this->namespaceForVersion($version))
-                    ->group(base_path("routes/api/{$version}.php"));
+                $file = base_path("routes/api/{$version}.php");
+
+                if (file_exists($file)) {
+                    Route::prefix("api/{$version}")
+                        ->middleware('api')
+                        ->group($file);
+                }
             }
 
             // Web routes
@@ -37,30 +30,14 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     /**
-     * Devuelve un array con las versiones de la API disponibles.
+     * Devuelve automáticamente las versiones de API detectadas
+     * (ej: v1.php, v2.php en /routes/api).
      */
     protected function getApiVersions(): array
     {
-        // Puedes agregar nuevas versiones aquí sin tocar la lógica principal
-        return ['v1'];
-    }
-
-    /**
-     * Devuelve el namespace del controlador para cada versión de API.
-     */
-    protected function namespaceForVersion(string $version): ?string
-    {
-        return "App\\Http\\Controllers\\Api\\" . strtoupper($version);
-    }
-
-    /**
-     * Configuración de rate limiting (opcional)
-     */
-    protected function configureRateLimiting(): void
-    {
-        // Por ejemplo, 60 requests por minuto por usuario/IP
-        // RateLimiter::for('api', function (Request $request) {
-        //     return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        // });
+        return collect(glob(base_path("routes/api/v*.php")))
+            ->map(fn ($file) => basename($file, ".php"))
+            ->values()
+            ->toArray();
     }
 }

@@ -98,12 +98,11 @@ class PermissionController extends Controller
         $this->service->delete($id);
 
         // Al usar 204, no devolvemos "data"
-        return response()->json([
-                'status'      => 'success',
-                'http_status' => Response::$statusTexts[Response::HTTP_NO_CONTENT],
-                'message'     => 'Permiso eliminado correctamente',
-                'data'        => []
-            ], Response::HTTP_NO_CONTENT);
+        return $this->successResponse(
+            data: [],
+            message: 'Permiso eliminado correctamente',
+            code: Response::HTTP_OK
+        );
     }
 
 }

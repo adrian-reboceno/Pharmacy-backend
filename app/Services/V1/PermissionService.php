@@ -57,7 +57,7 @@ class PermissionService
     public function delete(int $id): bool
     {
         $permission = $this->find($id);
-
-        return $this->repository->delete($permission);
+        
+        return $this->repository->delete($permission);        
     }
 }

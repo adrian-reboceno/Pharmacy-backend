@@ -13,11 +13,10 @@ class PermissionService
         private PermissionRepository $repository
     ) {}
 
-    public function list(int $perPage = 15)
+    public function list(int $perPage = 15, array $filters = [])
     {
-       return $this->repository->all($perPage);
+        return $this->repository->all($perPage, $filters);
     }
-
     public function create(PermissionDTO $dto): Permission
     {
         if (Permission::where('name', $dto->name)->exists()) {

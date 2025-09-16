@@ -24,13 +24,7 @@ class PermissionController extends Controller
     public function __construct(
         private PermissionService $service
     ) {
-        // Middleware dinámico según permisos
-        // Middleware dinámico según permisos
         
-        // or with specific guard
-        // Middleware dinámico según permisos (solo en el constructor)
-       
-       
     }
     public static function middleware(): array
     {
@@ -45,7 +39,9 @@ class PermissionController extends Controller
     public function index(PermissionIndexRequest $request)
     {
         $perPage = (int) $request->get('per_page', 15);
-        $permissions = $this->service->list($perPage);
+        $filters = $request->get('filters', []); // Laravel decodifica arrays de query params
+
+        $permissions = $this->service->list($perPage, $filters);
 
         return $this->successResponse(
             data: $permissions->through(fn($perm) => new PermissionResource($perm)),

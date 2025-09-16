@@ -6,11 +6,26 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionRepository
 {
-    public function all(int $perPage = 15)
+    public function all(int $perPage = 15, array $filters = [])
     {
-         return Permission::orderBy('id', 'asc')->paginate($perPage);
-    }
+        $query = Permission::query();
 
+        foreach ($filters as $filter) {
+            $field = $filter['field'] ?? null;
+            $operator = $filter['operator'] ?? null;
+            $value = $filter['value'] ?? null;
+
+            if ($field && $operator && $value !== null) {
+                match($operator) {
+                    'contains' => $query->where($field, 'like', "%{$value}%"),
+                    'equals' => $query->where($field, $value),
+                    default => null
+                };
+            }
+        }
+
+        return $query->orderBy('id', 'asc')->paginate($perPage);
+    }
     public function find(int $id): ?Permission
     {
         return Permission::find($id);

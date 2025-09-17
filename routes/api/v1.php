@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\JwtMiddleware;
-use App\Http\Controllers\Api\V1\AuthController;
+//use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\Permission\PermissionController;
+use App\Presentation\Http\Controllers\V1\AuthController;
 //use App\Http\Controllers\Api\V1\Role\RoleController;
 //use App\Http\Controllers\Api\V1\User\UserController;
 
@@ -15,6 +16,7 @@ Route::prefix('v1/auth')->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
 });
 
+
 // ------------------------
 // Rutas protegidas por JWT
 // ------------------------
@@ -22,21 +24,21 @@ Route::middleware([JwtMiddleware::class])->group(function () {
 
 
     // Auth
-    Route::prefix('v1/auth')->group(function () {
+   /* Route::prefix('v1/auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
-    });
+    });*/
 
     // ------------------------
     // Permissions (Spatie)
     // ------------------------
-    Route::middleware('permission:manager-permissions')->prefix('v1/permissions')->group(function () {
+    /*Route::middleware('permission:manager-permissions')->prefix('v1/permissions')->group(function () {
         Route::get('/', [PermissionController::class, 'index']);
         Route::post('/', [PermissionController::class, 'store']);
         Route::get('{id}', [PermissionController::class, 'show']);
         Route::put('{id}', [PermissionController::class, 'update']);
         Route::delete('{id}', [PermissionController::class, 'destroy']);
-    });
+    });*/
 
     // ------------------------
     // Roles

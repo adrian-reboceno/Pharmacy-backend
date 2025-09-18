@@ -2,16 +2,45 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
-use App\Traits\ApiResponseTrait;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
+use App\Infrastructure\Services\ApiResponseService;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
-    use ApiResponseTrait;
+    protected ApiResponseService $apiResponse;
+
+    public function __construct(ApiResponseService $apiResponse)
+    {
+        parent::__construct(app());
+        $this->apiResponse = $apiResponse;
+    }
+
+    /**
+     * Mapeo de excepciones → mensaje + código HTTP
+     */
+    protected array $exceptionMap = [
+        ModelNotFoundException::class => [
+            'message' => 'Recurso no encontrado',
+            'code'    => Response::HTTP_NOT_FOUND,
+        ],
+        AuthenticationException::class => [
+            'message' => 'No autenticado',
+            'code'    => Response::HTTP_UNAUTHORIZED,
+        ],
+        \App\Exceptions\V1\Permission\PermissionException::class => [
+            'message' => 'Permiso denegado',
+            'code'    => Response::HTTP_FORBIDDEN,
+        ],
+         \App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException::class => [
+            'message' => 'Credenciales inválidas',
+            'code'    => Response::HTTP_UNAUTHORIZED,
+        ],
+    ];
 
     /**
      * Report or log an exception.
@@ -26,50 +55,35 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        // Solo JSON para API
         if ($request->is('api/*')) {
-
-            if ($exception instanceof ModelNotFoundException) {
-                return $this->errorResponse(
-                    'Recurso no encontrado',
-                    [],
-                    Response::HTTP_NOT_FOUND
-                );
+            foreach ($this->exceptionMap as $class => $config) {
+                if ($exception instanceof $class) {
+                    return $this->apiResponse->error(
+                        $exception->getMessage() ?: $config['message'],
+                        [],
+                        $config['code']
+                    );
+                }
             }
 
-            if ($exception instanceof AuthenticationException) {
-                return $this->errorResponse(
-                    'No autenticado',
-                    [],
-                    Response::HTTP_UNAUTHORIZED
-                );
-            }
-
-            if ($exception instanceof \App\Exceptions\V1\Permission\PermissionException) {
-                return $this->errorResponse(
-                    $exception->getMessage(),
-                    [],
-                    $exception->getCode() ?: Response::HTTP_BAD_REQUEST
-                );
-            }
-
-            if (method_exists($exception, 'errors')) {
-                return $this->errorResponse(
+            // Validación (captura especial)
+            if ($exception instanceof ValidationException) {
+                return $this->apiResponse->error(
                     'Errores de validación',
                     $exception->errors(),
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
 
-            // Cualquier otro error
-            return $this->errorResponse(
+            // Cualquier otro error no mapeado
+            return $this->apiResponse->error(
                 'Error interno',
                 ['exception' => $exception->getMessage()],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
 
-        // Para rutas web, usar el render normal
+        // Para rutas web, usar render normal de Laravel
         return parent::render($request, $exception);
     }
 }

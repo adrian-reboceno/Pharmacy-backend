@@ -6,7 +6,7 @@ use Closure;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use App\Traits\ApiResponseTrait;
+use App\Presentation\Http\Traits\ApiResponseTrait;
 use Symfony\Component\HttpFoundation\Response;
 
 class JwtMiddleware

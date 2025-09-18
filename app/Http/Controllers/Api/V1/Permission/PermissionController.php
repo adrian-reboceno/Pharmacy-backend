@@ -9,8 +9,8 @@ use App\Http\Requests\V1\Permission\PermissionUpdateRequest;
 use App\Services\V1\PermissionService;
 use App\DTOs\V1\Permission\PermissionDTO;
 use App\Exceptions\V1\PermissionException;
-use App\Traits\ApiResponseTrait;
-use App\Traits\ExceptionHandlerTrait;
+use App\Presentation\Http\Traits\ApiResponseTrait;
+use App\Presentation\Http\Traits\ExceptionHandlerTrait;
 use App\Http\Resources\V1\Permission\PermissionResource;
 use Symfony\Component\HttpFoundation\Response;
 

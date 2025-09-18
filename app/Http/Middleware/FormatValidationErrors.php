@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use App\Traits\ApiResponseTrait;
+use App\Presentation\Http\Traits\ApiResponseTrait;
 
 class FormatValidationErrors
 {

@@ -1,6 +1,6 @@
 <?php
 #app/Traits/ExceptionHandlerTrait.php
-namespace App\Traits;
+namespace App\Presentation\Http\Traits;
 
 use Illuminate\Http\JsonResponse;
 use Throwable;

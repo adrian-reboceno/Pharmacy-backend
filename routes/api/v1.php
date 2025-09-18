@@ -24,10 +24,10 @@ Route::middleware([JwtMiddleware::class])->group(function () {
 
 
     // Auth
-   /* Route::prefix('v1/auth')->group(function () {
+    Route::prefix('v1/auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
-    });*/
+    });
 
     // ------------------------
     // Permissions (Spatie)

@@ -10,6 +10,13 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     use HasRoles;
+    public function __construct(
+        public int $id,
+        public string $name,
+        public string $email,
+        public ?string $role = null,
+        public array $permissions = []
+    ) {}
 
     protected $fillable = [
         'name', 'email', 'password',

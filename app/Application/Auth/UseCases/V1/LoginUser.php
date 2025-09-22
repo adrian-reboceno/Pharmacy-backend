@@ -1,6 +1,6 @@
 <?php
 #app/Application/Auth/UseCases/V1/LoginUser.php
-namespace App\Application\Auth\UseCases\V1;
+/*namespace App\Application\Auth\UseCases\V1;
 
 use App\Infrastructure\Services\JwtAuthService;
 use Illuminate\Support\Facades\Auth;
@@ -37,5 +37,43 @@ class LoginUser
                 'permissions' => $user->permissions->pluck('name'),
             ],
         ];
+    }
+}
+*/
+
+
+# app/Application/Auth/UseCases/LoginUser.php
+namespace App\Application\Auth\UseCases\V1;
+
+use App\Application\Auth\Services\JwtAuthService;
+use App\Presentation\DTOs\V1\UserDTO;
+use App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException;
+
+class LoginUser
+{
+    protected JwtAuthService $jwtService;
+
+    public function __construct(JwtAuthService $jwtService)
+    {
+        $this->jwtService = $jwtService;
+    }
+
+    /**
+     * Ejecuta el caso de uso de login
+     *
+     * @param array $credentials ['email' => string, 'password' => string]
+     * @return array
+     * @throws InvalidCredentialsException
+     */
+    public function execute(array $credentials): array
+    {
+        // Login vía servicio de autenticación
+        $data = $this->jwtService->attemptLogin($credentials);
+
+        // Convertir la entity User a DTO para respuesta limpia
+        $userDTO = UserDTO::fromEntity($data['user']);
+        $data['user'] = $userDTO->toArray();
+
+        return $data; // incluye token, roles y permisos
     }
 }

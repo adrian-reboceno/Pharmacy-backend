@@ -20,32 +20,19 @@ class JwtAuthService
     }
 
     /**
-     * Login con JWT y retorno de datos listos para Controller
+     * Intento de login con credenciales y retorno de token + roles + permisos
      *
      * @throws InvalidCredentialsException
      */
     public function attemptLogin(array $credentials): array
     {
-        if (!Auth::attempt($credentials)) {
-            throw new InvalidCredentialsException();
+        if (! $token = Auth::attempt($credentials)) {
+            throw new InvalidCredentialsException('Credenciales inválidas');
         }
 
-        $eloquentUser = Auth::user();
-        $this->user = $this->userRepository->findByEmail($eloquentUser->email);
+        $this->user = $this->userRepository->findByEmail(Auth::user()->email);
 
-        $claims = [
-            'permissions' => $this->user->permissions,
-            'role' => $this->user->role,
-        ];
-
-        $token = JWTAuth::claims($claims)->fromUser($eloquentUser);
-
-        return [
-            'token' => $token,
-            'user' => $this->user,
-            'roles' => $this->user->role ? [$this->user->role] : [],
-            'permissions' => $this->user->permissions,
-        ];
+        return $this->respondWithToken($token);
     }
 
     /**
@@ -75,30 +62,6 @@ class JwtAuthService
     }
 
     /**
-     * Refrescar token JWT
-     *
-     * @throws UserNotAuthenticatedException
-     */
-    public function refreshToken(): array
-    {
-        $token = Auth::refresh();
-
-        $eloquentUser = Auth::user();
-        if (!$eloquentUser) {
-            throw new UserNotAuthenticatedException('No hay usuario autenticado para refrescar token.');
-        }
-
-        $this->user = $this->userRepository->findByEmail($eloquentUser->email);
-
-        return [
-            'token' => $token,
-            'user' => $this->user,
-            'roles' => $this->user->role ? [$this->user->role] : [],
-            'permissions' => $this->user->permissions,
-        ];
-    }
-
-    /**
      * Logout e invalidación del token actual
      */
     public function logout(): void
@@ -108,14 +71,42 @@ class JwtAuthService
     }
 
     /**
-     * Estructura base de respuesta con token para el Controller
+     * Refrescar token JWT y devolver estructura con user, roles y permisos
      */
-    public function baseTokenResponse(string $token, string $message = 'Autenticación exitosa'): array
+    public function refreshToken(): array
     {
+        $token = Auth::refresh();
+        $this->user = $this->userRepository->findByEmail(Auth::user()->email);
+
+        return $this->respondWithToken($token);
+    }
+
+    /**
+     * Genera un token mínimo (solo user_id) para usar en front o cuando se requiere ligereza
+     */
+    public function createMinimalToken(UserEntity $user): string
+    {
+        $eloquentUser = new \App\Models\User(['id' => $user->id]);
+        return JWTAuth::claims([])->fromUser($eloquentUser);
+    }
+
+    /**
+     * Construye la respuesta de autenticación con token + roles + permisos
+     */
+    public function respondWithToken(string $token, string $message = 'Autenticación exitosa', bool $includeRoles = true, bool $includePermissions = true): array
+    {
+        $user = $this->user ?? $this->user();
+
+        $roles = $includeRoles ? $user->role ? [$user->role] : [] : [];
+        $permissions = $includePermissions ? $user->permissions : [];
+
         return [
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
+            'user' => $user,
+            'roles' => $roles,
+            'permissions' => $permissions,
             'message' => $message,
         ];
     }

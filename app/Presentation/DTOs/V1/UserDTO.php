@@ -6,12 +6,14 @@ use App\Domain\User\Entities\User;
 
 class UserDTO
 {
+    public int $id;
     public string $name;
     public string $email;
     public ?string $role;
 
-    public function __construct(string $name, string $email, ?string $role = null)
+    public function __construct(int $id, string $name, string $email, ?string $role = null)
     {
+        $this->id = $id;
         $this->name = $name;
         $this->email = $email;
         $this->role = $role;
@@ -20,6 +22,7 @@ class UserDTO
     public static function fromEntity(User $user): self
     {
         return new self(
+            id :$user->id,
             name: $user->name,
             email: $user->email,
             role: $user->role
@@ -29,6 +32,7 @@ class UserDTO
     public function toArray(): array
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'role' => $this->role,

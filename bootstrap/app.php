@@ -3,7 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Traits\ApiResponseTrait;
+//use App\Traits\ApiResponseTrait;
+use App\Presentation\Http\Traits\ApiResponseTrait;
 use App\Http\Middleware\FormatValidationErrors;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\AuthenticationException;

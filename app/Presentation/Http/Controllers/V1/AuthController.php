@@ -10,6 +10,7 @@ use App\Application\Auth\Services\JwtAuthService;
 use App\Presentation\DTOs\V1\UserDTO;
 use App\Infrastructure\Services\ApiResponseService;
 use App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException;
+use App\Application\Auth\UseCases\V1\LoginUser;
 
 class AuthController extends Controller
 {
@@ -22,29 +23,24 @@ class AuthController extends Controller
         $this->apiResponse = $apiResponse;
     }
 
-    public function login(LoginRequest $request)
+    /**
+     * Login de usuario
+     */
+   
+    public function login(LoginRequest $request, LoginUser $loginUser)
     {
         try {
             $credentials = $request->only(['email', 'password']);
-            $data = $this->jwtService->attemptLogin($credentials);
-
-            $userDTO = UserDTO::fromEntity($data['user']);
-
-            $response = array_merge(
-                $this->jwtService->baseTokenResponse($data['token']),
-                [
-                    'user' => $userDTO->toArray(),
-                    'roles' => $data['roles'],
-                    'permissions' => $data['permissions'],
-                ]
-            );
-
-            return $this->apiResponse->success($response, 'Login exitoso');
+            $data = $loginUser->execute($credentials);
+            return $this->apiResponse->success($data, 'Login exitoso');
         } catch (InvalidCredentialsException $e) {
             return $this->apiResponse->error($e->getMessage(), [], 401);
         }
     }
 
+    /**
+     * Información del usuario autenticado
+     */
     public function me()
     {
         $user = $this->jwtService->user();
@@ -57,26 +53,24 @@ class AuthController extends Controller
         ], 'Usuario autenticado');
     }
 
+    /**
+     * Logout del usuario
+     */
     public function logout(LogoutRequest $request)
     {
         $this->jwtService->logout();
         return $this->apiResponse->success([], 'Logout exitoso');
     }
 
+    /**
+     * Refrescar token JWT
+     */
     public function refresh(RefreshTokenRequest $request)
     {
         $data = $this->jwtService->refreshToken();
         $userDTO = UserDTO::fromEntity($data['user']);
+        $data['user'] = $userDTO->toArray();
 
-        $response = array_merge(
-            $this->jwtService->baseTokenResponse($data['token']),
-            [
-                'user' => $userDTO->toArray(),
-                'roles' => $data['roles'],
-                'permissions' => $data['permissions'],
-            ]
-        );
-
-        return $this->apiResponse->success($response, 'Token actualizado');
+        return $this->apiResponse->success($data, 'Token actualizado');
     }
 }

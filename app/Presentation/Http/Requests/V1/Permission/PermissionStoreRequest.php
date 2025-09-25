@@ -1,6 +1,6 @@
-<?php #app/Http/Requests/V1/Permission/PermissionStoreRequest.php
-
-namespace App\Http\Requests\V1\Permission;
+<?php
+#app/Presentation/Http/Requests/V1/Permission/PermissionStoreRequest.php;
+namespace App\Presentation\Http\Requests\V1\Permission;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -8,7 +8,7 @@ class PermissionStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // puedes validar si el user autenticado puede crear
+        return true; // aquí puedes validar permisos si quieres
     }
 
     public function rules(): array

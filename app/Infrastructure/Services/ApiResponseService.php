@@ -1,19 +1,16 @@
 <?php
 
-# app/Infrastructure/Services/ApiResponseService.php
 namespace App\Infrastructure\Services;
 
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ApiResponseService
 {
-    /**
-     * Convierte cualquier dato en array listo para API
-     * Detecta: DTO, Collection, Paginator, Model
-     */
     protected function transformData(mixed $data): array
     {
         if ($data instanceof PaginatorContract) {
@@ -27,24 +24,19 @@ class ApiResponseService
                         ->toArray();
         }
 
-        // DTO o Modelo Eloquent
         if (is_object($data) && method_exists($data, 'toArray')) {
             return $data->toArray();
         }
 
-        // Arrays planos o valores simples
         return (array) $data;
     }
 
-    /**
-     * Respuesta exitosa uniforme
-     */
     public function success(
         mixed $data = [],
         string $message = 'Éxito',
         int $code = Response::HTTP_OK,
         array $headers = []
-    ): \Illuminate\Http\JsonResponse {
+    ): JsonResponse {
         $payload = $this->transformData($data);
 
         $response = [
@@ -54,7 +46,6 @@ class ApiResponseService
             'data'        => $payload,
         ];
 
-        // Meta si es paginación
         if ($data instanceof PaginatorContract) {
             $response['meta'] = [
                 'current_page' => $data->currentPage(),
@@ -67,20 +58,26 @@ class ApiResponseService
         return response()->json($response, $code, $headers);
     }
 
-    /**
-     * Respuesta de error uniforme
-     */
-    public function error(
-        string $message = 'Error interno',
-        array $errors = [],
-        int $code = Response::HTTP_INTERNAL_SERVER_ERROR,
-        array $headers = []
-    ): \Illuminate\Http\JsonResponse {
+    public function error(\Throwable $e): JsonResponse
+    {
+        $code = Response::HTTP_INTERNAL_SERVER_ERROR;
+        $message = 'Error interno';
+
+        if ($e instanceof ModelNotFoundException) {
+            $code = Response::HTTP_NOT_FOUND;
+            $message = $e->getMessage() ?: 'Recurso no encontrado';
+        } elseif ($e instanceof \RuntimeException) {
+            $code = $e->getCode() === 409 ? Response::HTTP_CONFLICT : $code;
+            $code = $e->getCode() === 204 ? Response::HTTP_NO_CONTENT : $code;
+            $code = $e->getCode() === 404 ? Response::HTTP_NOT_FOUND : $code;
+            $message = $e->getMessage();
+        }
+
         return response()->json([
             'status'      => 'error',
-            'http_status' => Response::$statusTexts[$code] ?? 'Error',
+            'http_status' => Response::$statusTexts[$code] ?? 'unknown',
             'message'     => $message,
-            'errors'      => $errors,
-        ], $code, $headers);
+            'errors'      => [],
+        ], $code);
     }
 }

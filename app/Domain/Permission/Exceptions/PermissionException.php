@@ -1,11 +1,11 @@
 <?php
-# app/Exceptions/V1/Permission/PermissionException.php
 
-namespace App\Exceptions\V1\Permission;
+namespace App\Domain\Permission\Exceptions;
 
-use Exception;
+
 use Symfony\Component\HttpFoundation\Response;
-
+use Illuminate\Http\JsonResponse;
+use Exception;
 class PermissionException extends Exception
 {
     public function __construct(string $message, int $code)

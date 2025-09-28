@@ -17,7 +17,7 @@ use App\Application\Permission\DTOs\V1\{
     CreatePermissionDTO,
     UpdatePermissionDTO
 };
-use App\Domain\Permission\Exceptions\PermissionException;
+//use App\Domain\Permission\Exceptions\PermissionException;
 
 class PermissionController extends Controller
 {

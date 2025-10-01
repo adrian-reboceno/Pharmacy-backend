@@ -3,8 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\JwtMiddleware;
 //use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\Permission\PermissionController;
+//use App\Http\Controllers\Api\V1\Permission\PermissionController;
 use App\Presentation\Http\Controllers\V1\AuthController;
+use App\Presentation\Http\Controllers\V1\PermissionController;
+use App\Presentation\Http\Controllers\V1\RoleController;
 //use App\Http\Controllers\Api\V1\Role\RoleController;
 //use App\Http\Controllers\Api\V1\User\UserController;
 
@@ -32,17 +34,24 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     // ------------------------
     // Permissions (Spatie)
     // ------------------------
-    /*Route::middleware('permission:manager-permissions')->prefix('v1/permissions')->group(function () {
+    Route::middleware('permission:manager-permissions')->prefix('v1/permissions')->group(function () {
         Route::get('/', [PermissionController::class, 'index']);
         Route::post('/', [PermissionController::class, 'store']);
         Route::get('{id}', [PermissionController::class, 'show']);
         Route::put('{id}', [PermissionController::class, 'update']);
         Route::delete('{id}', [PermissionController::class, 'destroy']);
-    });*/
+    });
 
     // ------------------------
     // Roles
     // ------------------------
+    Route::middleware('permission:manager-permissions')->prefix('v1/roles')->group(function () {
+        Route::get('/', [RoleController::class, 'index']);
+        Route::post('/', [RoleController::class, 'store']);
+        Route::get('{id}', [RoleController::class, 'show']);
+        Route::put('{id}', [RoleController::class, 'update']);
+        Route::delete('{id}', [RoleController::class, 'destroy']);
+    });
    /* Route::middleware('permission:manager-roles')->prefix('roles')->group(function () {
         Route::get('/', [RoleController::class, 'index']);
         Route::post('/', [RoleController::class, 'store']);

@@ -5,26 +5,27 @@ namespace App\Infrastructure\Repositories;
 
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Eloquent implementation of the RoleRepositoryInterface.
  *
  * This repository provides persistence operations for roles using
- * the Spatie\Permission `Role` model. It bridges the domain layer
- * with the infrastructure layer, ensuring that higher-level modules
- * depend only on abstractions.
+ * the Spatie\Permission `Role` model. It acts as the bridge between
+ * the domain layer and the database (infrastructure layer), ensuring
+ * that higher-level modules depend only on abstractions.
  *
  * Applied principles:
- * - **SRP (Single Responsibility Principle):** Responsible only for role persistence operations.
- * - **DIP (Dependency Inversion Principle):** Implements the domain-defined interface
- *   (`RoleRepositoryInterface`), allowing the application layer to remain decoupled
- *   from the underlying database implementation.
+ * - **SRP (Single Responsibility Principle):** Handles only persistence operations for roles.
+ * - **DIP (Dependency Inversion Principle):** Implements the domain-defined
+ *   `RoleRepositoryInterface`, allowing the application and domain layers
+ *   to remain decoupled from the database.
  */
 class RoleRepository implements RoleRepositoryInterface
 {
     /**
-     * Returns a query builder for roles.
+     * Get a query builder for roles.
      *
      * @return Builder Query builder instance for roles.
      */
@@ -34,10 +35,10 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     /**
-     * Finds a role by its unique identifier.
+     * Find a role by its unique identifier.
      *
-     * @param int $id Unique identifier of the role.
-     * @return Role|null Role instance if found, null otherwise.
+     * @param int $id Role unique identifier.
+     * @return Role|null The Role instance if found, null otherwise.
      */
     public function find(int $id): ?object
     {
@@ -45,46 +46,65 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     /**
-     * Creates a new role.
+     * Create a new role.
      *
-     * @param array $data Associative array containing role attributes.
+     * Also synchronizes permissions if they are provided.
+     *
+     * @param array $data Associative array containing role attributes:
+     *                    - name: string (required)
+     *                    - guard_name: string (optional, defaults to 'api')
+     *                    - permissions: array<string> (optional)
      * @return Role The newly created role instance.
      */
     public function create(array $data): object
-    {
-        return Role::create($data);
-    }
+    {       
+        $role = Role::create($data);
 
-    /**
-     * Updates an existing role by its ID.
-     *
-     * @param int $id Unique identifier of the role to update.
-     * @param array $data Associative array of updated role attributes.
-     * @return Role The updated role instance.
-     */
-    public function update(int $id, array $data): object
-    {
-        $role = $this->find($id);
-        $role->update($data);
+        if (!empty($data['permissions'])) {
+            $role->syncPermissions($data['permissions']);
+        }
 
         return $role;
     }
 
     /**
-     * Deletes a role by its unique identifier.
+     * Update an existing role by its ID.
      *
-     * @param int $id Unique identifier of the role to delete.
+     * ⚠️ This method **does not allow updating the role name**.
+     * It only updates allowed attributes such as guard_name
+     * and synchronizes permissions if provided.
+     *
+     * @param int $id Role unique identifier.
+     * @param array $data Associative array of role attributes to update:
+     *                    - guard_name: string (optional)
+     *                    - permissions: array<string> (optional)
+     * @return Role The updated role instance.
+     */
+    public function update(int $id, array $data): object
+    {
+        $role = $this->find($id);
+
+        if (!empty($data['permissions'])) {
+            $role->syncPermissions($data['permissions']);
+        }
+
+        return $role;
+    }
+
+    /**
+     * Delete a role by its unique identifier.
+     *
+     * @param int $id Role unique identifier.
      * @return bool True if the role was successfully deleted, false otherwise.
      */
     public function delete(int $id): bool
     {
         $role = $this->find($id);
-
         return $role ? $role->delete() : false;
     }
 
     /**
-     * Checks if a role with the given name and guard already exists.
+     * Check if a role with the given name and guard already exists.
      *
      * Typically used in the **CreateRole** use case to prevent duplicates.
      *
@@ -101,11 +121,11 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     /**
-     * Checks if a role with the given name and guard already exists,
+     * Check if a role with the given name and guard already exists,
      * excluding a specific role ID.
      *
-     * Typically used in the **UpdateRole** use case to ensure uniqueness
-     * without conflicting with the current role being updated.
+     * Typically used in the **UpdateRole** use case to enforce uniqueness
+     * without conflicting with the role being updated.
      *
      * @param string $name Role name to check.
      * @param string $guard_name Guard name associated with the role.
@@ -119,5 +139,29 @@ class RoleRepository implements RoleRepositoryInterface
             ->where('guard_name', $guard_name)
             ->where('id', '!=', $exceptId)
             ->exists();
+    }
+
+    /**
+     * Validate a list of permission names against the database.
+     *
+     * This method separates permissions into valid and invalid sets.
+     * It does not throw exceptions; the responsibility of handling invalid
+     * permissions belongs to the application use case (e.g., **UpdateRole**).
+     *
+     * @param array<string> $permissions Array of permission names to validate.
+     * @return array{valid: array<string>, invalid: array<string>} Arrays containing valid and invalid permission names.
+     */
+    public function validatePermissions(array $permissions): array
+    {
+        $validPermissions = Permission::whereIn('name', $permissions)
+            ->pluck('name')
+            ->toArray();
+
+        $invalidPermissions = array_diff($permissions, $validPermissions);
+
+        return [
+            'valid' => $validPermissions,
+            'invalid' => $invalidPermissions,
+        ];
     }
 }

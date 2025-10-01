@@ -9,14 +9,14 @@ use Illuminate\Http\Response;
 /**
  * Use Case: Delete an existing role from the system.
  *
- * This use case encapsulates the business logic to remove a role
- * from the system by its unique identifier (ID).
- * It ensures that the role exists before attempting deletion.
+ * This use case encapsulates the business logic required to remove a role
+ * by its unique identifier (ID). It validates the existence of the role
+ * before attempting deletion to ensure consistency.
  *
  * Applied principles:
- * - **SRP (Single Responsibility Principle):** Responsible only for deleting roles.
- * - **DIP (Dependency Inversion Principle):** Depends on an abstraction
- *   (`RoleRepositoryInterface`) instead of a concrete implementation.
+ * - **SRP (Single Responsibility Principle):** Handles only the deletion of roles.
+ * - **DIP (Dependency Inversion Principle):** Relies on the abstraction
+ *   `RoleRepositoryInterface` rather than a concrete implementation.
  *
  * Example usage in a Controller:
  * ```php
@@ -35,7 +35,7 @@ use Illuminate\Http\Response;
 class DeleteRole
 {
     /**
-     * Role repository for domain persistence operations.
+     * Repository for role persistence operations.
      *
      * @var RoleRepositoryInterface
      */
@@ -44,7 +44,7 @@ class DeleteRole
     /**
      * Constructor.
      *
-     * @param RoleRepositoryInterface $repo Repository handling role persistence.
+     * @param RoleRepositoryInterface $repo Repository responsible for role persistence.
      */
     public function __construct(RoleRepositoryInterface $repo)
     {
@@ -52,11 +52,11 @@ class DeleteRole
     }
 
     /**
-     * Executes the deletion of a role by its ID.
+     * Executes the deletion of a role by its unique identifier.
      *
-     * @param int $id Unique identifier of the role to be deleted.
+     * @param int $id Unique identifier of the role to delete.
      *
-     * @throws \RuntimeException If the role does not exist in the system.
+     * @throws \RuntimeException If the role does not exist.
      *
      * @return bool True if the role was successfully deleted, false otherwise.
      */

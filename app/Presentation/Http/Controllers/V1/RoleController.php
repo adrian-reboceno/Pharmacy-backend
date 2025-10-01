@@ -170,8 +170,10 @@ class RoleController extends Controller
      */
     public function update(Request $request, int $id)
     {
+       
         try {
             $dto = new UpdateRoleDTO($request->all());
+            
             $role = $this->update->handle($id, $dto);
 
             return $this->api->success(

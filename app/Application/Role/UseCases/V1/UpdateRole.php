@@ -9,14 +9,17 @@ use App\Presentation\DTOs\V1\RoleDTO;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Use Case: Update an existing role in the system.
+ * Use Case: Update an existing role's permissions in the system.
  *
  * This use case encapsulates the business logic required to update
- * a role while validating that no other role exists with the same
- * name and guard combination.
+ * a role's **permissions** (and optionally `guard_name`).  
+ * **The role's name cannot be updated** to ensure consistency across the system.
+ *
+ * Validates that all provided permissions exist before updating.  
+ * Throws a RuntimeException (409 Conflict) if any invalid permissions are provided.
  *
  * Applied principles:
- * - **SRP (Single Responsibility Principle):** Responsible only for updating roles.
+ * - **SRP (Single Responsibility Principle):** Responsible only for updating role permissions.
  * - **DIP (Dependency Inversion Principle):** Depends on an abstraction
  *   (`RoleRepositoryInterface`) instead of a concrete implementation.
  *
@@ -30,8 +33,8 @@ use Symfony\Component\HttpFoundation\Response;
  *     public function update(int $id, Request $request, UpdateRole $updateRole)
  *     {
  *         $dto = new UpdateRoleDTO(
- *             name: $request->input('name'),
- *             guard_name: $request->input('guard_name')
+ *             guard_name: $request->input('guard_name'),
+ *             permissions: $request->input('permissions', [])
  *         );
  *
  *         $roleDTO = $updateRole->handle($id, $dto);
@@ -61,35 +64,40 @@ class UpdateRole
     }
 
     /**
-     * Executes the update of a role by its ID.
+     * Executes the update of a role's permissions (and optionally guard_name) by its ID.
      *
      * @param int $id Unique identifier of the role to be updated.
      * @param UpdateRoleDTO $dto Transfer object containing updated role data.
      *
-     * @throws \RuntimeException If another role already exists with the same name and guard.
+     * @throws \RuntimeException If any provided permission does not exist (409 Conflict).
      *
      * @return RoleDTO Data Transfer Object representing the updated role.
      */
     public function handle(int $id, UpdateRoleDTO $dto): RoleDTO
     {
-        // Check if another role already exists with the same name + guard
-        // (ideally using a repository method like existsExceptId)
-        $existing = $this->repo->exists($dto->name, $dto->guard_name);
+        $dataToUpdate = [];
 
-        if ($existing) {
-            throw new \RuntimeException(
-                "A role with the name '{$dto->name}' already exists for guard '{$dto->guard_name}'.",
-                Response::HTTP_CONFLICT // 409
-            );
+        // Only update permissions if provided in the DTO        
+
+        // Validate permissions
+        if (!empty($dto->permissions)) {
+            $validation = $this->repo->validatePermissions($dto->permissions);
+
+            if (!empty($validation['invalid'])) {
+                throw new \RuntimeException(
+                    'The following permissions do not exist: ' . implode(', ', $validation['invalid']),
+                    Response::HTTP_CONFLICT // 409
+                );
+            }
+
+            // Only pass valid permissions to the repository
+            $dataToUpdate['permissions'] = $validation['valid'];
         }
 
-        // Update the role in the domain layer
-        $role = $this->repo->update($id, array_filter([
-            'name'       => $dto->name,
-            'guard_name' => $dto->guard_name,
-        ]));
+        // Update the role with allowed fields only
+        $role = $this->repo->update($id, $dataToUpdate);
 
-        // Return DTO for presentation layer
+        // Return DTO for the presentation layer
         return RoleDTO::fromModel($role);
     }
 }

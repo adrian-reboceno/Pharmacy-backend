@@ -10,13 +10,14 @@ use Illuminate\Http\Response;
 /**
  * Use Case: Retrieve a specific role by its ID.
  *
- * This use case encapsulates the business logic to fetch and return
- * a single role from the system, ensuring that the role exists.
+ * This use case encapsulates the business logic to fetch a single role
+ * from the system. If the role does not exist, it throws a runtime exception
+ * with an HTTP 404 status code.
  *
  * Applied principles:
- * - **SRP (Single Responsibility Principle):** Responsible only for retrieving a role by ID.
- * - **DIP (Dependency Inversion Principle):** Depends on an abstraction
- *   (`RoleRepositoryInterface`) instead of a concrete implementation.
+ * - **SRP (Single Responsibility Principle):** Handles only the retrieval of a single role.
+ * - **DIP (Dependency Inversion Principle):** Depends on the abstraction
+ *   `RoleRepositoryInterface` rather than a concrete implementation.
  *
  * Example usage in a Controller:
  * ```php
@@ -52,11 +53,11 @@ class ShowRole
     }
 
     /**
-     * Executes the retrieval of a role by its ID.
+     * Executes the retrieval of a role by its unique identifier.
      *
-     * @param int $id Unique identifier of the role to be retrieved.
+     * @param int $id Unique identifier of the role to retrieve.
      *
-     * @throws \RuntimeException If the role does not exist in the system.
+     * @throws \RuntimeException If no role with the given ID exists.
      *
      * @return RoleDTO Data Transfer Object representing the requested role.
      */

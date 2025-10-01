@@ -1,15 +1,50 @@
 <?php
-#app/Presentation/DTOs/V1/PermissionDTO.php
+# app/Presentation/DTOs/V1/PermissionDTO.php
+
 namespace App\Presentation\DTOs\V1;
 
 use Spatie\Permission\Models\Permission;
 
+/**
+ * Data Transfer Object (DTO) for representing a Permission.
+ *
+ * This DTO encapsulates permission information and provides helper
+ * methods to format the data for API responses.
+ *
+ * Applied principles:
+ * - **SRP (Single Responsibility Principle):** Responsible only for carrying
+ *   permission data to the presentation layer.
+ */
 class PermissionDTO
 {
+    /**
+     * Permission unique identifier.
+     *
+     * @var int
+     */
     public int $id;
+
+    /**
+     * Permission name.
+     *
+     * @var string
+     */
     public string $name;
+
+    /**
+     * Guard name associated with the permission (e.g., 'api', 'web').
+     *
+     * @var string
+     */
     public string $guard_name;
 
+    /**
+     * PermissionDTO constructor.
+     *
+     * @param int    $id
+     * @param string $name
+     * @param string $guard_name
+     */
     public function __construct(int $id, string $name, string $guard_name)
     {
         $this->id = $id;
@@ -17,6 +52,12 @@ class PermissionDTO
         $this->guard_name = $guard_name;
     }
 
+    /**
+     * Create a PermissionDTO instance from a Permission model.
+     *
+     * @param Permission $permission
+     * @return self
+     */
     public static function fromModel(Permission $permission): self
     {
         return new self(
@@ -26,6 +67,11 @@ class PermissionDTO
         );
     }
 
+    /**
+     * Convert the DTO into an array representation suitable for API responses.
+     *
+     * @return array<string,mixed> Associative array including permission attributes.
+     */
     public function toArray(): array
     {
         return [

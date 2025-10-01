@@ -1,49 +1,61 @@
 <?php
-#App/Domain/Permission/Repositories/PermissionRepositoryInterface.php;
+# app/Domain/Permission/Repositories/PermissionRepositoryInterface.php
+
 namespace App\Domain\Permission\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * Repository Interface for managing Permissions in the Domain layer.
+ *
+ * This interface defines the contract for interacting with the
+ * persistence layer (database) regarding permission entities.
+ *
+ * Applied principles:
+ * - **DIP (Dependency Inversion Principle):** Higher-level layers
+ *   depend on this abstraction, not a concrete implementation.
+ */
 interface PermissionRepositoryInterface
 {
     /**
-     * Devuelve un query builder para permisos
+     * Returns a query builder for permissions.
      *
-     * Esto permite aplicar filtros, ordenamiento y paginación
+     * This allows applying filters, sorting, and pagination.
+     *
+     * @return Builder
      */
     public function query(): Builder;
 
     /**
-     * Busca un permiso por ID
+     * Find a permission by its unique identifier.
      *
-     * @param int $id
-     * @return \App\Domain\Permission\Permission|null
+     * @param int $id Permission ID.
+     * @return \App\Domain\Permission\Permission|null Returns the permission entity or null if not found.
      */
     public function find(int $id): ?object;
 
     /**
-     * Crea un nuevo permiso
+     * Create a new permission.
      *
-     * @param array $data
-     * @return \App\Domain\Permission\Permission
+     * @param array $data Data required to create a permission (e.g., name, guard_name).
+     * @return \App\Domain\Permission\Permission The newly created permission entity.
      */
     public function create(array $data): object;
 
     /**
-     * Actualiza un permiso existente
+     * Update an existing permission.
      *
-     * @param int $id
-     * @param array $data
-     * @return \App\Domain\Permission\Permission
+     * @param int   $id   Unique identifier of the permission to update.
+     * @param array $data Data to update (e.g., name, guard_name).
+     * @return \App\Domain\Permission\Permission The updated permission entity.
      */
     public function update(int $id, array $data): object;
 
     /**
-     * Elimina un permiso
+     * Delete a permission by its unique identifier.
      *
-     * @param int $id
-     * @return bool
+     * @param int $id Permission ID to delete.
+     * @return bool True if the permission was successfully deleted, false otherwise.
      */
     public function delete(int $id): bool;
 }

@@ -17,21 +17,26 @@ use App\Application\Role\DTOs\V1\{
     CreateRoleDTO,
     UpdateRoleDTO
 };
+use App\Presentation\Http\Requests\V1\Role\{
+    RoleIndexRequest,
+    RoleStoreRequest,
+    RoleUpdateRequest
+};
 
 /**
  * Class RoleController
  *
- * Controller responsible for managing Roles via API.
- * It provides endpoints for listing, viewing, creating, updating, and deleting roles.
- * Each action is handled by its corresponding Use Case to keep the business logic separate
- * from the presentation layer.
+ * Controller responsible for managing Roles via the API.
+ * Provides endpoints for listing, viewing, creating, updating, and deleting roles.
+ * Each action is delegated to its corresponding Use Case, keeping business logic 
+ * separated from the presentation layer.
  *
  * @package App\Presentation\Http\Controllers\V1
  */
 class RoleController extends Controller
 {
     /**
-     * Injects dependencies (Use Cases and API Response service).
+     * Inject dependencies (Use Cases and API Response service).
      *
      * @param ApiResponseService $api
      * @param ListRoles          $list
@@ -70,15 +75,13 @@ class RoleController extends Controller
      * 
      * Retrieve a paginated list of roles.
      *
-     * @param Request $request
+     * @param RoleIndexRequest $request
      * @return \Illuminate\Http\JsonResponse
      *
-     * Example usage in route:
-     * ```php
+     * Example usage:
      * GET /api/v1/roles?per_page=15
-     * ```
      */
-    public function index(Request $request)
+    public function index(RoleIndexRequest $request)
     {
         $perPage   = (int) $request->query('per_page', 10);
         $paginator = $this->list->handle($perPage);
@@ -97,10 +100,8 @@ class RoleController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      *
-     * Example usage in route:
-     * ```php
+     * Example usage:
      * GET /api/v1/roles/5
-     * ```
      */
     public function show(int $id)
     {
@@ -122,19 +123,17 @@ class RoleController extends Controller
      * 
      * Create a new role from request data.
      *
-     * @param Request $request
+     * @param RoleStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      *
-     * Example usage in route:
-     * ```php
-     * POST /api/v1/roles
+     * Example payload:
      * {
      *   "name": "Manager",
-     *   "guard_name": "api"
+     *   "guard_name": "api",
+     *   "permissions": [1,2,3]
      * }
-     * ```
      */
-    public function store(Request $request)
+    public function store(RoleStoreRequest $request)
     {
         try {
             $dto = new CreateRoleDTO($request->all());
@@ -155,25 +154,21 @@ class RoleController extends Controller
      * 
      * Update an existing role by ID.
      *
-     * @param Request $request
+     * @param RoleUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      *
-     * Example usage in route:
-     * ```php
-     * PUT /api/v1/roles/3
+     * Example payload:
      * {
      *   "name": "Administrator",
-     *   "guard_name": "api"
+     *   "guard_name": "api",
+     *   "permissions": [1,2,3]
      * }
-     * ```
      */
-    public function update(Request $request, int $id)
+    public function update(RoleUpdateRequest $request, int $id)
     {
-       
         try {
             $dto = new UpdateRoleDTO($request->all());
-            
             $role = $this->update->handle($id, $dto);
 
             return $this->api->success(
@@ -194,10 +189,8 @@ class RoleController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      *
-     * Example usage in route:
-     * ```php
+     * Example usage:
      * DELETE /api/v1/roles/4
-     * ```
      */
     public function destroy(int $id)
     {

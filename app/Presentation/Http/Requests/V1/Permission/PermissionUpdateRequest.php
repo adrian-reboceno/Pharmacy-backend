@@ -4,24 +4,25 @@
 namespace App\Presentation\Http\Requests\V1\Permission;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
- * Handles validation for updating an existing permission.
+ * Handles validation for updating an existing Permission.
  *
- * This FormRequest validates the input required to update a permission,
- * ensuring that the 'name' is provided, a valid string, and unique in the
- * permissions table (excluding the current permission being updated).
+ * This FormRequest validates the input required to update a Permission,
+ * ensuring that the 'name' field is provided, is a valid string, and unique
+ * in the permissions table (excluding the current Permission being updated).
  *
- * Applied principles:
- * - **SRP (Single Responsibility Principle):** Only validates input for updating a permission.
+ * Principles applied:
+ * - SRP (Single Responsibility Principle): Only validates input for updating a Permission.
  */
 class PermissionUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
-     * You can add additional authorization logic here, e.g., check if the
-     * user has the 'permission-edit' ability.
+     * Extend this method to include authorization logic, for example,
+     * checking if the user has the 'permission-edit' ability.
      *
      * @return bool
      */
@@ -33,16 +34,22 @@ class PermissionUpdateRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * - The 'name' field is required, must be a string, and unique in the
-     *   permissions table, ignoring the current permission's ID.
-     * - The 'guard_name' field is optional and must be a string if provided.
+     * Rules:
+     * - 'name' is required, must be a string, and unique in the 'permissions' table,
+     *   ignoring the current Permission's ID.
+     * - 'guard_name' is optional, but if provided, must be a string.
      *
-     * @return array<string,string>
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
         return [
-            'name'       => 'required|string|unique:permissions,name,' . $this->route('permission')->id,
+            'name' => [
+                'required',
+                'string',
+                // Ensure the 'name' is unique, ignoring the current permission
+                Rule::unique('permissions', 'name')->ignore($this->route('id')),
+            ],
             'guard_name' => 'nullable|string',
         ];
     }
@@ -50,7 +57,9 @@ class PermissionUpdateRequest extends FormRequest
     /**
      * Get custom error messages for validation failures.
      *
-     * @return array<string,string>
+     * Provides user-friendly messages for each validation rule.
+     *
+     * @return array<string, string>
      */
     public function messages(): array
     {

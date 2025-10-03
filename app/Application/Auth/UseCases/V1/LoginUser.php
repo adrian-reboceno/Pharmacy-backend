@@ -46,7 +46,7 @@ class LoginUser
 namespace App\Application\Auth\UseCases\V1;
 
 use App\Application\Auth\Services\JwtAuthService;
-use App\Presentation\DTOs\V1\UserDTO;
+use App\Presentation\DTOs\V1\AuthUserDTO as UserDTO;
 use App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException;
 
 class LoginUser

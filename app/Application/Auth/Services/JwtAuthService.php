@@ -2,8 +2,8 @@
 # app/Application/Auth/Services/JwtAuthService.php
 namespace App\Application\Auth\Services;
 
-use App\Domain\User\Repositories\UserRepositoryInterface;
-use App\Domain\User\Entities\User as UserEntity;
+use App\Domain\Auth\Repositories\AuthRepositoryInterface;
+use App\Domain\Auth\Entities\User as UserEntity;
 use App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException;
 use App\Presentation\Exceptions\V1\Auth\UserNotAuthenticatedException;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -12,11 +12,11 @@ use Illuminate\Support\Facades\Auth;
 class JwtAuthService
 {
     protected ?UserEntity $user = null;
-    protected UserRepositoryInterface $userRepository;
+    protected AuthRepositoryInterface $AuthRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(AuthRepositoryInterface $AuthRepository)
     {
-        $this->userRepository = $userRepository;
+        $this->AuthRepository = $AuthRepository;
     }
 
     /**
@@ -30,7 +30,7 @@ class JwtAuthService
             throw new InvalidCredentialsException('Credenciales inválidas');
         }
 
-        $this->user = $this->userRepository->findByEmail(Auth::user()->email);
+        $this->user = $this->AuthRepository->findByEmail(Auth::user()->email);
 
         return $this->respondWithToken($token);
     }
@@ -52,7 +52,7 @@ class JwtAuthService
             throw new UserNotAuthenticatedException('No hay usuario autenticado.');
         }
 
-        $this->user = $this->userRepository->findByEmail($eloquentUser->email);
+        $this->user = $this->AuthRepository->findByEmail($eloquentUser->email);
 
         if (!$this->user) {
             throw new \RuntimeException('No se pudo cargar la entidad User.');
@@ -76,7 +76,7 @@ class JwtAuthService
     public function refreshToken(): array
     {
         $token = Auth::refresh();
-        $this->user = $this->userRepository->findByEmail(Auth::user()->email);
+        $this->user = $this->AuthRepository->findByEmail(Auth::user()->email);
 
         return $this->respondWithToken($token);
     }

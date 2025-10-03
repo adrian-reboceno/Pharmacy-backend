@@ -7,7 +7,7 @@ use App\Presentation\Http\Requests\V1\LoginRequest;
 use App\Presentation\Http\Requests\V1\LogoutRequest;
 use App\Presentation\Http\Requests\V1\RefreshTokenRequest;
 use App\Application\Auth\Services\JwtAuthService;
-use App\Presentation\DTOs\V1\UserDTO;
+use App\Presentation\DTOs\V1\AuthUserDTO as userDTO;
 use App\Infrastructure\Services\ApiResponseService;
 use App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException;
 use App\Application\Auth\UseCases\V1\LoginUser;

@@ -1,10 +1,10 @@
 <?php
-# app/Domain/User/Repositories/UserRepositoryInterface.php
-namespace App\Domain\User\Repositories;
+# app/Domain/User/Repositories/AuthRepositoryInterface.php
+namespace App\Domain\Auth\Repositories;
 
-use App\Domain\User\Entities\User;
+use App\Domain\Auth\Entities\User;
 
-interface UserRepositoryInterface
+interface AuthRepositoryInterface
 {
     public function findByEmail(string $email): ?User;
     public function getUserPermissions(User $user): array;

@@ -2,9 +2,9 @@
 # app/Presentation/DTOs/V1/UserDTO.php
 namespace App\Presentation\DTOs\V1;
 
-use App\Domain\User\Entities\User;
+use App\Domain\Auth\Entities\User;
 
-class UserDTO
+class AuthUserDTO
 {
     public int $id;
     public string $name;

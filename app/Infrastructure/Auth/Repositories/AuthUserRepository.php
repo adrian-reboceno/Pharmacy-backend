@@ -1,12 +1,12 @@
 <?php
-# app/Infrastructure/User/Repositories/UserRepository.php
-namespace App\Infrastructure\Repositories;
+# app/Infrastructure/Auth/Repositories/AuthUserRepository.php
+namespace App\Infrastructure\Auth\Repositories;
 
-use App\Domain\User\Entities\User as UserEntity;
-use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Domain\Auth\Entities\User as UserEntity;
+use App\Domain\Auth\Repositories\AuthRepositoryInterface;
 use App\Models\User as UserModel;
 
-class EloquentUserRepository implements UserRepositoryInterface
+class AuthUserRepository implements AuthRepositoryInterface
 {
     public function findByEmail(string $email): ?UserEntity
     {

@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Services;
 
 use Illuminate\Support\Facades\Auth;
-use App\Application\User\DTOs\V1\UserDTO;
+use App\Application\User\DTOs\V1\AutUserDTO as UserDTO;
 
 class JwtAuthService
 {

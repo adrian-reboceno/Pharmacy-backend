@@ -1,7 +1,7 @@
 <?php
 # app/Infrastructure/Repositories/RoleRepository.php
 
-namespace App\Infrastructure\Repositories;
+namespace App\Infrastructure\Role\Repositories;
 
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use Spatie\Permission\Models\Role;

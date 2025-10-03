@@ -1,7 +1,7 @@
 <?php
 # app/Infrastructure/Repositories/PermissionRepository.php
 
-namespace App\Infrastructure\Repositories;
+namespace App\Infrastructure\Permission\Repositories;
 
 use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
 use Spatie\Permission\Models\Permission;

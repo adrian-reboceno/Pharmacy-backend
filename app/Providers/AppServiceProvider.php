@@ -15,19 +15,33 @@ use App\Infrastructure\Repositories\RoleRepository;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Register any application services and bindings.
+     *
+     * This method binds interfaces to their concrete implementations,
+     * ensuring that the Dependency Injection Container can resolve 
+     * the appropriate classes throughout the application.
+     *
+     * @return void
      */
     public function register(): void
     {
-        //
-        // Vincula la interfaz con la implementación concreta
+        // Bind Auth repository
         $this->app->bind(AuthRepositoryInterface::class, AuthUserRepository::class);
+
+        // Bind Permission repository
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
+
+        // Bind Role repository
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
     }
 
     /**
      * Bootstrap any application services.
+     *
+     * This method is called after all services have been registered.
+     * It can be used to configure or initialize services as needed.
+     *
+     * @return void
      */
     public function boot(): void
     {

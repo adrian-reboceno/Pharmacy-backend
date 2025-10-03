@@ -1,5 +1,6 @@
 <?php
 # app/Application/Auth/Services/JwtAuthService.php
+
 namespace App\Application\Auth\Services;
 
 use App\Domain\Auth\Repositories\AuthRepositoryInterface;
@@ -20,14 +21,31 @@ class JwtAuthService
     }
 
     /**
-     * Intento de login con credenciales y retorno de token + roles + permisos
+     * Attempts to log in with the provided credentials.
      *
-     * @throws InvalidCredentialsException
+     * If successful, it generates a JWT token and returns it along with
+     * user information, roles, and permissions. If authentication fails,
+     * an exception is thrown.
+     *
+     * @param array $credentials Associative array containing:
+     *                           - 'email'    => string
+     *                           - 'password' => string
+     *
+     * @return array Authentication response including:
+     *               - 'access_token' => string
+     *               - 'token_type'   => string ("bearer")
+     *               - 'expires_in'   => int (token TTL in seconds)
+     *               - 'user'         => UserEntity
+     *               - 'roles'        => array
+     *               - 'permissions'  => array
+     *               - 'message'      => string
+     *
+     * @throws InvalidCredentialsException If the provided credentials are invalid.
      */
     public function attemptLogin(array $credentials): array
     {
         if (! $token = Auth::attempt($credentials)) {
-            throw new InvalidCredentialsException('Credenciales inválidas');
+            throw new InvalidCredentialsException('Invalid credentials.');
         }
 
         $this->user = $this->AuthRepository->findByEmail(Auth::user()->email);
@@ -36,9 +54,15 @@ class JwtAuthService
     }
 
     /**
-     * Retorna la Entity User siempre cargada.
+     * Returns the authenticated User entity.
      *
-     * @throws UserNotAuthenticatedException
+     * If the user is not yet loaded, it attempts to load it from the
+     * authentication guard. Throws an exception if no user is authenticated.
+     *
+     * @return UserEntity
+     *
+     * @throws UserNotAuthenticatedException If there is no authenticated user.
+     * @throws \RuntimeException If the User entity cannot be loaded.
      */
     public function user(): UserEntity
     {
@@ -49,20 +73,22 @@ class JwtAuthService
         $eloquentUser = Auth::user();
 
         if (!$eloquentUser) {
-            throw new UserNotAuthenticatedException('No hay usuario autenticado.');
+            throw new UserNotAuthenticatedException('No authenticated user found.');
         }
 
         $this->user = $this->AuthRepository->findByEmail($eloquentUser->email);
 
         if (!$this->user) {
-            throw new \RuntimeException('No se pudo cargar la entidad User.');
+            throw new \RuntimeException('Failed to load User entity.');
         }
 
         return $this->user;
     }
 
     /**
-     * Logout e invalidación del token actual
+     * Logs out the current user and invalidates the active JWT token.
+     *
+     * @return void
      */
     public function logout(): void
     {
@@ -71,7 +97,12 @@ class JwtAuthService
     }
 
     /**
-     * Refrescar token JWT y devolver estructura con user, roles y permisos
+     * Refreshes the current JWT token.
+     *
+     * Returns a new authentication response with the refreshed token,
+     * along with the user entity, roles, and permissions.
+     *
+     * @return array
      */
     public function refreshToken(): array
     {
@@ -82,7 +113,13 @@ class JwtAuthService
     }
 
     /**
-     * Genera un token mínimo (solo user_id) para usar en front o cuando se requiere ligereza
+     * Creates a minimal JWT token containing only the user_id claim.
+     *
+     * Useful for lightweight operations or frontend initialization.
+     *
+     * @param UserEntity $user The domain User entity.
+     *
+     * @return string The generated JWT token.
      */
     public function createMinimalToken(UserEntity $user): string
     {
@@ -91,13 +128,27 @@ class JwtAuthService
     }
 
     /**
-     * Construye la respuesta de autenticación con token + roles + permisos
+     * Builds the authentication response payload.
+     *
+     * The response contains the JWT token, its type, expiration time,
+     * user information, roles, permissions, and an optional message.
+     *
+     * @param string $token             The generated JWT token.
+     * @param string $message           Optional response message (default: "Authentication successful").
+     * @param bool   $includeRoles      Whether to include user roles in the response.
+     * @param bool   $includePermissions Whether to include user permissions in the response.
+     *
+     * @return array Authentication response.
      */
-    public function respondWithToken(string $token, string $message = 'Autenticación exitosa', bool $includeRoles = true, bool $includePermissions = true): array
-    {
+    public function respondWithToken(
+        string $token,
+        string $message = 'Authentication successful',
+        bool $includeRoles = true,
+        bool $includePermissions = true
+    ): array {
         $user = $this->user ?? $this->user();
 
-        $roles = $includeRoles ? $user->role ? [$user->role] : [] : [];
+        $roles = $includeRoles ? ($user->role ? [$user->role] : []) : [];
         $permissions = $includePermissions ? $user->permissions : [];
 
         return [

@@ -7,6 +7,7 @@ use App\Http\Middleware\JwtMiddleware;
 use App\Presentation\Http\Controllers\V1\AuthController;
 use App\Presentation\Http\Controllers\V1\PermissionController;
 use App\Presentation\Http\Controllers\V1\RoleController;
+use App\Presentation\Http\Controllers\V1\UserController;
 //use App\Http\Controllers\Api\V1\Role\RoleController;
 //use App\Http\Controllers\Api\V1\User\UserController;
 
@@ -51,6 +52,17 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         Route::get('{id}', [RoleController::class, 'show']);
         Route::put('{id}', [RoleController::class, 'update']);
         Route::delete('{id}', [RoleController::class, 'destroy']);
+    });
+
+     // ------------------------
+    // Users
+    // ------------------------
+    Route::middleware('permission:manager-users')->prefix('v1/user')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::post('/', [UserController::class, 'store']);
+        Route::get('{id}', [UserController::class, 'show']);
+        Route::put('{id}', [UserController::class, 'update']);
+        Route::delete('{id}', [UserController::class, 'destroy']);
     });
    /* Route::middleware('permission:manager-roles')->prefix('roles')->group(function () {
         Route::get('/', [RoleController::class, 'index']);

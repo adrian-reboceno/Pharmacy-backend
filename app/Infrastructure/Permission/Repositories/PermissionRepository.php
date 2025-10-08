@@ -1,5 +1,5 @@
 <?php
-# app/Infrastructure/Repositories/PermissionRepository.php
+# app/Infrastructure/Permission/Repositories/PermissionRepository.php
 
 namespace App\Infrastructure\Permission\Repositories;
 

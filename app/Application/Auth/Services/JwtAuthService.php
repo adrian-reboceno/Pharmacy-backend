@@ -123,7 +123,8 @@ class JwtAuthService
      */
     public function createMinimalToken(UserEntity $user): string
     {
-        $eloquentUser = new \App\Models\User(['id' => $user->id]);
+      //  $eloquentUser = new \App\Models\User(['id' => $user->id]); use App\Infrastructure\User\Models\User
+      $eloquentUser = new  \App\Models\User(['id' => $user->id]); 
         return JWTAuth::claims([])->fromUser($eloquentUser);
     }
 

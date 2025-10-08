@@ -1,5 +1,5 @@
 <?php
-# app/Infrastructure/Repositories/RoleRepository.php
+# app/Infrastructure/Role/Repositories/RoleRepository.php
 
 namespace App\Infrastructure\Role\Repositories;
 

@@ -6,6 +6,7 @@ namespace App\Infrastructure\Auth\Repositories;
 use App\Domain\Auth\Entities\User as UserEntity;
 use App\Domain\Auth\Repositories\AuthRepositoryInterface;
 use App\Models\User as UserModel;
+//use App\Infrastructure\User\Models\User as UserModel;
 
 /**
  * Infrastructure Repository: AuthUserRepository

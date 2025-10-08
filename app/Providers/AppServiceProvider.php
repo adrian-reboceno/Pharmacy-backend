@@ -12,6 +12,9 @@ use App\Infrastructure\Permission\Repositories\PermissionRepository;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Infrastructure\Role\Repositories\RoleRepository;
 
+use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Infrastructure\User\Repositories\UserRepository;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -33,6 +36,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Bind Role repository
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
+
+        // Bind domain interfaces to infrastructure implementations
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 
     /**

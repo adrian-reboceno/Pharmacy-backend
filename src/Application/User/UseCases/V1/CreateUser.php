@@ -1,5 +1,6 @@
 <?php
-# src/Application/User/UseCases/V1/CreateUser.php
+
+// src/Application/User/UseCases/V1/CreateUser.php
 
 namespace App\Application\User\UseCases\V1;
 
@@ -40,8 +41,7 @@ final class CreateUser
      */
     public function __construct(
         private readonly UserRepositoryInterface $repository
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the user creation process.
@@ -55,19 +55,17 @@ final class CreateUser
      *  5. Persist the User via the repository.
      *  6. Return the persisted User entity (with ID populated).
      *
-     * @param CreateUserDTO $dto
-     *        Data Transfer Object containing the input required
-     *        to create a new user (name, email, password, roles).
-     *
+     * @param  CreateUserDTO  $dto
+     *                              Data Transfer Object containing the input required
+     *                              to create a new user (name, email, password, roles).
      * @return User
-     *         The fully constructed and persisted User domain entity.
+     *              The fully constructed and persisted User domain entity.
      *
      * @throws InvalidUserValueException
-     *         If any of the provided values (name, email, password, roles)
-     *         violates domain rules enforced by the value objects.
-     *
+     *                                   If any of the provided values (name, email, password, roles)
+     *                                   violates domain rules enforced by the value objects.
      * @throws AlreadyExistsException
-     *         If a user with the same email already exists in the system.
+     *                                If a user with the same email already exists in the system.
      *
      * @example
      * php
@@ -80,12 +78,11 @@ final class CreateUser
      *
      * $useCase = new CreateUser($userRepository);
      * $user = $useCase->execute($dto);
-     * 
      */
     public function execute(CreateUserDTO $dto): User
     {
         // Build email value object and check for existing user
-        $emailVo  = new UserEmail($dto->email);
+        $emailVo = new UserEmail($dto->email);
         $existing = $this->repository->findByEmail($emailVo);
 
         if ($existing !== null) {

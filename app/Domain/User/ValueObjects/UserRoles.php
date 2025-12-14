@@ -1,5 +1,6 @@
 <?php
-# app/Domain/User/ValueObjects/UserRoles.php
+
+// app/Domain/User/ValueObjects/UserRoles.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -22,18 +23,20 @@ final class UserRoles
     /**
      * Constructor
      *
-     * @param array<int,string> $roles
+     * @param  array<int,string>  $roles
+     *
      * @throws InvalidUserValueException
      */
     public function __construct(array $roles)
     {
         if (empty($roles)) {
             $this->roles = collect();
+
             return;
         }
 
         foreach ($roles as $role) {
-            if (!is_string($role) || empty($role)) {
+            if (! is_string($role) || empty($role)) {
                 throw new InvalidUserValueException('Invalid role value provided.');
             }
         }
@@ -57,6 +60,7 @@ final class UserRoles
     public function add(string $role): self
     {
         $newRoles = $this->roles->push($role)->unique()->values()->toArray();
+
         return new self($newRoles);
     }
 
@@ -65,7 +69,8 @@ final class UserRoles
      */
     public function remove(string $role): self
     {
-        $newRoles = $this->roles->reject(fn($r) => $r === $role)->values()->toArray();
+        $newRoles = $this->roles->reject(fn ($r) => $r === $role)->values()->toArray();
+
         return new self($newRoles);
     }
 

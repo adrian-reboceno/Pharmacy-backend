@@ -1,5 +1,6 @@
 <?php
-# app/Infrastructure/User/Mappers/UserMapper.php
+
+// app/Infrastructure/User/Mappers/UserMapper.php
 
 namespace App\Infrastructure\User\Mappers;
 
@@ -24,7 +25,7 @@ final class UserMapper
     /**
      * Convert an Eloquent User model to a Domain User entity.
      *
-     * @param EloquentUser $model The Eloquent User model instance.
+     * @param  EloquentUser  $model  The Eloquent User model instance.
      */
     public static function toDomain(EloquentUser $model): DomainUser
     {
@@ -47,7 +48,7 @@ final class UserMapper
      */
     public static function toEloquent(DomainUser $user, ?EloquentUser $model = null): EloquentUser
     {
-        $model ??= new EloquentUser();
+        $model ??= new EloquentUser;
 
         $data = $user->toArray();
 
@@ -56,8 +57,8 @@ final class UserMapper
             $model->id = $data['id'];
         }
 
-        $model->name     = $data['name'];
-        $model->email    = $data['email'];
+        $model->name = $data['name'];
+        $model->email = $data['email'];
         $model->password = $data['password']; // already hashed
 
         return $model;

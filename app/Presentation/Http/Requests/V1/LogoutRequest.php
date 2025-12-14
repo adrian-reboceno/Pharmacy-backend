@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/Http/Requests/V1/LogoutRequest.php
+
+// app/Presentation/Http/Requests/V1/LogoutRequest.php
 
 namespace App\Presentation\Http\Requests\V1;
 
@@ -16,8 +17,6 @@ use Illuminate\Foundation\Http\FormRequest;
  *
  * Optionally, this request can include additional fields such as
  * `device_id` if the application supports session management by device.
- *
- * @package App\Presentation\Http\Requests\V1
  */
 class LogoutRequest extends FormRequest
 {
@@ -25,8 +24,6 @@ class LogoutRequest extends FormRequest
      * Determine if the user is authorized to make this request.
      *
      * By default, all authenticated users are allowed to log out.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {

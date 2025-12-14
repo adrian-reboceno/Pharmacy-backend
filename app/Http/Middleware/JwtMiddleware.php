@@ -1,14 +1,15 @@
 <?php
-# app/Http/Middleware/JwtMiddleware.php
+
+// app/Http/Middleware/JwtMiddleware.php
 
 namespace App\Http\Middleware;
 
+use App\Presentation\Http\Traits\ApiResponseTrait;
 use Closure;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use App\Presentation\Http\Traits\ApiResponseTrait;
-use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * Class JwtMiddleware
@@ -24,8 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
  * - Handles expired tokens by attempting to refresh them automatically.
  * - Returns standardized JSON error responses when the token is invalid,
  *   expired, or the user cannot be found.
- *
- * @package App\Http\Middleware
  */
 class JwtMiddleware
 {
@@ -38,8 +37,7 @@ class JwtMiddleware
      * included in the request. If the token has expired, it attempts to refresh it
      * and includes a new token in the response headers.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
+     * @param  \Illuminate\Http\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle($request, Closure $next)
@@ -48,7 +46,7 @@ class JwtMiddleware
             // Attempt to authenticate the token
             $user = JWTAuth::parseToken()->authenticate();
 
-            if (!$user) {
+            if (! $user) {
                 return $this->errorResponse(
                     message: 'User not found',
                     data: [],
@@ -63,7 +61,8 @@ class JwtMiddleware
 
                 // Optionally include the refreshed token in the response headers
                 $response = $next($request);
-                return $response->header('Authorization', 'Bearer ' . $newToken);
+
+                return $response->header('Authorization', 'Bearer '.$newToken);
 
             } catch (JWTException $e) {
                 return $this->errorResponse(

@@ -1,13 +1,14 @@
 <?php
-# src/Domain/User/Entities/User.php
+
+// src/Domain/User/Entities/User.php
 
 namespace App\Domain\User\Entities;
 
-use App\Domain\User\ValueObjects\UserRoles;
-use App\Domain\User\ValueObjects\UserId;
 use App\Domain\User\ValueObjects\UserEmail;
+use App\Domain\User\ValueObjects\UserId;
 use App\Domain\User\ValueObjects\UserName;
 use App\Domain\User\ValueObjects\UserPassword;
+use App\Domain\User\ValueObjects\UserRoles;
 
 /**
  * Domain Entity: User
@@ -53,11 +54,11 @@ final class User
     /**
      * Create a new User entity instance.
      *
-     * @param UserId|null   $id       Unique identifier of the user.
-     * @param UserName      $name     The user's name.
-     * @param UserEmail     $email    The user's email address.
-     * @param UserPassword  $password The user's hashed password.
-     * @param UserRoles     $roles    The roles assigned to the user.
+     * @param  UserId|null  $id  Unique identifier of the user.
+     * @param  UserName  $name  The user's name.
+     * @param  UserEmail  $email  The user's email address.
+     * @param  UserPassword  $password  The user's hashed password.
+     * @param  UserRoles  $roles  The roles assigned to the user.
      */
     public function __construct(
         ?UserId $id,
@@ -66,11 +67,11 @@ final class User
         UserPassword $password,
         UserRoles $roles
     ) {
-        $this->id       = $id;
-        $this->name     = $name;
-        $this->email    = $email;
+        $this->id = $id;
+        $this->name = $name;
+        $this->email = $email;
         $this->password = $password;
-        $this->roles    = $roles;
+        $this->roles = $roles;
     }
 
     // ─────────────────────────────────────────────
@@ -124,7 +125,7 @@ final class User
     /**
      * Change the user's name.
      *
-     * @param UserName $newName The new validated user name.
+     * @param  UserName  $newName  The new validated user name.
      */
     public function rename(UserName $newName): void
     {
@@ -134,7 +135,7 @@ final class User
     /**
      * Change the user's email.
      *
-     * @param UserEmail $newEmail The new validated email.
+     * @param  UserEmail  $newEmail  The new validated email.
      */
     public function changeEmail(UserEmail $newEmail): void
     {
@@ -147,7 +148,7 @@ final class User
      * The password must already be validated and hashed
      * according to domain rules.
      *
-     * @param UserPassword $newPassword The new validated password.
+     * @param  UserPassword  $newPassword  The new validated password.
      */
     public function changePassword(UserPassword $newPassword): void
     {
@@ -157,7 +158,7 @@ final class User
     /**
      * Replace the entire set of user roles.
      *
-     * @param UserRoles $roles The new set of roles.
+     * @param  UserRoles  $roles  The new set of roles.
      */
     public function assignRoles(UserRoles $roles): void
     {
@@ -170,7 +171,7 @@ final class User
      * Validation and duplicate prevention are delegated to
      * the {@see UserRoles} Value Object.
      *
-     * @param string $role The role name to add.
+     * @param  string  $role  The role name to add.
      */
     public function addRole(string $role): void
     {
@@ -182,7 +183,7 @@ final class User
      *
      * If the role does not exist, no change occurs.
      *
-     * @param string $role The role name to remove.
+     * @param  string  $role  The role name to remove.
      */
     public function removeRole(string $role): void
     {
@@ -192,8 +193,7 @@ final class User
     /**
      * Check if the user has a specific role.
      *
-     * @param string $role The role name to verify.
-     *
+     * @param  string  $role  The role name to verify.
      * @return bool True if the user has the specified role.
      */
     public function hasRole(string $role): bool
@@ -222,11 +222,11 @@ final class User
     public function toArray(): array
     {
         return [
-            'id'       => $this->id?->value(),
-            'name'     => $this->name->value(),
-            'email'    => $this->email->value(),
+            'id' => $this->id?->value(),
+            'name' => $this->name->value(),
+            'email' => $this->email->value(),
             'password' => $this->password->value(),
-            'roles'    => $this->roles->names(),
+            'roles' => $this->roles->names(),
         ];
     }
 }

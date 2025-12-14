@@ -1,10 +1,11 @@
 <?php
-# app/Presentation/DTOs/V1/RoleDTO.php
+
+// app/Presentation/DTOs/V1/RoleDTO.php
 
 namespace App\Presentation\DTOs\V1;
 
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Collection;
+use Spatie\Permission\Models\Role;
 
 /**
  * Data Transfer Object (DTO) for representing a Role entity.
@@ -21,22 +22,16 @@ class RoleDTO
 {
     /**
      * Unique identifier of the role.
-     *
-     * @var int
      */
     public int $id;
 
     /**
      * Role name.
-     *
-     * @var string
      */
     public string $name;
 
     /**
      * Guard name associated with the role (e.g., 'api', 'web').
-     *
-     * @var string
      */
     public string $guard_name;
 
@@ -55,10 +50,10 @@ class RoleDTO
     /**
      * RoleDTO constructor.
      *
-     * @param int                    $id          Unique identifier of the role.
-     * @param string                 $name        Name of the role.
-     * @param string                 $guard_name  Guard name associated with the role.
-     * @param string|Collection|null $permissions Role permissions (optional).
+     * @param  int  $id  Unique identifier of the role.
+     * @param  string  $name  Name of the role.
+     * @param  string  $guard_name  Guard name associated with the role.
+     * @param  string|Collection|null  $permissions  Role permissions (optional).
      */
     public function __construct(int $id, string $name, string $guard_name, $permissions = null)
     {
@@ -71,7 +66,7 @@ class RoleDTO
     /**
      * Create a RoleDTO instance from a Role model.
      *
-     * @param Role $role Role model instance.
+     * @param  Role  $role  Role model instance.
      * @return self RoleDTO instance containing role data.
      */
     public static function fromModel(Role $role): self
@@ -92,9 +87,9 @@ class RoleDTO
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'name'        => $this->name,
-            'guard_name'  => $this->guard_name,
+            'id' => $this->id,
+            'name' => $this->name,
+            'guard_name' => $this->guard_name,
             'permissions' => $this->formatPermissions(),
         ];
     }
@@ -116,12 +111,12 @@ class RoleDTO
                 ? json_decode($this->permissions, true)
                 : $this->permissions
         )
-        ->map(fn($permission) => is_array($permission) ? $permission : [
-            'id'         => $permission->id,
-            'name'       => $permission->name,
-            'guard_name' => $permission->guard_name,
-            'pivot'      => $permission->pivot ?? null,
-        ])
-        ->toArray();
+            ->map(fn ($permission) => is_array($permission) ? $permission : [
+                'id' => $permission->id,
+                'name' => $permission->name,
+                'guard_name' => $permission->guard_name,
+                'pivot' => $permission->pivot ?? null,
+            ])
+            ->toArray();
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -35,8 +35,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function getApiVersions(): array
     {
-        return collect(glob(base_path("routes/api/v*.php")))
-            ->map(fn ($file) => basename($file, ".php"))
+        return collect(glob(base_path('routes/api/v*.php')))
+            ->map(fn ($file) => basename($file, '.php'))
             ->values()
             ->toArray();
     }

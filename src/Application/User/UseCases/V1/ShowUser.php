@@ -1,5 +1,6 @@
 <?php
-# src/Application/User/UseCases/V1/ShowUser.php
+
+// src/Application/User/UseCases/V1/ShowUser.php
 
 namespace App\Application\User\UseCases\V1;
 
@@ -26,8 +27,7 @@ final class ShowUser
      */
     public function __construct(
         private readonly UserRepositoryInterface $repository
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the user retrieval process.
@@ -36,14 +36,13 @@ final class ShowUser
      * If the user cannot be found, a NotFoundException is thrown
      * to indicate that the requested resource does not exist.
      *
-     * @param string|int $id
-     *        The unique identifier of the user to retrieve.
-     *
+     * @param  string|int  $id
+     *                          The unique identifier of the user to retrieve.
      * @return User
-     *         The corresponding User entity if found.
+     *              The corresponding User entity if found.
      *
      * @throws NotFoundException
-     *         When no user with the specified ID exists.
+     *                           When no user with the specified ID exists.
      *
      * @example
      * php
@@ -53,7 +52,6 @@ final class ShowUser
      * } catch (NotFoundException $e) {
      *     // handle "user not found"
      * }
-     * 
      */
     public function execute(string|int $id): User
     {

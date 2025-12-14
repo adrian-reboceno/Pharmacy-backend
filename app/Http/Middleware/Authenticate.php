@@ -1,10 +1,11 @@
 <?php
-# app/Http/Middleware/Authenticate.php
+
+// app/Http/Middleware/Authenticate.php
 
 namespace App\Http\Middleware;
 
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,8 +21,6 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * This implementation is tailored for stateless API applications,
  * ensuring that unauthenticated requests are handled gracefully.
- *
- * @package App\Http\Middleware
  */
 class Authenticate extends Middleware
 {
@@ -33,8 +32,8 @@ class Authenticate extends Middleware
      * Overrides the default Laravel behavior to return a JSON response
      * instead of attempting to redirect to a login route.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param array<int, string> $guards
+     * @param  \Illuminate\Http\Request  $request
+     * @param  array<int, string>  $guards
      * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function unauthenticated($request, array $guards)
@@ -51,8 +50,7 @@ class Authenticate extends Middleware
      * This ensures that API routes never attempt to redirect users
      * when authentication fails.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return string|null
+     * @param  \Illuminate\Http\Request  $request
      */
     protected function redirectTo($request): ?string
     {
@@ -66,9 +64,8 @@ class Authenticate extends Middleware
      * attaches the user's basic information, role, and permissions
      * to the request object for convenient access in controllers.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
-     * @param string ...$guards
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  ...$guards
      * @return mixed
      */
     public function handle($request, \Closure $next, ...$guards)
@@ -81,12 +78,12 @@ class Authenticate extends Middleware
             // Attach authenticated user data to the request
             $request->merge([
                 'auth_user' => [
-                    'id'        => $user->id,
-                    'name'      => $user->name,
-                    'email'     => $user->email,
-                    'role'      => $user->role->name ?? null,
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role->name ?? null,
                     'permissions' => $user->role->permissions->pluck('name') ?? [],
-                ]
+                ],
             ]);
         }
 

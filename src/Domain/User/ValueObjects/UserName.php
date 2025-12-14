@@ -1,5 +1,6 @@
 <?php
-# src/Domain/User/ValueObjects/UserName.php
+
+// src/Domain/User/ValueObjects/UserName.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -19,7 +20,7 @@ final class UserName
     private string $value;
 
     /**
-     * @param string $value The user's full name.
+     * @param  string  $value  The user's full name.
      *
      * @throws InvalidUserValueException If the name is empty or does not meet
      *                                   the minimum length requirements.

@@ -1,5 +1,6 @@
 <?php
-# src/Domain/User/ValueObjects/UserEmail.php
+
+// src/Domain/User/ValueObjects/UserEmail.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -19,7 +20,7 @@ final class UserEmail
     private string $value;
 
     /**
-     * @param string $value The user's email address.
+     * @param  string  $value  The user's email address.
      *
      * @throws InvalidUserValueException If the email is empty or has an invalid format.
      */

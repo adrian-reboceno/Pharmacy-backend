@@ -1,5 +1,6 @@
 <?php
-# app/Application/User/DTOs/V1/UpdateUserDTO.php
+
+// app/Application/User/DTOs/V1/UpdateUserDTO.php
 
 namespace App\Application\User\DTOs\V1;
 
@@ -7,19 +8,17 @@ namespace App\Application\User\DTOs\V1;
  * Data Transfer Object: UpdateUserDTO
  *
  * Represents the data used to update an existing User.
- * 
+ *
  * This DTO supports partial updates — fields can be null
  * if they are not meant to be changed.
- *
- * @package App\Application\User\DTOs\V1
  */
 final class UpdateUserDTO
 {
     /**
-     * @param string|null $name      Optional updated name
-     * @param string|null $email     Optional updated email
-     * @param string|null $password  Optional updated password (hashed later)
-     * @param string[]|null $roles   Optional updated roles
+     * @param  string|null  $name  Optional updated name
+     * @param  string|null  $email  Optional updated email
+     * @param  string|null  $password  Optional updated password (hashed later)
+     * @param  string[]|null  $roles  Optional updated roles
      */
     public function __construct(
         public readonly ?string $name = null,
@@ -31,8 +30,6 @@ final class UpdateUserDTO
     /**
      * Create a new DTO instance from an associative array.
      *
-     * @param array $data
-     * @return self
      *
      * @example
      * $dto = UpdateUserDTO::fromArray([
@@ -52,7 +49,7 @@ final class UpdateUserDTO
 
     /**
      * Convert the DTO into a plain array representation.
-     * 
+     *
      * This method filters out null fields to avoid overriding
      * existing data unnecessarily.
      *
@@ -61,10 +58,10 @@ final class UpdateUserDTO
     public function toArray(): array
     {
         return array_filter([
-            'name'     => $this->name,
-            'email'    => $this->email,
+            'name' => $this->name,
+            'email' => $this->email,
             'password' => $this->password,
-            'roles'    => $this->roles,
-        ], static fn($value) => $value !== null);
+            'roles' => $this->roles,
+        ], static fn ($value) => $value !== null);
     }
 }

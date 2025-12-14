@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/Http/Requests/V1/Role/RoleIndexRequest.php
+
+// app/Presentation/Http/Requests/V1/Role/RoleIndexRequest.php
 
 namespace App\Presentation\Http\Requests\V1\Role;
 
@@ -20,8 +21,6 @@ class RoleIndexRequest extends FormRequest
      * Determine if the user is authorized to make this request.
      *
      * You can adjust this according to your authorization policies.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -37,7 +36,7 @@ class RoleIndexRequest extends FormRequest
     {
         return [
             'per_page' => 'sometimes|integer|min:1',
-            'page'     => 'sometimes|integer|min:1',
+            'page' => 'sometimes|integer|min:1',
         ];
     }
 
@@ -50,9 +49,9 @@ class RoleIndexRequest extends FormRequest
     {
         return [
             'per_page.integer' => 'The per_page parameter must be an integer.',
-            'per_page.min'     => 'The per_page parameter must be at least 1.',
-            'page.integer'     => 'The page parameter must be an integer.',
-            'page.min'         => 'The page parameter must be at least 1.',
+            'per_page.min' => 'The per_page parameter must be at least 1.',
+            'page.integer' => 'The page parameter must be an integer.',
+            'page.min' => 'The page parameter must be at least 1.',
         ];
     }
 }

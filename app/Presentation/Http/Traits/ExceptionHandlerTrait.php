@@ -1,5 +1,7 @@
 <?php
-#app/Traits/ExceptionHandlerTrait.php
+
+// app/Traits/ExceptionHandlerTrait.php
+
 namespace App\Presentation\Http\Traits;
 
 use Illuminate\Http\JsonResponse;

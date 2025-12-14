@@ -1,15 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\JwtMiddleware;
-//use App\Http\Controllers\Api\V1\AuthController;
-//use App\Http\Controllers\Api\V1\Permission\PermissionController;
 use App\Presentation\Http\Controllers\V1\AuthController;
+// use App\Http\Controllers\Api\V1\AuthController;
+// use App\Http\Controllers\Api\V1\Permission\PermissionController;
 use App\Presentation\Http\Controllers\V1\PermissionController;
 use App\Presentation\Http\Controllers\V1\RoleController;
 use App\Presentation\Http\Controllers\V1\UserController;
-//use App\Http\Controllers\Api\V1\Role\RoleController;
-//use App\Http\Controllers\Api\V1\User\UserController;
+use Illuminate\Support\Facades\Route;
+
+// use App\Http\Controllers\Api\V1\Role\RoleController;
+// use App\Http\Controllers\Api\V1\User\UserController;
 
 // ------------------------
 // Rutas públicas
@@ -19,12 +20,10 @@ Route::prefix('v1/auth')->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
 });
 
-
 // ------------------------
 // Rutas protegidas por JWT
 // ------------------------
 Route::middleware([JwtMiddleware::class])->group(function () {
-
 
     // Auth
     Route::prefix('v1/auth')->group(function () {
@@ -54,7 +53,7 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         Route::delete('{id}', [RoleController::class, 'destroy']);
     });
 
-     // ------------------------
+    // ------------------------
     // Users
     // ------------------------
     Route::middleware('permission:manager-users')->prefix('v1/user')->group(function () {
@@ -64,23 +63,23 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         Route::put('{id}', [UserController::class, 'update']);
         Route::delete('{id}', [UserController::class, 'destroy']);
     });
-   /* Route::middleware('permission:manager-roles')->prefix('roles')->group(function () {
-        Route::get('/', [RoleController::class, 'index']);
-        Route::post('/', [RoleController::class, 'store']);
-        Route::get('{id}', [RoleController::class, 'show']);
-        Route::put('{id}', [RoleController::class, 'update']);
-        Route::delete('{id}', [RoleController::class, 'destroy']);
-    });
+    /* Route::middleware('permission:manager-roles')->prefix('roles')->group(function () {
+         Route::get('/', [RoleController::class, 'index']);
+         Route::post('/', [RoleController::class, 'store']);
+         Route::get('{id}', [RoleController::class, 'show']);
+         Route::put('{id}', [RoleController::class, 'update']);
+         Route::delete('{id}', [RoleController::class, 'destroy']);
+     });
 
-    // ------------------------
-    // Users
-    // ------------------------
-    Route::middleware('permission:manager-users')->prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index']);
-        Route::post('/', [UserController::class, 'store']);
-        Route::get('{id}', [UserController::class, 'show']);
-        Route::put('{id}', [UserController::class, 'update']);
-        Route::delete('{id}', [UserController::class, 'destroy']);
-    });*/
+     // ------------------------
+     // Users
+     // ------------------------
+     Route::middleware('permission:manager-users')->prefix('users')->group(function () {
+         Route::get('/', [UserController::class, 'index']);
+         Route::post('/', [UserController::class, 'store']);
+         Route::get('{id}', [UserController::class, 'show']);
+         Route::put('{id}', [UserController::class, 'update']);
+         Route::delete('{id}', [UserController::class, 'destroy']);
+     });*/
 
 });

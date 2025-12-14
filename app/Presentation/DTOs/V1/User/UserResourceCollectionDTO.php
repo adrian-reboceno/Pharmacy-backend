@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/DTOs/V1/User/UserResourceCollectionDTO.php
+
+// app/Presentation/DTOs/V1/User/UserResourceCollectionDTO.php
 
 namespace App\Presentation\DTOs\V1\User;
 
@@ -23,8 +24,7 @@ final class UserResourceCollectionDTO
     /**
      * Convert a collection of users to a structured response array.
      *
-     * @param iterable<DomainUser> $users A collection/array of domain User entities.
-     *
+     * @param  iterable<DomainUser>  $users  A collection/array of domain User entities.
      * @return array{
      *     data: array<int, array<string, mixed>>, // Transformed list of users
      *     count: int                              // Total number of users in the collection
@@ -32,7 +32,7 @@ final class UserResourceCollectionDTO
      */
     public static function fromUsers(iterable $users): array
     {
-        $data  = [];
+        $data = [];
         $count = 0;
 
         foreach ($users as $user) {
@@ -42,7 +42,7 @@ final class UserResourceCollectionDTO
         }
 
         return [
-            'data'  => $data,
+            'data' => $data,
             'count' => $count,
         ];
     }

@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/DTOs/V1/User/UserListResponseDTO.php
+
+// app/Presentation/DTOs/V1/User/UserListResponseDTO.php
 
 namespace App\Presentation\DTOs\V1\User;
 
@@ -33,8 +34,8 @@ final class UserListResponseDTO
     /**
      * Constructor: Initialize the DTO with user data and pagination metadata.
      *
-     * @param array<int, array<string, mixed>> $data
-     * @param array<string, int>               $meta
+     * @param  array<int, array<string, mixed>>  $data
+     * @param  array<string, int>  $meta
      */
     public function __construct(array $data, array $meta)
     {
@@ -45,7 +46,7 @@ final class UserListResponseDTO
     /**
      * Build a UserListResponseDTO from a PaginatedResult of Domain User entities.
      *
-     * @param PaginatedResult<DomainUser> $paginatedResult
+     * @param  PaginatedResult<DomainUser>  $paginatedResult
      */
     public static function fromPaginatedResult(PaginatedResult $paginatedResult): self
     {
@@ -58,9 +59,9 @@ final class UserListResponseDTO
 
         $meta = [
             'current_page' => $paginatedResult->page(),
-            'per_page'     => $paginatedResult->perPage(),
-            'total'        => $paginatedResult->total(),
-            'last_page'    => $paginatedResult->lastPage(),
+            'per_page' => $paginatedResult->perPage(),
+            'total' => $paginatedResult->total(),
+            'last_page' => $paginatedResult->lastPage(),
         ];
 
         return new self($data, $meta);

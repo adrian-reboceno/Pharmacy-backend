@@ -1,5 +1,6 @@
 <?php
-# src/Application/User/DTOs/V1/ListUsersDTO.php
+
+// src/Application/User/DTOs/V1/ListUsersDTO.php
 
 namespace App\Application\User\DTOs\V1;
 
@@ -12,19 +13,18 @@ namespace App\Application\User\DTOs\V1;
 final class ListUsersDTO
 {
     /**
-     * @param int $page    Current page number (1-based).
-     * @param int $perPage Number of items per page.
+     * @param  int  $page  Current page number (1-based).
+     * @param  int  $perPage  Number of items per page.
      */
     public function __construct(
         public readonly int $page = 1,
         public readonly int $perPage = 20
-    ) {
-    }
+    ) {}
 
     /**
      * Create a new DTO instance from an associative array.
      *
-     * @param array<string,mixed> $data
+     * @param  array<string,mixed>  $data
      */
     public static function fromArray(array $data): self
     {
@@ -53,7 +53,7 @@ final class ListUsersDTO
     public function toArray(): array
     {
         return [
-            'page'     => $this->page,
+            'page' => $this->page,
             'per_page' => $this->perPage,
         ];
     }

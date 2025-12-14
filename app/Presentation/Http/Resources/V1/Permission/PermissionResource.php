@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/Http/Resources/V1/Permission/PermissionResource.php
+
+// app/Presentation/Http/Resources/V1/Permission/PermissionResource.php
 
 namespace App\Presentation\Http\Resources\V1\Permission;
 
@@ -21,22 +22,20 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     "name": "edit_user",
  *     "guard_name": "web"
  * }
- *
- * @package App\Presentation\Http\Resources\V1\Permission
  */
 class PermissionResource extends JsonResource
 {
     /**
      * Transform the resource into an array for JSON serialization.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array<string, mixed>
      */
     public function toArray($request): array
     {
         return [
-            'id'         => $this->id,
-            'name'       => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'guard_name' => $this->guard_name,
         ];
     }

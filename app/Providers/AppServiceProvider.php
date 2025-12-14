@@ -2,19 +2,15 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-
 use App\Domain\Auth\Repositories\AuthRepositoryInterface;
-use App\Infrastructure\Auth\Repositories\AuthUserRepository;
-
 use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
-use App\Infrastructure\Permission\Repositories\PermissionRepository;
-
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
-use App\Infrastructure\Role\Repositories\RoleRepository;
-
 use App\Domain\User\Repositories\UserRepositoryInterface;
+use App\Infrastructure\Auth\Repositories\AuthUserRepository;
+use App\Infrastructure\Permission\Repositories\PermissionRepository;
+use App\Infrastructure\Role\Repositories\RoleRepository;
 use App\Infrastructure\User\Repositories\UserRepository;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
      * Register any application services and bindings.
      *
      * This method binds interfaces to their concrete implementations,
-     * ensuring that the Dependency Injection Container can resolve 
+     * ensuring that the Dependency Injection Container can resolve
      * the appropriate classes throughout the application.
      */
     public function register(): void

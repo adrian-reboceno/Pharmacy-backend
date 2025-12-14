@@ -1,18 +1,20 @@
 <?php
-# app/Application/Auth/Services/JwtAuthService.php
+
+// app/Application/Auth/Services/JwtAuthService.php
 
 namespace App\Application\Auth\Services;
 
-use App\Domain\Auth\Repositories\AuthRepositoryInterface;
 use App\Domain\Auth\Entities\User as UserEntity;
+use App\Domain\Auth\Repositories\AuthRepositoryInterface;
 use App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException;
 use App\Presentation\Exceptions\V1\Auth\UserNotAuthenticatedException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class JwtAuthService
 {
     protected ?UserEntity $user = null;
+
     protected AuthRepositoryInterface $AuthRepository;
 
     public function __construct(AuthRepositoryInterface $AuthRepository)
@@ -27,10 +29,9 @@ class JwtAuthService
      * user information, roles, and permissions. If authentication fails,
      * an exception is thrown.
      *
-     * @param array $credentials Associative array containing:
-     *                           - 'email'    => string
-     *                           - 'password' => string
-     *
+     * @param  array  $credentials  Associative array containing:
+     *                              - 'email'    => string
+     *                              - 'password' => string
      * @return array Authentication response including:
      *               - 'access_token' => string
      *               - 'token_type'   => string ("bearer")
@@ -59,7 +60,6 @@ class JwtAuthService
      * If the user is not yet loaded, it attempts to load it from the
      * authentication guard. Throws an exception if no user is authenticated.
      *
-     * @return UserEntity
      *
      * @throws UserNotAuthenticatedException If there is no authenticated user.
      * @throws \RuntimeException If the User entity cannot be loaded.
@@ -72,13 +72,13 @@ class JwtAuthService
 
         $eloquentUser = Auth::user();
 
-        if (!$eloquentUser) {
+        if (! $eloquentUser) {
             throw new UserNotAuthenticatedException('No authenticated user found.');
         }
 
         $this->user = $this->AuthRepository->findByEmail($eloquentUser->email);
 
-        if (!$this->user) {
+        if (! $this->user) {
             throw new \RuntimeException('Failed to load User entity.');
         }
 
@@ -87,8 +87,6 @@ class JwtAuthService
 
     /**
      * Logs out the current user and invalidates the active JWT token.
-     *
-     * @return void
      */
     public function logout(): void
     {
@@ -101,8 +99,6 @@ class JwtAuthService
      *
      * Returns a new authentication response with the refreshed token,
      * along with the user entity, roles, and permissions.
-     *
-     * @return array
      */
     public function refreshToken(): array
     {
@@ -117,14 +113,14 @@ class JwtAuthService
      *
      * Useful for lightweight operations or frontend initialization.
      *
-     * @param UserEntity $user The domain User entity.
-     *
+     * @param  UserEntity  $user  The domain User entity.
      * @return string The generated JWT token.
      */
     public function createMinimalToken(UserEntity $user): string
     {
-      //  $eloquentUser = new \App\Models\User(['id' => $user->id]); use App\Infrastructure\User\Models\User
-      $eloquentUser = new  \App\Models\User(['id' => $user->id]); 
+        //  $eloquentUser = new \App\Models\User(['id' => $user->id]); use App\Infrastructure\User\Models\User
+        $eloquentUser = new \App\Models\User(['id' => $user->id]);
+
         return JWTAuth::claims([])->fromUser($eloquentUser);
     }
 
@@ -134,11 +130,10 @@ class JwtAuthService
      * The response contains the JWT token, its type, expiration time,
      * user information, roles, permissions, and an optional message.
      *
-     * @param string $token             The generated JWT token.
-     * @param string $message           Optional response message (default: "Authentication successful").
-     * @param bool   $includeRoles      Whether to include user roles in the response.
-     * @param bool   $includePermissions Whether to include user permissions in the response.
-     *
+     * @param  string  $token  The generated JWT token.
+     * @param  string  $message  Optional response message (default: "Authentication successful").
+     * @param  bool  $includeRoles  Whether to include user roles in the response.
+     * @param  bool  $includePermissions  Whether to include user permissions in the response.
      * @return array Authentication response.
      */
     public function respondWithToken(

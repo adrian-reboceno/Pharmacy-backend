@@ -1,20 +1,20 @@
 <?php
 
+use App\Http\Middleware\FormatValidationErrors;
+use App\Presentation\Http\Traits\ApiResponseTrait;
+use Illuminate\Auth\AuthenticationException;
+// use App\Traits\ApiResponseTrait;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-//use App\Traits\ApiResponseTrait;
-use App\Presentation\Http\Traits\ApiResponseTrait;
-use App\Http\Middleware\FormatValidationErrors;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web.php',
-        api: __DIR__ . '/../routes/api/v1.php',
-        commands: __DIR__ . '/../routes/console.php',
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api/v1.php',
+        commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -25,11 +25,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
-        
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->renderable(function (\Throwable $e) {
-            $trait = new class { use ApiResponseTrait; };
+            $trait = new class
+            {
+                use ApiResponseTrait;
+            };
 
             // Modelo no encontrado
             if ($e instanceof ModelNotFoundException) {

@@ -1,9 +1,11 @@
 <?php
-# app/Application/Permission/UseCases/V1/CreatePermission.php
+
+// app/Application/Permission/UseCases/V1/CreatePermission.php
+
 namespace App\Application\Permission\UseCases\V1;
 
-use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
 use App\Application\Permission\DTOs\V1\CreatePermissionDTO;
+use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
 use App\Presentation\DTOs\V1\PermissionDTO;
 use Illuminate\Http\Response;
 
@@ -43,15 +45,13 @@ class CreatePermission
 {
     /**
      * Permission repository for domain persistence operations.
-     *
-     * @var PermissionRepositoryInterface
      */
     protected PermissionRepositoryInterface $repo;
 
     /**
      * Constructor.
      *
-     * @param PermissionRepositoryInterface $repo Repository handling permission persistence.
+     * @param  PermissionRepositoryInterface  $repo  Repository handling permission persistence.
      */
     public function __construct(PermissionRepositoryInterface $repo)
     {
@@ -61,11 +61,10 @@ class CreatePermission
     /**
      * Executes the permission creation process after validating uniqueness.
      *
-     * @param CreatePermissionDTO $dto Transfer object with required permission data.
+     * @param  CreatePermissionDTO  $dto  Transfer object with required permission data.
+     * @return PermissionDTO Data Transfer Object representing the newly created permission.
      *
      * @throws \RuntimeException If a permission with the same name and guard already exists.
-     *
-     * @return PermissionDTO Data Transfer Object representing the newly created permission.
      */
     public function handle(CreatePermissionDTO $dto): PermissionDTO
     {
@@ -81,7 +80,7 @@ class CreatePermission
 
         // Create the permission in the domain layer
         $permission = $this->repo->create([
-            'name'       => $dto->name,
+            'name' => $dto->name,
             'guard_name' => $dto->guard_name,
         ]);
 

@@ -1,5 +1,6 @@
 <?php
-# app/Application/User/UseCases/V1/ListUser.php
+
+// app/Application/User/UseCases/V1/ListUser.php
 
 namespace App\Application\User\UseCases\V1;
 
@@ -22,27 +23,27 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  * decoupled from the infrastructure (ORM or database engine).
  *
  * ──────────────────────────────────────────────────────────────
+ *
  * @layer Application
+ *
  * @pattern Query Use Case (DDD)
+ *
  * @version 1.0
+ *
  * @author AFLR
- * @package App\Application\User\UseCases\V1
- * ──────────────────────────────────────────────────────────────
  */
 final class ListUser
 {
     /**
      * Repository responsible for retrieving user data.
-     *
-     * @var UserRepositoryInterface
      */
     private readonly UserRepositoryInterface $repository;
 
     /**
      * Constructor.
      *
-     * @param UserRepositoryInterface $repository
-     *        Repository abstraction for user data retrieval and querying.
+     * @param  UserRepositoryInterface  $repository
+     *                                               Repository abstraction for user data retrieval and querying.
      */
     public function __construct(UserRepositoryInterface $repository)
     {
@@ -56,24 +57,23 @@ final class ListUser
      * supporting optional filters for search and role,
      * as well as configurable sorting and pagination.
      *
-     * @param array $filters
-     *        Optional filters to customize the query:
-     *        - `search`: (string) Search term for name or email.
-     *        - `role`: (string) Filter by a specific role name.
-     *        - `sort_by`: (string) Column name to sort by. Default: `id`.
-     *        - `sort_order`: ('asc'|'desc') Sorting direction. Default: `asc`.
-     *        - `page`: (int) Current page number.
-     *        - `per_page`: (int) Number of items per page. Default: 15.
-     *
+     * @param  array  $filters
+     *                          Optional filters to customize the query:
+     *                          - `search`: (string) Search term for name or email.
+     *                          - `role`: (string) Filter by a specific role name.
+     *                          - `sort_by`: (string) Column name to sort by. Default: `id`.
+     *                          - `sort_order`: ('asc'|'desc') Sorting direction. Default: `asc`.
+     *                          - `page`: (int) Current page number.
+     *                          - `per_page`: (int) Number of items per page. Default: 15.
      * @return LengthAwarePaginator
-     *         A Laravel paginator instance containing users and pagination metadata.
+     *                              A Laravel paginator instance containing users and pagination metadata.
      *
      * ──────────────────────────────────────────────
      * Example usage:
      * ──────────────────────────────────────────────
      * ```php
      * $useCase = new ListUser($userRepository);
-     * 
+     *
      * $filters = [
      *     'search' => 'john',
      *     'role' => 'admin',
@@ -81,9 +81,9 @@ final class ListUser
      *     'sort_order' => 'desc',
      *     'per_page' => 20
      * ];
-     * 
+     *
      * $paginatedUsers = $useCase->handle($filters);
-     * 
+     *
      * foreach ($paginatedUsers as $user) {
      *     echo $user->name;
      * }
@@ -102,16 +102,16 @@ final class ListUser
         $query = $this->repository->query()->with('roles');
 
         // Filter by search term (name or email).
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
-            $query->where(fn($q) => $q->where('name', 'like', "%{$search}%")
-                                     ->orWhere('email', 'like', "%{$search}%"));
+            $query->where(fn ($q) => $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%"));
         }
 
         // Filter by specific role.
-        if (!empty($filters['role'])) {
+        if (! empty($filters['role'])) {
             $role = $filters['role'];
-            $query->whereHas('roles', fn($q) => $q->where('name', $role));
+            $query->whereHas('roles', fn ($q) => $q->where('name', $role));
         }
 
         // Sorting configuration.

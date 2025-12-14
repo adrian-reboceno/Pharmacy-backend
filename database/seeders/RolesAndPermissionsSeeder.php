@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
+use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -17,7 +17,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // --------------------------------
         // Crear roles con guard 'web'
         // --------------------------------
-        $roles = ['admin','cajero','almacen','compras','auditor'];
+        $roles = ['admin', 'cajero', 'almacen', 'compras', 'auditor'];
         foreach ($roles as $role) {
             Role::updateOrCreate(
                 ['name' => $role, 'guard_name' => 'api'],
@@ -26,11 +26,11 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         // Obtener roles
-        $admin   = Role::where('name','admin')->where('guard_name','api')->firstOrFail();
-        $cajero  = Role::where('name','cajero')->where('guard_name','api')->firstOrFail();
-        $almacen = Role::where('name','almacen')->where('guard_name','api')->firstOrFail();
-        $compras = Role::where('name','compras')->where('guard_name','api')->firstOrFail();
-        $auditor = Role::where('name','auditor')->where('guard_name','api')->firstOrFail();
+        $admin = Role::where('name', 'admin')->where('guard_name', 'api')->firstOrFail();
+        $cajero = Role::where('name', 'cajero')->where('guard_name', 'api')->firstOrFail();
+        $almacen = Role::where('name', 'almacen')->where('guard_name', 'api')->firstOrFail();
+        $compras = Role::where('name', 'compras')->where('guard_name', 'api')->firstOrFail();
+        $auditor = Role::where('name', 'auditor')->where('guard_name', 'api')->firstOrFail();
 
         // --------------------------------
         // Definir permisos CRUD + subpermisos por módulo
@@ -52,24 +52,24 @@ class RolesAndPermissionsSeeder extends Seeder
             'reportes'       => ['list','exportar','imprimir'],
         ];*/
 
-        $modules = [         
-            'manager' => ['dashboards','catalogs','users','suppliers','products','reports','sales','shoppings','recipes','audits','permissions'],
-            'user'       => ['list','view','create','edit','delete','export','print'],
-            'roles'       => ['list','view','create','edit','delete','export','print'],
-            'permissions'       => ['list','view','create','edit','delete','export','print'],
-            'category' => ['list','view','create','edit','delete','export','print'],
-            'status' => ['list','view','create','edit','delete','export','print'],
-            'denominations' => ['list','view','create','edit','delete','export','print'],
-            'laboratories' => ['list','view','create','edit','delete','export','print'],
-            'saletypes'  => ['list','view','create','edit','delete','export','print'],
-            'pharmaceuticalforms' => ['list','view','create','edit','delete','export','print'],
-            'symptoms' => ['list','view','create','edit','delete','export','print'],
-            'suppliers' => ['list','view','create','edit','delete','export','print'],
-            'products' => ['list','view','create','edit','delete','export','print'],
-            'batches' => ['list','view','create','edit','delete','export','print'],
-            'sales'         => ['list','view','create','edit','delete','print','annular'],
-            'returns'   => ['list','view','create','edit','delete','print','authorize'],
-            'report'       => ['list','view','export','print'],
+        $modules = [
+            'manager' => ['dashboards', 'catalogs', 'users', 'suppliers', 'products', 'reports', 'sales', 'shoppings', 'recipes', 'audits', 'permissions'],
+            'user' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'roles' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'permissions' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'category' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'status' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'denominations' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'laboratories' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'saletypes' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'pharmaceuticalforms' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'symptoms' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'suppliers' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'products' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'batches' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
+            'sales' => ['list', 'view', 'create', 'edit', 'delete', 'print', 'annular'],
+            'returns' => ['list', 'view', 'create', 'edit', 'delete', 'print', 'authorize'],
+            'report' => ['list', 'view', 'export', 'print'],
 
         ];
 
@@ -88,8 +88,8 @@ class RolesAndPermissionsSeeder extends Seeder
         $admin->givePermissionTo(Permission::all());
 
         $cajero->givePermissionTo([
-            'sales-view','sales-create','sales-edit','sales-print','sales-annular',
-            'returns-view','returns-create','returns-edit','returns-print'
+            'sales-view', 'sales-create', 'sales-edit', 'sales-print', 'sales-annular',
+            'returns-view', 'returns-create', 'returns-edit', 'returns-print',
         ]);
 
         /*$almacen->givePermissionTo([
@@ -112,18 +112,18 @@ class RolesAndPermissionsSeeder extends Seeder
         // Crear usuarios de ejemplo
         // --------------------------------
         $users = [
-            ['name'=>'Admin','email'=>'admin@farmacia.com','password'=>'password123','role'=>$admin],
-            ['name'=>'Cajero','email'=>'cajero@farmacia.com','password'=>'password123','role'=>$cajero],
-            ['name'=>'Almacén','email'=>'almacen@farmacia.com','password'=>'password123','role'=>$almacen],
-            ['name'=>'Compras','email'=>'compras@farmacia.com','password'=>'password123','role'=>$compras],
-            ['name'=>'Auditor','email'=>'auditor@farmacia.com','password'=>'password123','role'=>$auditor],
-            
+            ['name' => 'Admin', 'email' => 'admin@farmacia.com', 'password' => 'password123', 'role' => $admin],
+            ['name' => 'Cajero', 'email' => 'cajero@farmacia.com', 'password' => 'password123', 'role' => $cajero],
+            ['name' => 'Almacén', 'email' => 'almacen@farmacia.com', 'password' => 'password123', 'role' => $almacen],
+            ['name' => 'Compras', 'email' => 'compras@farmacia.com', 'password' => 'password123', 'role' => $compras],
+            ['name' => 'Auditor', 'email' => 'auditor@farmacia.com', 'password' => 'password123', 'role' => $auditor],
+
         ];
 
         foreach ($users as $u) {
             $user = User::updateOrCreate(
-                ['email'=>$u['email']],
-                ['name'=>$u['name'], 'password'=>bcrypt($u['password'])]
+                ['email' => $u['email']],
+                ['name' => $u['name'], 'password' => bcrypt($u['password'])]
             );
             $user->assignRole($u['role']);
         }

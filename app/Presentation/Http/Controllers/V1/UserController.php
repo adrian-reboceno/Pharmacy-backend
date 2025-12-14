@@ -1,29 +1,22 @@
 <?php
+
 namespace App\Presentation\Http\Controllers\V1;
 
-use App\Application\User\DTOs\V1\{
-    CreateUserDTO,
-    UpdateUserDTO
-};
-use App\Application\User\UseCases\V1\{
-    CreateUser, 
-    DeleteUser,
-    ListUser,
-    ShowUser,
-    UpdateUser
-};
-use App\Presentation\DTOs\V1\User\{
-    UserResponseDTO,
-    UserListResponseDTO
-};
-use App\Presentation\Http\Requests\V1\User\{
-    UserStoreRequest,
-    UserUpdateRequest,
-    UserIndexRequest
-};
-use App\Infrastructure\Services\ApiResponseService;
-//use Illuminate\Http\JsonResponse;
+use App\Application\User\DTOs\V1\CreateUserDTO;
+use App\Application\User\DTOs\V1\UpdateUserDTO;
+use App\Application\User\UseCases\V1\CreateUser;
+use App\Application\User\UseCases\V1\DeleteUser;
+use App\Application\User\UseCases\V1\ListUser;
+use App\Application\User\UseCases\V1\ShowUser;
+use App\Application\User\UseCases\V1\UpdateUser;
 use App\Http\Controllers\Controller;
+use App\Infrastructure\Services\ApiResponseService;
+use App\Presentation\DTOs\V1\User\UserListResponseDTO;
+use App\Presentation\DTOs\V1\User\UserResponseDTO;
+use App\Presentation\Http\Requests\V1\User\UserIndexRequest;
+use App\Presentation\Http\Requests\V1\User\UserStoreRequest;
+// use Illuminate\Http\JsonResponse;
+use App\Presentation\Http\Requests\V1\User\UserUpdateRequest;
 use Illuminate\Http\Response;
 
 /**
@@ -48,12 +41,10 @@ class UserController extends Controller
 
     /**
      * Define middleware permissions for each controller method.
-     *
-     * @return array
      */
     public static function middleware(): array
     {
-        return [           
+        return [
             new Middleware('permission:user-list', only: ['index']),
             new Middleware('permission:user-view', only: ['show']),
             new Middleware('permission:user-create', only: ['store']),
@@ -90,7 +81,6 @@ class UserController extends Controller
      */
     public function show(int $id)
     {
-        
 
         try {
             $user = $this->show->handle($id);
@@ -142,9 +132,9 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, int $id)
     {
-        
+
         /*$dto = UpdateUserDTO::fromArray(array_merge($request->validated()));
-        
+
         $user = $this->update->handle( $id, $dto,);
 
         return response()->json(
@@ -154,7 +144,7 @@ class UserController extends Controller
 
         try {
             $dto = UpdateUserDTO::fromArray(array_merge($request->validated()));
-            $user = $this->update->handle( $id, $dto,);
+            $user = $this->update->handle($id, $dto);
 
             return $this->api->success(
                 UserResponseDTO::fromEntity($user),
@@ -174,7 +164,7 @@ class UserController extends Controller
      */
     public function destroy(int $id)
     {
-        
+
         try {
             $this->delete->handle($id);
 
@@ -187,5 +177,4 @@ class UserController extends Controller
             return $this->api->error($e);
         }
     }
-
 }

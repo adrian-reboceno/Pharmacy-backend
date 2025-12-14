@@ -1,10 +1,10 @@
 <?php
-# app/Domain/Role/Repositories/RoleRepositoryInterface.php
+
+// app/Domain/Role/Repositories/RoleRepositoryInterface.php
 
 namespace App\Domain\Role\Repositories;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Role Repository Interface.
@@ -33,7 +33,7 @@ interface RoleRepositoryInterface
     /**
      * Finds a role by its unique identifier.
      *
-     * @param int $id Unique identifier of the role.
+     * @param  int  $id  Unique identifier of the role.
      * @return object|null Role instance if found, null otherwise.
      */
     public function find(int $id): ?object;
@@ -41,7 +41,7 @@ interface RoleRepositoryInterface
     /**
      * Creates a new role.
      *
-     * @param array $data Associative array containing role attributes.
+     * @param  array  $data  Associative array containing role attributes.
      * @return object The newly created role instance.
      */
     public function create(array $data): object;
@@ -49,8 +49,8 @@ interface RoleRepositoryInterface
     /**
      * Updates an existing role.
      *
-     * @param int $id Unique identifier of the role to update.
-     * @param array $data Associative array of updated role attributes.
+     * @param  int  $id  Unique identifier of the role to update.
+     * @param  array  $data  Associative array of updated role attributes.
      * @return object The updated role instance.
      */
     public function update(int $id, array $data): object;
@@ -58,7 +58,7 @@ interface RoleRepositoryInterface
     /**
      * Deletes a role by its unique identifier.
      *
-     * @param int $id Unique identifier of the role to delete.
+     * @param  int  $id  Unique identifier of the role to delete.
      * @return bool True if the role was successfully deleted, false otherwise.
      */
     public function delete(int $id): bool;

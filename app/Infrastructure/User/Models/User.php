@@ -1,18 +1,19 @@
 <?php
-# app/Infrastructure/User/Models/User.php
+
+// app/Infrastructure/User/Models/User.php
 
 namespace App\Infrastructure\User\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use HasFactory;
-    use Notifiable;
     use HasRoles;
+    use Notifiable;
 
     /**
      * Database table associated with the model.

@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/Http/Requests/V1/Permission/PermissionStoreRequest.php
+
+// app/Presentation/Http/Requests/V1/Permission/PermissionStoreRequest.php
 
 namespace App\Presentation\Http\Requests\V1\Permission;
 
@@ -22,8 +23,6 @@ class PermissionStoreRequest extends FormRequest
      *
      * You can add additional authorization logic here (e.g., check if the user
      * has the 'permission-create' ability).
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -38,7 +37,7 @@ class PermissionStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => 'required|string|max:150',
+            'name' => 'required|string|max:150',
             'guard_name' => 'nullable|string|max:50|in:api,web',
         ];
     }
@@ -51,12 +50,12 @@ class PermissionStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'     => 'The name field is required.',
-            'name.string'       => 'The name must be a valid string.',
-            'name.max'          => 'The name cannot exceed 150 characters.',
+            'name.required' => 'The name field is required.',
+            'name.string' => 'The name must be a valid string.',
+            'name.max' => 'The name cannot exceed 150 characters.',
             'guard_name.string' => 'The guard_name must be a valid string.',
-            'guard_name.max'    => 'The guard_name cannot exceed 50 characters.',
-            'guard_name.in'     => 'The guard_name must be either "api" or "web".',
+            'guard_name.max' => 'The guard_name cannot exceed 50 characters.',
+            'guard_name.in' => 'The guard_name must be either "api" or "web".',
         ];
     }
 }

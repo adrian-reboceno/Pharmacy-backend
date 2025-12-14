@@ -1,5 +1,6 @@
 <?php
-# app/Application/Auth/UseCases/V1/LoginUser.php
+
+// app/Application/Auth/UseCases/V1/LoginUser.php
 
 namespace App\Application\Auth\UseCases\V1;
 
@@ -25,10 +26,9 @@ class LoginUser
      * The user entity is transformed into a Data Transfer Object (DTO) to
      * ensure a clean response format.
      *
-     * @param array $credentials An associative array with:
-     *                           - 'email' => string
-     *                           - 'password' => string
-     *
+     * @param  array  $credentials  An associative array with:
+     *                              - 'email' => string
+     *                              - 'password' => string
      * @return array An array containing:
      *               - 'token' => string (JWT access token)
      *               - 'user'  => array (user DTO data)

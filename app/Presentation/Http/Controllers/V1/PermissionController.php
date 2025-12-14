@@ -2,26 +2,20 @@
 
 namespace App\Presentation\Http\Controllers\V1;
 
+use App\Application\Permission\DTOs\V1\CreatePermissionDTO;
+use App\Application\Permission\DTOs\V1\UpdatePermissionDTO;
+use App\Application\Permission\UseCases\V1\CreatePermission;
+use App\Application\Permission\UseCases\V1\DeletePermission;
+use App\Application\Permission\UseCases\V1\ListPermissions;
+use App\Application\Permission\UseCases\V1\ShowPermission;
+use App\Application\Permission\UseCases\V1\UpdatePermission;
 use App\Http\Controllers\Controller;
+use App\Infrastructure\Services\ApiResponseService;
+use App\Presentation\Http\Requests\V1\Permission\PermissionIndexRequest;
+use App\Presentation\Http\Requests\V1\Permission\PermissionStoreRequest;
+use App\Presentation\Http\Requests\V1\Permission\PermissionUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Infrastructure\Services\ApiResponseService;
-use App\Application\Permission\UseCases\V1\{
-    ListPermissions,
-    ShowPermission,
-    CreatePermission,
-    UpdatePermission,
-    DeletePermission
-};
-use App\Application\Permission\DTOs\V1\{
-    CreatePermissionDTO,
-    UpdatePermissionDTO
-};
-use App\Presentation\Http\Requests\V1\Permission\{
-    PermissionIndexRequest,
-    PermissionStoreRequest,
-    PermissionUpdateRequest
-};
 
 /**
  * Controller responsible for handling HTTP requests related to Permissions.
@@ -47,12 +41,12 @@ class PermissionController extends Controller
      *
      * Injects the required Use Cases and the API response service.
      *
-     * @param ApiResponseService $api Service for standardized API responses
-     * @param ListPermissions $list Use Case to list permissions
-     * @param ShowPermission $show Use Case to retrieve a single permission
-     * @param CreatePermission $create Use Case to create a permission
-     * @param UpdatePermission $update Use Case to update a permission
-     * @param DeletePermission $delete Use Case to delete a permission
+     * @param  ApiResponseService  $api  Service for standardized API responses
+     * @param  ListPermissions  $list  Use Case to list permissions
+     * @param  ShowPermission  $show  Use Case to retrieve a single permission
+     * @param  CreatePermission  $create  Use Case to create a permission
+     * @param  UpdatePermission  $update  Use Case to update a permission
+     * @param  DeletePermission  $delete  Use Case to delete a permission
      */
     public function __construct(
         protected ApiResponseService $api,
@@ -70,7 +64,7 @@ class PermissionController extends Controller
      */
     public static function middleware(): array
     {
-        return [           
+        return [
             new Middleware('permission:permissions-list', only: ['index']),
             new Middleware('permission:permissions-view', only: ['show']),
             new Middleware('permission:permissions-create', only: ['store']),
@@ -82,12 +76,11 @@ class PermissionController extends Controller
     /**
      * List all permissions with optional pagination.
      *
-     * @param PermissionIndexRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(PermissionIndexRequest $request)
     {
-        $perPage   = (int) $request->query('per_page', 10);
+        $perPage = (int) $request->query('per_page', 10);
         $paginator = $this->list->handle($perPage);
 
         return $this->api->success(
@@ -99,7 +92,7 @@ class PermissionController extends Controller
     /**
      * Retrieve a single permission by its ID.
      *
-     * @param int $id Permission ID
+     * @param  int  $id  Permission ID
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(int $id)
@@ -120,7 +113,6 @@ class PermissionController extends Controller
     /**
      * Create a new permission.
      *
-     * @param PermissionStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(PermissionStoreRequest $request)
@@ -142,8 +134,7 @@ class PermissionController extends Controller
     /**
      * Update an existing permission by ID.
      *
-     * @param PermissionUpdateRequest $request
-     * @param int $id Permission ID
+     * @param  int  $id  Permission ID
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(PermissionUpdateRequest $request, int $id)
@@ -165,7 +156,7 @@ class PermissionController extends Controller
     /**
      * Delete a permission by ID.
      *
-     * @param int $id Permission ID
+     * @param  int  $id  Permission ID
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(int $id)

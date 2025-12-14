@@ -1,5 +1,6 @@
 <?php
-# app/Application/Role/UseCases/V1/ListRoles.php
+
+// app/Application/Role/UseCases/V1/ListRoles.php
 
 namespace App\Application\Role\UseCases\V1;
 
@@ -40,15 +41,14 @@ class ListRoles
     /**
      * Constructor.
      *
-     * @param RoleRepositoryInterface $repo Repository responsible for role persistence.
+     * @param  RoleRepositoryInterface  $repo  Repository responsible for role persistence.
      */
     public function __construct(protected RoleRepositoryInterface $repo) {}
 
     /**
      * Executes the process of retrieving roles in a paginated format.
      *
-     * @param int $perPage Number of roles per page (default: 10).
-     *
+     * @param  int  $perPage  Number of roles per page (default: 10).
      * @return LengthAwarePaginator Paginated list of RoleDTO objects.
      */
     public function handle(int $perPage = 10): LengthAwarePaginator
@@ -59,7 +59,7 @@ class ListRoles
 
         // Transform each Role model into a DTO
         $paginator->getCollection()->transform(
-            fn($role) => RoleDTO::fromModel($role)
+            fn ($role) => RoleDTO::fromModel($role)
         );
 
         return $paginator;

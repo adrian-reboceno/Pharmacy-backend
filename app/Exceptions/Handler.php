@@ -1,16 +1,17 @@
 <?php
-# app/Exceptions/Handler.php
+
+// app/Exceptions/Handler.php
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Symfony\Component\HttpFoundation\Response;
 use App\Infrastructure\Services\ApiResponseService;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
 /**
  * Class Handler
@@ -33,8 +34,6 @@ use App\Infrastructure\Services\ApiResponseService;
  * 4️⃣ AuthenticationException — Handles authentication failures.
  * 5️⃣ Custom PermissionException — Handles domain-specific permission issues.
  * 6️⃣ All other exceptions default to a 500 Internal Server Error (optional fallback).
- *
- * @package App\Exceptions
  */
 class Handler extends ExceptionHandler
 {
@@ -43,9 +42,6 @@ class Handler extends ExceptionHandler
      *
      * This method can be customized to send exceptions to third-party
      * services such as Sentry, Bugsnag, or custom logging solutions.
-     *
-     * @param \Throwable $e
-     * @return void
      */
     public function report(Throwable $e): void
     {
@@ -59,8 +55,7 @@ class Handler extends ExceptionHandler
      * For API routes, it leverages the ApiResponseService to generate
      * standardized JSON responses.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Throwable $e
+     * @param  \Illuminate\Http\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function render($request, Throwable $e)

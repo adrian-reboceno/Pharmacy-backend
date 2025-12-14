@@ -1,5 +1,6 @@
 <?php
-# app/Domain/User/ValueObjects/UserName.php
+
+// app/Domain/User/ValueObjects/UserName.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -10,15 +11,13 @@ use App\Domain\User\Exceptions\InvalidUserValueException;
  *
  * Represents a validated, human-readable user name.
  * Enforces formatting rules and non-empty constraints.
- *
- * @package App\Domain\User\ValueObjects
  */
 final class UserName
 {
     private string $value;
 
     /**
-     * @param string $value The user's full name.
+     * @param  string  $value  The user's full name.
      *
      * @throws InvalidUserValueException if the name is invalid.
      */

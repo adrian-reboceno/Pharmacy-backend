@@ -1,14 +1,15 @@
 <?php
-# App/Infrastructure/Services/ApiResponseService.php
+
+// App/Infrastructure/Services/ApiResponseService.php
 
 namespace App\Infrastructure\Services;
 
 use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -27,13 +28,13 @@ class ApiResponseService
     {
         if ($data instanceof PaginatorContract) {
             return $data->getCollection()
-                        ->map(fn($item) => $this->transformData($item))
-                        ->toArray();
+                ->map(fn ($item) => $this->transformData($item))
+                ->toArray();
         }
 
         if ($data instanceof Collection) {
-            return $data->map(fn($item) => $this->transformData($item))
-                        ->toArray();
+            return $data->map(fn ($item) => $this->transformData($item))
+                ->toArray();
         }
 
         if (is_object($data) && method_exists($data, 'toArray')) {
@@ -55,18 +56,18 @@ class ApiResponseService
         $payload = $this->transformData($data);
 
         $response = [
-            'status'      => 'success',
+            'status' => 'success',
             'http_status' => Response::$statusTexts[$code] ?? 'OK',
-            'message'     => $message,
-            'data'        => $payload,
+            'message' => $message,
+            'data' => $payload,
         ];
 
         if ($data instanceof PaginatorContract) {
             $response['meta'] = [
                 'current_page' => $data->currentPage(),
-                'per_page'     => $data->perPage(),
-                'total'        => $data instanceof LengthAwarePaginator ? $data->total() : count($payload),
-                'last_page'    => $data instanceof LengthAwarePaginator ? $data->lastPage() : 1,
+                'per_page' => $data->perPage(),
+                'total' => $data instanceof LengthAwarePaginator ? $data->total() : count($payload),
+                'last_page' => $data instanceof LengthAwarePaginator ? $data->lastPage() : 1,
             ];
         }
 
@@ -109,10 +110,10 @@ class ApiResponseService
         }
 
         return response()->json([
-            'status'      => 'error',
+            'status' => 'error',
             'http_status' => Response::$statusTexts[$code] ?? 'Unknown',
-            'message'     => $message,
-            'errors'      => $errors,
+            'message' => $message,
+            'errors' => $errors,
         ], $code);
     }
 }

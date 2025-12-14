@@ -1,5 +1,6 @@
 <?php
-# app/Domain/User/ValueObjects/UserEmail.php
+
+// app/Domain/User/ValueObjects/UserEmail.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -10,15 +11,13 @@ use App\Domain\User\Exceptions\InvalidUserValueException;
  *
  * Represents and validates an immutable email address.
  * Ensures the email follows a valid RFC format.
- *
- * @package App\Domain\User\ValueObjects
  */
 final class UserEmail
 {
     private string $value;
 
     /**
-     * @param string $value The user's email address.
+     * @param  string  $value  The user's email address.
      *
      * @throws InvalidUserValueException if the email format is invalid.
      */
@@ -26,7 +25,7 @@ final class UserEmail
     {
         $value = strtolower(trim($value));
 
-        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidUserValueException("Invalid email format: {$value}");
         }
 

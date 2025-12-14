@@ -1,5 +1,6 @@
 <?php
-# src/Application/User/UseCases/V1/DeleteUser.php
+
+// src/Application/User/UseCases/V1/DeleteUser.php
 
 namespace App\Application\User\UseCases\V1;
 
@@ -26,8 +27,7 @@ final class DeleteUser
      */
     public function __construct(
         private readonly UserRepositoryInterface $repository
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the user deletion process.
@@ -38,11 +38,11 @@ final class DeleteUser
      *     - If not found, throw a NotFoundException.
      *  3. Delegate deletion to the repository.
      *
-     * @param string|int $id
-     *        The unique identifier of the user to delete.
+     * @param  string|int  $id
+     *                          The unique identifier of the user to delete.
      *
      * @throws NotFoundException
-     *         When the user with the specified ID does not exist.
+     *                           When the user with the specified ID does not exist.
      *
      * @example
      * php
@@ -52,7 +52,6 @@ final class DeleteUser
      * } catch (NotFoundException $e) {
      *     // handle "user not found" case
      * }
-     * 
      */
     public function execute(string|int $id): void
     {

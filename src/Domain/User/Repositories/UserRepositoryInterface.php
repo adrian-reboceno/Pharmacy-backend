@@ -1,5 +1,6 @@
 <?php
-# src/Domain/User/Repositories/UserRepositoryInterface.php
+
+// src/Domain/User/Repositories/UserRepositoryInterface.php
 
 namespace App\Domain\User\Repositories;
 
@@ -25,7 +26,6 @@ interface UserRepositoryInterface
     /**
      * Find a User by its unique identifier.
      *
-     * @param UserId $id
      *
      * @return User|null Returns the User entity or null if not found.
      */
@@ -34,7 +34,6 @@ interface UserRepositoryInterface
     /**
      * Find a User by email.
      *
-     * @param UserEmail $email
      *
      * @return User|null Returns the User entity or null if not found.
      */
@@ -43,9 +42,8 @@ interface UserRepositoryInterface
     /**
      * Paginate Users.
      *
-     * @param int $page    Current page number (1-based).
-     * @param int $perPage Number of items per page.
-     *
+     * @param  int  $page  Current page number (1-based).
+     * @param  int  $perPage  Number of items per page.
      * @return User[] List of User entities for the requested page.
      */
     public function paginate(int $page, int $perPage): array;
@@ -61,7 +59,6 @@ interface UserRepositoryInterface
      * Creates a new user or updates an existing one, depending
      * on whether the entity has an identifier.
      *
-     * @param User $user
      *
      * @return User The persisted User entity (with ID populated if new).
      */
@@ -69,8 +66,6 @@ interface UserRepositoryInterface
 
     /**
      * Delete a User by its identifier.
-     *
-     * @param UserId $id
      */
     public function delete(UserId $id): void;
 }

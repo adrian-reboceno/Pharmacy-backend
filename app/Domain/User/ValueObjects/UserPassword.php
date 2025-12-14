@@ -1,5 +1,6 @@
 <?php
-# app/Domain/User/ValueObjects/UserPassword.php
+
+// app/Domain/User/ValueObjects/UserPassword.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -18,7 +19,8 @@ final class UserPassword
     /**
      * Constructor
      *
-     * @param string $password Contraseña en texto plano o ya hasheada
+     * @param  string  $password  Contraseña en texto plano o ya hasheada
+     *
      * @throws InvalidUserValueException Si la contraseña es inválida
      */
     public function __construct(string $password)
@@ -32,8 +34,6 @@ final class UserPassword
 
     /**
      * Retorna el valor de la contraseña
-     *
-     * @return string
      */
     public function value(): string
     {

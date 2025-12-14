@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/Exceptions/V1/Auth/InvalidCredentialsException.php
+
+// app/Presentation/Exceptions/V1/Auth/InvalidCredentialsException.php
 
 namespace App\Presentation\Exceptions\V1\Auth;
 
@@ -14,8 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
  * This exception represents an HTTP 401 Unauthorized response and is typically
  * used within the authentication flow when the provided username, email,
  * or password is incorrect.
- *
- * @package App\Presentation\Exceptions\V1\Auth
  */
 class InvalidCredentialsException extends Exception
 {
@@ -29,10 +28,10 @@ class InvalidCredentialsException extends Exception
     /**
      * Creates a new InvalidCredentialsException instance.
      *
-     * @param string $message Optional custom error message.
-     *                        Defaults to "Invalid credentials".
+     * @param  string  $message  Optional custom error message.
+     *                           Defaults to "Invalid credentials".
      */
-    public function __construct(string $message = "Invalid credentials")
+    public function __construct(string $message = 'Invalid credentials')
     {
         parent::__construct($message, $this->code);
     }

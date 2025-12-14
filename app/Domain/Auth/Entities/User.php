@@ -1,5 +1,6 @@
 <?php
-# app/Domain/Auth/Entities/User.php
+
+// app/Domain/Auth/Entities/User.php
 
 namespace App\Domain\Auth\Entities;
 
@@ -22,11 +23,11 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Domain constructor for the User entity.
      *
-     * @param int         $id          Unique identifier of the user.
-     * @param string      $name        Full name of the user.
-     * @param string      $email       Email address used for authentication.
-     * @param string|null $role        Optional role assigned to the user.
-     * @param array       $permissions Array of granted permissions.
+     * @param  int  $id  Unique identifier of the user.
+     * @param  string  $name  Full name of the user.
+     * @param  string  $email  Email address used for authentication.
+     * @param  string|null  $role  Optional role assigned to the user.
+     * @param  array  $permissions  Array of granted permissions.
      */
     public function __construct(
         public int $id,

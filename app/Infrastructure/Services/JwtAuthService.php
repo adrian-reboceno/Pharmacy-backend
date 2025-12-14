@@ -1,10 +1,11 @@
 <?php
-# App/Infrastructure/Services/JwtAuthService.php
+
+// App/Infrastructure/Services/JwtAuthService.php
 
 namespace App\Infrastructure\Services;
 
-use Illuminate\Support\Facades\Auth;
 use App\Application\User\DTOs\V1\AutUserDTO as UserDTO;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Service: JwtAuthService
@@ -20,10 +21,9 @@ class JwtAuthService
      *
      * Adds the user’s direct permissions as JWT claims.
      *
-     * @param array $credentials Associative array with:
-     *                           - 'email'    => string
-     *                           - 'password' => string
-     *
+     * @param  array  $credentials  Associative array with:
+     *                              - 'email'    => string
+     *                              - 'password' => string
      * @return string|null Returns a JWT token string if authentication succeeds, or null if it fails.
      */
     public function attemptLogin(array $credentials): ?string
@@ -53,8 +53,6 @@ class JwtAuthService
      * Log out the currently authenticated user.
      *
      * Invalidates the current JWT token.
-     *
-     * @return void
      */
     public function logout(): void
     {
@@ -74,11 +72,10 @@ class JwtAuthService
     /**
      * Build a standardized authentication response including token, user info, roles, and permissions.
      *
-     * @param string $token              JWT token string.
-     * @param string $message            Optional message (default: 'Authentication successful').
-     * @param bool   $includeRoles       Whether to include the user's roles (default: true).
-     * @param bool   $includePermissions Whether to include the user's permissions (default: true).
-     *
+     * @param  string  $token  JWT token string.
+     * @param  string  $message  Optional message (default: 'Authentication successful').
+     * @param  bool  $includeRoles  Whether to include the user's roles (default: true).
+     * @param  bool  $includePermissions  Whether to include the user's permissions (default: true).
      * @return array Structured authentication response.
      */
     public function respondWithToken(

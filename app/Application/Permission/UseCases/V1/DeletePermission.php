@@ -1,5 +1,7 @@
 <?php
-# app/Application/Permission/UseCases/V1/DeletePermission.php
+
+// app/Application/Permission/UseCases/V1/DeletePermission.php
+
 namespace App\Application\Permission\UseCases\V1;
 
 use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
@@ -34,15 +36,13 @@ class DeletePermission
 {
     /**
      * Permission repository for domain persistence operations.
-     *
-     * @var PermissionRepositoryInterface
      */
     protected PermissionRepositoryInterface $repo;
 
     /**
      * Constructor.
      *
-     * @param PermissionRepositoryInterface $repo Repository handling permission persistence.
+     * @param  PermissionRepositoryInterface  $repo  Repository handling permission persistence.
      */
     public function __construct(PermissionRepositoryInterface $repo)
     {
@@ -52,11 +52,10 @@ class DeletePermission
     /**
      * Executes the deletion of a permission by its ID.
      *
-     * @param int $id Unique identifier of the permission to be deleted.
+     * @param  int  $id  Unique identifier of the permission to be deleted.
+     * @return bool True if the permission was successfully deleted, false otherwise.
      *
      * @throws \RuntimeException If the permission does not exist in the system.
-     *
-     * @return bool True if the permission was successfully deleted, false otherwise.
      */
     public function handle(int $id): bool
     {
@@ -64,7 +63,7 @@ class DeletePermission
         $permission = $this->repo->find($id);
 
         // Throw an exception if the permission does not exist
-        if (!$permission) {
+        if (! $permission) {
             throw new \RuntimeException(
                 "The permission with ID {$id} does not exist and cannot be deleted. Please verify.",
                 Response::HTTP_NOT_FOUND // 404

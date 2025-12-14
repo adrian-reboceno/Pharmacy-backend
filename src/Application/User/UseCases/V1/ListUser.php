@@ -1,5 +1,6 @@
 <?php
-# src/Application/User/UseCases/V1/ListUsers.php
+
+// src/Application/User/UseCases/V1/ListUsers.php
 
 namespace App\Application\User\UseCases\V1;
 
@@ -24,8 +25,7 @@ final class ListUsers
      */
     public function __construct(
         private readonly UserRepositoryInterface $repository
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the user listing process.
@@ -34,9 +34,8 @@ final class ListUsers
      * a PaginatedResult value object that can be easily transformed
      * into arrays or JSON by the Presentation layer.
      *
-     * @param ListUsersDTO $dto
-     *        Contains pagination parameters (page, perPage).
-     *
+     * @param  ListUsersDTO  $dto
+     *                             Contains pagination parameters (page, perPage).
      * @return PaginatedResult<User>
      */
     public function execute(ListUsersDTO $dto): PaginatedResult

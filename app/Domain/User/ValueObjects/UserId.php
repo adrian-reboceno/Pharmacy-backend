@@ -1,5 +1,6 @@
 <?php
-# app/Domain/User/ValueObjects/UserId.php
+
+// app/Domain/User/ValueObjects/UserId.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -14,18 +15,13 @@ use Ramsey\Uuid\Uuid;
  * The identifier may be a UUID or an integer, depending on how
  * the infrastructure persists entities, but at the domain level
  * it behaves as an immutable value object.
- *
- * @package App\Domain\User\ValueObjects
  */
 final class UserId
 {
-    /**
-     * @var string
-     */
     private string $value;
 
     /**
-     * @param string|int $value The unique identifier value.
+     * @param  string|int  $value  The unique identifier value.
      *
      * @throws InvalidUserValueException if the provided value is empty or invalid.
      */
@@ -37,7 +33,7 @@ final class UserId
             throw new InvalidUserValueException('User ID cannot be empty.');
         }
 
-        if (!Uuid::isValid($value) && !ctype_digit($value)) {
+        if (! Uuid::isValid($value) && ! ctype_digit($value)) {
             throw new InvalidUserValueException("Invalid User ID format: {$value}");
         }
 

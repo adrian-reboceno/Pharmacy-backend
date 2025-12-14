@@ -1,5 +1,6 @@
 <?php
-# app/Domain/User/Repositories/UserRepositoryInterface.php
+
+// app/Domain/User/Repositories/UserRepositoryInterface.php
 
 namespace App\Domain\User\Repositories;
 
@@ -31,7 +32,6 @@ interface UserRepositoryInterface
     /**
      * Find a User by email.
      *
-     * @param string $email
      * @return User|null Returns the User entity or null if not found.
      */
     public function findByEmail(string $email): ?User;
@@ -39,7 +39,6 @@ interface UserRepositoryInterface
     /**
      * Get all roles assigned to a User.
      *
-     * @param User $user
      * @return string[] Array of role names.
      */
     public function getUserRoles(User $user): array;
@@ -47,39 +46,32 @@ interface UserRepositoryInterface
     /**
      * Get all permissions assigned to a User, either directly or via roles.
      *
-     * @param User $user
      * @return string[] Array of permission names.
      */
     public function getUserPermissions(User $user): array;
 
     /**
      * Return a query builder for advanced queries.
-     *
-     * @return Builder
      */
     public function query(): Builder;
 
     /**
      * Find a User by its unique identifier.
-     *
-     * @param int $id
-     * @return User|null
      */
     public function find(int $id): ?User;
 
     /**
      * Create a new User.
      *
-     * @param array $data User attributes including optional roles
-     * @return User
+     * @param  array  $data  User attributes including optional roles
      */
     public function create(array $data): User;
 
     /**
      * Update an existing User entity.
      *
-     * @param User $user The user entity to update
-     * @param array $data Attributes to update
+     * @param  User  $user  The user entity to update
+     * @param  array  $data  Attributes to update
      * @return User Updated User entity
      */
     public function update(User $user, array $data): User;
@@ -87,8 +79,8 @@ interface UserRepositoryInterface
     /**
      * Update an existing User by ID.
      *
-     * @param int $id User ID
-     * @param array $data Attributes to update
+     * @param  int  $id  User ID
+     * @param  array  $data  Attributes to update
      * @return User Updated User entity
      */
     public function updateById(int $id, array $data): User;
@@ -96,7 +88,6 @@ interface UserRepositoryInterface
     /**
      * Delete a User entity.
      *
-     * @param User $user
      * @return bool True if deletion succeeded
      */
     public function delete(User $user): bool;
@@ -104,7 +95,6 @@ interface UserRepositoryInterface
     /**
      * Delete a User by ID.
      *
-     * @param int $id
      * @return bool True if deletion succeeded
      */
     public function deleteById(int $id): bool;

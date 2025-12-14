@@ -1,5 +1,6 @@
 <?php
-# app/Application/Role/UseCases/V1/DeleteRole.php
+
+// app/Application/Role/UseCases/V1/DeleteRole.php
 
 namespace App\Application\Role\UseCases\V1;
 
@@ -36,15 +37,13 @@ class DeleteRole
 {
     /**
      * Repository for role persistence operations.
-     *
-     * @var RoleRepositoryInterface
      */
     protected RoleRepositoryInterface $repo;
 
     /**
      * Constructor.
      *
-     * @param RoleRepositoryInterface $repo Repository responsible for role persistence.
+     * @param  RoleRepositoryInterface  $repo  Repository responsible for role persistence.
      */
     public function __construct(RoleRepositoryInterface $repo)
     {
@@ -54,11 +53,10 @@ class DeleteRole
     /**
      * Executes the deletion of a role by its unique identifier.
      *
-     * @param int $id Unique identifier of the role to delete.
+     * @param  int  $id  Unique identifier of the role to delete.
+     * @return bool True if the role was successfully deleted, false otherwise.
      *
      * @throws \RuntimeException If the role does not exist.
-     *
-     * @return bool True if the role was successfully deleted, false otherwise.
      */
     public function handle(int $id): bool
     {
@@ -66,7 +64,7 @@ class DeleteRole
         $role = $this->repo->find($id);
 
         // Throw an exception if the role does not exist
-        if (!$role) {
+        if (! $role) {
             throw new \RuntimeException(
                 "The role with ID {$id} does not exist and cannot be deleted. Please verify.",
                 Response::HTTP_NOT_FOUND // 404

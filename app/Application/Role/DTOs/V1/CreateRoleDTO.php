@@ -1,5 +1,6 @@
 <?php
-# app/Application/Role/DTOs/V1/CreateRoleDTO.php
+
+// app/Application/Role/DTOs/V1/CreateRoleDTO.php
 
 namespace App\Application\Role\DTOs\V1;
 
@@ -20,8 +21,6 @@ class CreateRoleDTO
      * The unique name of the role.
      *
      * Example: "admin", "editor", "viewer".
-     *
-     * @var string
      */
     public string $name;
 
@@ -32,11 +31,9 @@ class CreateRoleDTO
      * e.g. 'web', 'api'.
      *
      * Defaults to "api" if not provided.
-     *
-     * @var string
      */
     public string $guard_name;
-    
+
     /**
      * List of permission names to assign to the role.
      *
@@ -65,8 +62,8 @@ class CreateRoleDTO
      */
     public function __construct(array $data)
     {
-        $this->name        = $data['name'] ?? '';
-        $this->guard_name  = $data['guard_name'] ?? 'api';
+        $this->name = $data['name'] ?? '';
+        $this->guard_name = $data['guard_name'] ?? 'api';
         $this->permissions = $data['permissions'] ?? [];
     }
 
@@ -85,8 +82,8 @@ class CreateRoleDTO
     public function toArray(): array
     {
         return [
-            'name'        => $this->name,
-            'guard_name'  => $this->guard_name,
+            'name' => $this->name,
+            'guard_name' => $this->guard_name,
             'permissions' => $this->permissions,
         ];
     }

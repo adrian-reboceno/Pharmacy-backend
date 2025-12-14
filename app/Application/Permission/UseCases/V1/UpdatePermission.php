@@ -1,9 +1,11 @@
 <?php
-#app/Application/Permission/UseCases/V1/UpdatePermission.php
+
+// app/Application/Permission/UseCases/V1/UpdatePermission.php
+
 namespace App\Application\Permission\UseCases\V1;
 
-use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
 use App\Application\Permission\DTOs\V1\UpdatePermissionDTO;
+use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
 use App\Presentation\DTOs\V1\PermissionDTO;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,15 +45,13 @@ class UpdatePermission
 {
     /**
      * Permission repository for domain persistence operations.
-     *
-     * @var PermissionRepositoryInterface
      */
     protected PermissionRepositoryInterface $repo;
 
     /**
      * Constructor.
      *
-     * @param PermissionRepositoryInterface $repo Repository handling permission persistence.
+     * @param  PermissionRepositoryInterface  $repo  Repository handling permission persistence.
      */
     public function __construct(PermissionRepositoryInterface $repo)
     {
@@ -61,12 +61,11 @@ class UpdatePermission
     /**
      * Executes the update of a permission by its ID.
      *
-     * @param int $id Unique identifier of the permission to be updated.
-     * @param UpdatePermissionDTO $dto Transfer object containing updated permission data.
+     * @param  int  $id  Unique identifier of the permission to be updated.
+     * @param  UpdatePermissionDTO  $dto  Transfer object containing updated permission data.
+     * @return PermissionDTO Data Transfer Object representing the updated permission.
      *
      * @throws \RuntimeException If another permission already exists with the same name and guard.
-     *
-     * @return PermissionDTO Data Transfer Object representing the updated permission.
      */
     public function handle(int $id, UpdatePermissionDTO $dto): PermissionDTO
     {
@@ -82,7 +81,7 @@ class UpdatePermission
 
         // Update the permission in the repository
         $permission = $this->repo->update($id, array_filter([
-            'name'       => $dto->name,
+            'name' => $dto->name,
             'guard_name' => $dto->guard_name,
         ]));
 

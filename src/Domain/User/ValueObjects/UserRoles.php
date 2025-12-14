@@ -1,5 +1,6 @@
 <?php
-# src/Domain/User/ValueObjects/UserRoles.php
+
+// src/Domain/User/ValueObjects/UserRoles.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -19,7 +20,7 @@ final class UserRoles
     private array $roles;
 
     /**
-     * @param array<int,string> $roles Initial list of roles.
+     * @param  array<int,string>  $roles  Initial list of roles.
      *
      * @throws InvalidUserValueException If any role value is invalid.
      */
@@ -27,6 +28,7 @@ final class UserRoles
     {
         if (empty($roles)) {
             $this->roles = [];
+
             return;
         }
 
@@ -53,7 +55,7 @@ final class UserRoles
     /**
      * Add a role and return a new instance.
      *
-     * @param string $role Role name to add.
+     * @param  string  $role  Role name to add.
      *
      * @throws InvalidUserValueException If the role value is invalid.
      */
@@ -75,7 +77,7 @@ final class UserRoles
     /**
      * Remove a role and return a new instance.
      *
-     * @param string $role Role name to remove.
+     * @param  string  $role  Role name to remove.
      */
     public function remove(string $role): self
     {
@@ -90,7 +92,7 @@ final class UserRoles
     /**
      * Check whether the given role is present.
      *
-     * @param string $role Role name to check.
+     * @param  string  $role  Role name to check.
      */
     public function contains(string $role): bool
     {

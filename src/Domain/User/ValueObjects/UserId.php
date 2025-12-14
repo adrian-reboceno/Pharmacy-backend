@@ -1,5 +1,6 @@
 <?php
-# src/Domain/User/ValueObjects/UserId.php
+
+// src/Domain/User/ValueObjects/UserId.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -22,7 +23,7 @@ final class UserId
     private string $value;
 
     /**
-     * @param string|int $value The unique identifier value.
+     * @param  string|int  $value  The unique identifier value.
      *
      * @throws InvalidUserValueException If the provided value is empty or invalid.
      */

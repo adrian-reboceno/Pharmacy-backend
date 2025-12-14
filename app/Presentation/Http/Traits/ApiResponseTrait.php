@@ -2,9 +2,9 @@
 
 namespace App\Presentation\Http\Traits;
 
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Symfony\Component\HttpFoundation\Response;
 
 trait ApiResponseTrait
 {
@@ -17,10 +17,10 @@ trait ApiResponseTrait
         int $code = Response::HTTP_OK
     ) {
         $response = [
-            'status'      => 'success',
+            'status' => 'success',
             'http_status' => Response::$statusTexts[$code] ?? 'OK',
-            'message'     => $message,
-            'data'        => $data,
+            'message' => $message,
+            'data' => $data,
         ];
 
         // Si es una respuesta paginada, añadimos metadatos
@@ -28,9 +28,9 @@ trait ApiResponseTrait
             $response['data'] = $data->items();
             $response['meta'] = [
                 'current_page' => $data->currentPage(),
-                'per_page'     => $data->perPage(),
-                'total'        => $data instanceof LengthAwarePaginator ? $data->total() : null,
-                'last_page'    => $data instanceof LengthAwarePaginator ? $data->lastPage() : null,
+                'per_page' => $data->perPage(),
+                'total' => $data instanceof LengthAwarePaginator ? $data->total() : null,
+                'last_page' => $data instanceof LengthAwarePaginator ? $data->lastPage() : null,
             ];
         }
 
@@ -46,10 +46,10 @@ trait ApiResponseTrait
         int $code = Response::HTTP_INTERNAL_SERVER_ERROR
     ) {
         return response()->json([
-            'status'      => 'error',
+            'status' => 'error',
             'http_status' => Response::$statusTexts[$code] ?? 'Error',
-            'message'     => $message,
-            'errors'      => !empty($errors) ? $errors : null,
+            'message' => $message,
+            'errors' => ! empty($errors) ? $errors : null,
         ], $code);
     }
 }

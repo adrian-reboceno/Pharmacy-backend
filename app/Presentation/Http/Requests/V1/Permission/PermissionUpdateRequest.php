@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/Http/Requests/V1/Permission/PermissionUpdateRequest.php
+
+// app/Presentation/Http/Requests/V1/Permission/PermissionUpdateRequest.php
 
 namespace App\Presentation\Http\Requests\V1\Permission;
 
@@ -23,8 +24,6 @@ class PermissionUpdateRequest extends FormRequest
      *
      * Extend this method to include authorization logic, for example,
      * checking if the user has the 'permission-edit' ability.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -65,8 +64,8 @@ class PermissionUpdateRequest extends FormRequest
     {
         return [
             'name.required' => 'The name field is required.',
-            'name.string'   => 'The name must be a valid string.',
-            'name.unique'   => 'A permission with this name already exists.',
+            'name.string' => 'The name must be a valid string.',
+            'name.unique' => 'A permission with this name already exists.',
             'guard_name.string' => 'The guard_name must be a valid string.',
         ];
     }

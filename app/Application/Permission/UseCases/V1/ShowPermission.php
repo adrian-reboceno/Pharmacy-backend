@@ -1,5 +1,7 @@
 <?php
-# app/Application/Permission/UseCases/V1/ShowPermission.php
+
+// app/Application/Permission/UseCases/V1/ShowPermission.php
+
 namespace App\Application\Permission\UseCases\V1;
 
 use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
@@ -35,15 +37,13 @@ class ShowPermission
 {
     /**
      * Permission repository for domain persistence operations.
-     *
-     * @var PermissionRepositoryInterface
      */
     protected PermissionRepositoryInterface $repo;
 
     /**
      * Constructor.
      *
-     * @param PermissionRepositoryInterface $repo Repository handling permission persistence.
+     * @param  PermissionRepositoryInterface  $repo  Repository handling permission persistence.
      */
     public function __construct(PermissionRepositoryInterface $repo)
     {
@@ -53,11 +53,10 @@ class ShowPermission
     /**
      * Executes the retrieval of a permission by its ID.
      *
-     * @param int $id Unique identifier of the permission to be retrieved.
+     * @param  int  $id  Unique identifier of the permission to be retrieved.
+     * @return PermissionDTO Data Transfer Object representing the requested permission.
      *
      * @throws \RuntimeException If the permission does not exist in the system.
-     *
-     * @return PermissionDTO Data Transfer Object representing the requested permission.
      */
     public function handle(int $id): PermissionDTO
     {
@@ -65,7 +64,7 @@ class ShowPermission
         $permission = $this->repo->find($id);
 
         // Throw an exception if the permission does not exist
-        if (!$permission) {
+        if (! $permission) {
             throw new \RuntimeException(
                 "The permission with ID {$id} does not exist. Please verify.",
                 Response::HTTP_NOT_FOUND // 404

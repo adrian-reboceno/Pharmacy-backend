@@ -1,10 +1,11 @@
 <?php
-# app/Application/User/UseCases/V1/ShowUser.php
+
+// app/Application/User/UseCases/V1/ShowUser.php
 
 namespace App\Application\User\UseCases\V1;
 
-use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Domain\User\Entities\User;
+use App\Domain\User\Repositories\UserRepositoryInterface;
 use Illuminate\Http\Response;
 
 /**
@@ -22,27 +23,27 @@ use Illuminate\Http\Response;
  * error handling is applied when the requested user does not exist.
  *
  * ──────────────────────────────────────────────────────────────
+ *
  * @layer Application
+ *
  * @pattern Query Use Case (DDD)
+ *
  * @version 1.0
+ *
  * @author AFLR
- * @package App\Application\User\UseCases\V1
- * ──────────────────────────────────────────────────────────────
  */
 final class ShowUser
 {
     /**
      * Repository responsible for retrieving user data.
-     *
-     * @var UserRepositoryInterface
      */
     private readonly UserRepositoryInterface $repository;
 
     /**
      * Constructor.
      *
-     * @param UserRepositoryInterface $repository
-     *        Repository abstraction for retrieving user domain entities.
+     * @param  UserRepositoryInterface  $repository
+     *                                               Repository abstraction for retrieving user domain entities.
      */
     public function __construct(UserRepositoryInterface $repository)
     {
@@ -57,22 +58,21 @@ final class ShowUser
      * with a 404 (Not Found) status code to indicate the resource
      * is missing.
      *
-     * @param int $id
-     *        The unique identifier of the user to retrieve.
-     *
+     * @param  int  $id
+     *                   The unique identifier of the user to retrieve.
      * @return User|null
-     *         Returns the corresponding User entity if found,
-     *         or `null` if the user does not exist.
+     *                   Returns the corresponding User entity if found,
+     *                   or `null` if the user does not exist.
      *
      * @throws \RuntimeException
-     *         Thrown when no user with the specified ID exists.
+     *                           Thrown when no user with the specified ID exists.
      *
      * ──────────────────────────────────────────────
      * Example usage:
      * ──────────────────────────────────────────────
      * ```php
      * $useCase = new ShowUser($userRepository);
-     * 
+     *
      * try {
      *     $user = $useCase->handle(42);
      *     echo $user->name()->value();
@@ -95,7 +95,7 @@ final class ShowUser
         $user = $this->repository->find($id);
 
         // If the user does not exist, throw a domain-level exception
-        if (!$user) {
+        if (! $user) {
             throw new \RuntimeException(
                 "The User with ID {$id} does not exist. Please verify.",
                 Response::HTTP_NOT_FOUND // 404

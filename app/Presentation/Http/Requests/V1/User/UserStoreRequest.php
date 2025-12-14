@@ -1,10 +1,11 @@
 <?php
-# app/Presentation/Http/Requests/V1/User/UserStoreRequest.php
+
+// app/Presentation/Http/Requests/V1/User/UserStoreRequest.php
 
 namespace App\Presentation\Http\Requests\V1\User;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Application\User\DTOs\V1\CreateUserDTO;
+use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Handles validation for creating a new User.
@@ -12,15 +13,11 @@ use App\Application\User\DTOs\V1\CreateUserDTO;
  * This FormRequest ensures all required user fields are valid
  * before passing them to the application layer. It also converts
  * validated input into a CreateUserDTO instance.
- *
- * @package App\Presentation\Http\Requests\V1\User
  */
 class UserStoreRequest extends FormRequest
 {
     /**
      * Determine if the current user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -36,18 +33,16 @@ class UserStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
-            'roles'    => ['nullable', 'array'],
-            'roles.*'  => ['string', 'exists:roles,name'],
+            'roles' => ['nullable', 'array'],
+            'roles.*' => ['string', 'exists:roles,name'],
         ];
     }
 
     /**
      * Convert validated data into a CreateUserDTO instance.
-     *
-     * @return CreateUserDTO
      */
     public function toDTO(): CreateUserDTO
     {

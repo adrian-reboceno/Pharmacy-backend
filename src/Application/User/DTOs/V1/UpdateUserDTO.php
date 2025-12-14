@@ -1,5 +1,6 @@
 <?php
-# src/Application/User/DTOs/V1/UpdateUserDTO.php
+
+// src/Application/User/DTOs/V1/UpdateUserDTO.php
 
 namespace App\Application\User\DTOs\V1;
 
@@ -16,12 +17,12 @@ namespace App\Application\User\DTOs\V1;
 final class UpdateUserDTO
 {
     /**
-     * @param string|int   $id       User identifier.
-     * @param string|null  $name     Optional updated name.
-     * @param string|null  $email    Optional updated email.
-     * @param string|null  $password Optional updated plain-text password
-     *                               (it will be hashed in the domain layer).
-     * @param string[]|null $roles   Optional updated roles (replaces the set).
+     * @param  string|int  $id  User identifier.
+     * @param  string|null  $name  Optional updated name.
+     * @param  string|null  $email  Optional updated email.
+     * @param  string|null  $password  Optional updated plain-text password
+     *                                 (it will be hashed in the domain layer).
+     * @param  string[]|null  $roles  Optional updated roles (replaces the set).
      */
     public function __construct(
         public readonly string|int $id,
@@ -29,13 +30,12 @@ final class UpdateUserDTO
         public readonly ?string $email = null,
         public readonly ?string $password = null,
         public readonly ?array $roles = null
-    ) {
-    }
+    ) {}
 
     /**
      * Create a new DTO instance from an associative array.
      *
-     * @param array<string,mixed> $data
+     * @param  array<string,mixed>  $data
      */
     public static function fromArray(array $data): self
     {
@@ -60,11 +60,11 @@ final class UpdateUserDTO
     {
         return array_filter(
             [
-                'id'       => $this->id,
-                'name'     => $this->name,
-                'email'    => $this->email,
+                'id' => $this->id,
+                'name' => $this->name,
+                'email' => $this->email,
                 'password' => $this->password,
-                'roles'    => $this->roles,
+                'roles' => $this->roles,
             ],
             static fn ($value, string $key) => $key === 'id' || $value !== null,
             ARRAY_FILTER_USE_BOTH

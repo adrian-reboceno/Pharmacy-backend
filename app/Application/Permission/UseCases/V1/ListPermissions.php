@@ -1,5 +1,7 @@
 <?php
-# app/Application/Permission/UseCases/V1/ListPermissions.php
+
+// app/Application/Permission/UseCases/V1/ListPermissions.php
+
 namespace App\Application\Permission\UseCases\V1;
 
 use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
@@ -37,15 +39,13 @@ class ListPermissions
 {
     /**
      * Permission repository for domain persistence operations.
-     *
-     * @var PermissionRepositoryInterface
      */
     protected PermissionRepositoryInterface $repo;
 
     /**
      * Constructor.
      *
-     * @param PermissionRepositoryInterface $repo Repository handling permission persistence.
+     * @param  PermissionRepositoryInterface  $repo  Repository handling permission persistence.
      */
     public function __construct(PermissionRepositoryInterface $repo)
     {
@@ -58,17 +58,17 @@ class ListPermissions
      * Each permission is transformed into a PermissionDTO for the
      * presentation layer.
      *
-     * @param int $perPage Number of items per page. Default is 10.
+     * @param  int  $perPage  Number of items per page. Default is 10.
      * @return LengthAwarePaginator Paginated collection of PermissionDTOs.
      */
     public function handle(int $perPage = 10): LengthAwarePaginator
     {
         $paginator = $this->repo->query()
-                                ->orderBy('id', 'asc')
-                                ->paginate($perPage);
+            ->orderBy('id', 'asc')
+            ->paginate($perPage);
 
         // Transform each model to a DTO
-        $paginator->getCollection()->transform(fn($permission) => PermissionDTO::fromModel($permission));
+        $paginator->getCollection()->transform(fn ($permission) => PermissionDTO::fromModel($permission));
 
         return $paginator;
     }

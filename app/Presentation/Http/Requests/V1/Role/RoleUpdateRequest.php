@@ -1,16 +1,17 @@
 <?php
-# app/Presentation/Http/Requests/V1/Role/RoleUpdateRequest.php
+
+// app/Presentation/Http/Requests/V1/Role/RoleUpdateRequest.php
 
 namespace App\Presentation\Http\Requests\V1\Role;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;   
+use Illuminate\Validation\Rule;
 
 /**
  * Handles validation for updating an existing Role.
  *
  * This FormRequest validates the input required to update a Role,
- * ensuring that the 'name' field is provided, is a valid string, and 
+ * ensuring that the 'name' field is provided, is a valid string, and
  * unique in the Roles table (excluding the current Role being updated).
  *
  * Principles applied:
@@ -21,10 +22,8 @@ class RoleUpdateRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * You can extend this method to include authorization logic, 
+     * You can extend this method to include authorization logic,
      * such as checking if the user has the 'Role-edit' permission.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -65,11 +64,11 @@ class RoleUpdateRequest extends FormRequest
     {
         return [
             'name.required' => 'The name field is required.',
-            'name.string'   => 'The name must be a valid string.',
-            'name.unique'   => 'A role with this name already exists.',
+            'name.string' => 'The name must be a valid string.',
+            'name.unique' => 'A role with this name already exists.',
             'guard_name.string' => 'The guard_name must be a valid string.',
             'permissions.required' => 'The permissions field is required.',
-            'permissions.array'    => 'The permissions must be a valid array.',
+            'permissions.array' => 'The permissions must be a valid array.',
         ];
     }
 }

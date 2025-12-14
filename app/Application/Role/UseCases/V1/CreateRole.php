@@ -1,10 +1,11 @@
 <?php
-# app/Application/Role/UseCases/V1/CreateRole.php
+
+// app/Application/Role/UseCases/V1/CreateRole.php
 
 namespace App\Application\Role\UseCases\V1;
 
-use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Application\Role\DTOs\V1\CreateRoleDTO;
+use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Presentation\DTOs\V1\RoleDTO;
 use Illuminate\Http\Response;
 
@@ -46,15 +47,13 @@ class CreateRole
 {
     /**
      * Repository responsible for persisting roles.
-     *
-     * @var RoleRepositoryInterface
      */
     protected RoleRepositoryInterface $repo;
 
     /**
      * Constructor.
      *
-     * @param RoleRepositoryInterface $repo Repository handling role persistence operations.
+     * @param  RoleRepositoryInterface  $repo  Repository handling role persistence operations.
      */
     public function __construct(RoleRepositoryInterface $repo)
     {
@@ -70,13 +69,12 @@ class CreateRole
      * 3. Creates the new role and synchronizes permissions.
      * 4. Returns a RoleDTO for presentation purposes.
      *
-     * @param CreateRoleDTO $dto Data Transfer Object containing the role details.
+     * @param  CreateRoleDTO  $dto  Data Transfer Object containing the role details.
+     * @return RoleDTO Data Transfer Object representing the newly created role.
      *
      * @throws \RuntimeException If:
-     * - A role with the same name and guard already exists (HTTP 409 Conflict).
-     * - Invalid permissions are provided (HTTP 409 Conflict).
-     *
-     * @return RoleDTO Data Transfer Object representing the newly created role.
+     *                           - A role with the same name and guard already exists (HTTP 409 Conflict).
+     *                           - Invalid permissions are provided (HTTP 409 Conflict).
      */
     public function handle(CreateRoleDTO $dto): RoleDTO
     {
@@ -89,12 +87,12 @@ class CreateRole
         }
 
         // 2. Validate permissions (if provided)
-        if (!empty($dto->permissions)) {
+        if (! empty($dto->permissions)) {
             $validation = $this->repo->validatePermissions($dto->permissions);
 
-            if (!empty($validation['invalid'])) {
+            if (! empty($validation['invalid'])) {
                 throw new \RuntimeException(
-                    'The following permissions do not exist: ' . implode(', ', $validation['invalid']),
+                    'The following permissions do not exist: '.implode(', ', $validation['invalid']),
                     Response::HTTP_CONFLICT // 409 Conflict
                 );
             }
@@ -105,8 +103,8 @@ class CreateRole
 
         // 3. Create role in the repository
         $role = $this->repo->create([
-            'name'        => $dto->name,
-            'guard_name'  => $dto->guard_name,
+            'name' => $dto->name,
+            'guard_name' => $dto->guard_name,
             'permissions' => $dto->permissions,
         ]);
 

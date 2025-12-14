@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/Http/Requests/V1/LoginRequest.php
+
+// app/Presentation/Http/Requests/V1/LoginRequest.php
 
 namespace App\Presentation\Http\Requests\V1;
 
@@ -14,8 +15,6 @@ use Illuminate\Foundation\Http\FormRequest;
  * — a valid email address and password — before passing the data to the
  * authentication layer. It belongs to the Presentation layer in a Clean
  * Architecture structure.
- *
- * @package App\Presentation\Http\Requests\V1
  */
 class LoginRequest extends FormRequest
 {
@@ -24,8 +23,6 @@ class LoginRequest extends FormRequest
      *
      * This method can include custom authorization logic.
      * Currently, all requests are authorized by default.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -40,7 +37,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required|string|min:6',
         ];
     }
@@ -53,10 +50,10 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required'    => 'The email field is required.',
-            'email.email'       => 'Please provide a valid email address.',
+            'email.required' => 'The email field is required.',
+            'email.email' => 'Please provide a valid email address.',
             'password.required' => 'The password field is required.',
-            'password.min'      => 'The password must be at least 6 characters long.',
+            'password.min' => 'The password must be at least 6 characters long.',
         ];
     }
 }

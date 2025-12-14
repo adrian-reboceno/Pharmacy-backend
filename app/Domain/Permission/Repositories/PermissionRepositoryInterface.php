@@ -1,5 +1,6 @@
 <?php
-# app/Domain/Permission/Repositories/PermissionRepositoryInterface.php
+
+// app/Domain/Permission/Repositories/PermissionRepositoryInterface.php
 
 namespace App\Domain\Permission\Repositories;
 
@@ -21,15 +22,13 @@ interface PermissionRepositoryInterface
      * Returns a query builder for permissions.
      *
      * This allows applying filters, sorting, and pagination.
-     *
-     * @return Builder
      */
     public function query(): Builder;
 
     /**
      * Find a permission by its unique identifier.
      *
-     * @param int $id Permission ID.
+     * @param  int  $id  Permission ID.
      * @return \App\Domain\Permission\Permission|null Returns the permission entity or null if not found.
      */
     public function find(int $id): ?object;
@@ -37,7 +36,7 @@ interface PermissionRepositoryInterface
     /**
      * Create a new permission.
      *
-     * @param array $data Data required to create a permission (e.g., name, guard_name).
+     * @param  array  $data  Data required to create a permission (e.g., name, guard_name).
      * @return \App\Domain\Permission\Permission The newly created permission entity.
      */
     public function create(array $data): object;
@@ -45,8 +44,8 @@ interface PermissionRepositoryInterface
     /**
      * Update an existing permission.
      *
-     * @param int   $id   Unique identifier of the permission to update.
-     * @param array $data Data to update (e.g., name, guard_name).
+     * @param  int  $id  Unique identifier of the permission to update.
+     * @param  array  $data  Data to update (e.g., name, guard_name).
      * @return \App\Domain\Permission\Permission The updated permission entity.
      */
     public function update(int $id, array $data): object;
@@ -54,7 +53,7 @@ interface PermissionRepositoryInterface
     /**
      * Delete a permission by its unique identifier.
      *
-     * @param int $id Permission ID to delete.
+     * @param  int  $id  Permission ID to delete.
      * @return bool True if the permission was successfully deleted, false otherwise.
      */
     public function delete(int $id): bool;

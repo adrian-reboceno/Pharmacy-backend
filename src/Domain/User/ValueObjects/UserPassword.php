@@ -1,5 +1,6 @@
 <?php
-# src/Domain/User/ValueObjects/UserPassword.php
+
+// src/Domain/User/ValueObjects/UserPassword.php
 
 namespace App\Domain\User\ValueObjects;
 
@@ -21,7 +22,7 @@ final class UserPassword
     private string $hash;
 
     /**
-     * @param string $hash Already hashed password value.
+     * @param  string  $hash  Already hashed password value.
      *
      * @throws InvalidUserValueException If the hash is empty.
      */
@@ -40,7 +41,7 @@ final class UserPassword
      * This method validates the plain-text password against domain rules
      * (e.g. minimum length) and then hashes it using a secure algorithm.
      *
-     * @param string $plain Plain-text password.
+     * @param  string  $plain  Plain-text password.
      *
      * @throws InvalidUserValueException If the plain-text password is invalid.
      */
@@ -60,7 +61,7 @@ final class UserPassword
      *
      * Useful when reconstructing the aggregate from persistence.
      *
-     * @param string $hash Hashed password value.
+     * @param  string  $hash  Hashed password value.
      */
     public static function fromHash(string $hash): self
     {
@@ -78,8 +79,7 @@ final class UserPassword
     /**
      * Verify a plain-text password against the stored hash.
      *
-     * @param string $plain Plain-text password to verify.
-     *
+     * @param  string  $plain  Plain-text password to verify.
      * @return bool True if the password matches the hash, false otherwise.
      */
     public function verify(string $plain): bool

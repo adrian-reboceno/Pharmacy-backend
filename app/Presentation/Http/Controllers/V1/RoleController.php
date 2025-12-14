@@ -2,48 +2,33 @@
 
 namespace App\Presentation\Http\Controllers\V1;
 
+use App\Application\Role\DTOs\V1\CreateRoleDTO;
+use App\Application\Role\DTOs\V1\UpdateRoleDTO;
+use App\Application\Role\UseCases\V1\CreateRole;
+use App\Application\Role\UseCases\V1\DeleteRole;
+use App\Application\Role\UseCases\V1\ListRoles;
+use App\Application\Role\UseCases\V1\ShowRole;
+use App\Application\Role\UseCases\V1\UpdateRole;
 use App\Http\Controllers\Controller;
+use App\Infrastructure\Services\ApiResponseService;
+use App\Presentation\Http\Requests\V1\Role\RoleIndexRequest;
+use App\Presentation\Http\Requests\V1\Role\RoleStoreRequest;
+use App\Presentation\Http\Requests\V1\Role\RoleUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Infrastructure\Services\ApiResponseService;
-use App\Application\Role\UseCases\V1\{
-    ListRoles,
-    ShowRole,
-    CreateRole,
-    UpdateRole,
-    DeleteRole
-};
-use App\Application\Role\DTOs\V1\{
-    CreateRoleDTO,
-    UpdateRoleDTO
-};
-use App\Presentation\Http\Requests\V1\Role\{
-    RoleIndexRequest,
-    RoleStoreRequest,
-    RoleUpdateRequest
-};
 
 /**
  * Class RoleController
  *
  * Controller responsible for managing Roles via the API.
  * Provides endpoints for listing, viewing, creating, updating, and deleting roles.
- * Each action is delegated to its corresponding Use Case, keeping business logic 
+ * Each action is delegated to its corresponding Use Case, keeping business logic
  * separated from the presentation layer.
- *
- * @package App\Presentation\Http\Controllers\V1
  */
 class RoleController extends Controller
 {
     /**
      * Inject dependencies (Use Cases and API Response service).
-     *
-     * @param ApiResponseService $api
-     * @param ListRoles          $list
-     * @param ShowRole           $show
-     * @param CreateRole         $create
-     * @param UpdateRole         $update
-     * @param DeleteRole         $delete
      */
     public function __construct(
         protected ApiResponseService $api,
@@ -56,12 +41,10 @@ class RoleController extends Controller
 
     /**
      * Define middleware permissions for each controller method.
-     *
-     * @return array
      */
     public static function middleware(): array
     {
-        return [           
+        return [
             new Middleware('permission:roles-list', only: ['index']),
             new Middleware('permission:roles-view', only: ['show']),
             new Middleware('permission:roles-create', only: ['store']),
@@ -72,10 +55,9 @@ class RoleController extends Controller
 
     /**
      * GET /roles
-     * 
+     *
      * Retrieve a paginated list of roles.
      *
-     * @param RoleIndexRequest $request
      * @return \Illuminate\Http\JsonResponse
      *
      * Example usage:
@@ -83,7 +65,7 @@ class RoleController extends Controller
      */
     public function index(RoleIndexRequest $request)
     {
-        $perPage   = (int) $request->query('per_page', 10);
+        $perPage = (int) $request->query('per_page', 10);
         $paginator = $this->list->handle($perPage);
 
         return $this->api->success(
@@ -94,10 +76,9 @@ class RoleController extends Controller
 
     /**
      * GET /roles/{id}
-     * 
+     *
      * Retrieve a single role by its ID.
      *
-     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      *
      * Example usage:
@@ -120,10 +101,9 @@ class RoleController extends Controller
 
     /**
      * POST /roles
-     * 
+     *
      * Create a new role from request data.
      *
-     * @param RoleStoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      *
      * Example payload:
@@ -151,11 +131,9 @@ class RoleController extends Controller
 
     /**
      * PUT/PATCH /roles/{id}
-     * 
+     *
      * Update an existing role by ID.
      *
-     * @param RoleUpdateRequest $request
-     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      *
      * Example payload:
@@ -183,10 +161,9 @@ class RoleController extends Controller
 
     /**
      * DELETE /roles/{id}
-     * 
+     *
      * Delete a role by ID.
      *
-     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      *
      * Example usage:

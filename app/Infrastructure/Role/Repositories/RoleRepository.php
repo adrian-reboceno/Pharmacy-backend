@@ -1,12 +1,13 @@
 <?php
-# app/Infrastructure/Role/Repositories/RoleRepository.php
+
+// app/Infrastructure/Role/Repositories/RoleRepository.php
 
 namespace App\Infrastructure\Role\Repositories;
 
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 /**
  * Eloquent implementation of the RoleRepositoryInterface.
@@ -37,7 +38,7 @@ class RoleRepository implements RoleRepositoryInterface
     /**
      * Find a role by its unique identifier.
      *
-     * @param int $id Role unique identifier.
+     * @param  int  $id  Role unique identifier.
      * @return Role|null The Role instance if found, null otherwise.
      */
     public function find(int $id): ?object
@@ -50,17 +51,17 @@ class RoleRepository implements RoleRepositoryInterface
      *
      * Also synchronizes permissions if they are provided.
      *
-     * @param array $data Associative array containing role attributes:
-     *                    - name: string (required)
-     *                    - guard_name: string (optional, defaults to 'api')
-     *                    - permissions: array<string> (optional)
+     * @param  array  $data  Associative array containing role attributes:
+     *                       - name: string (required)
+     *                       - guard_name: string (optional, defaults to 'api')
+     *                       - permissions: array<string> (optional)
      * @return Role The newly created role instance.
      */
     public function create(array $data): object
-    {       
+    {
         $role = Role::create($data);
 
-        if (!empty($data['permissions'])) {
+        if (! empty($data['permissions'])) {
             $role->syncPermissions($data['permissions']);
         }
 
@@ -74,17 +75,17 @@ class RoleRepository implements RoleRepositoryInterface
      * It only updates allowed attributes such as guard_name
      * and synchronizes permissions if provided.
      *
-     * @param int $id Role unique identifier.
-     * @param array $data Associative array of role attributes to update:
-     *                    - guard_name: string (optional)
-     *                    - permissions: array<string> (optional)
+     * @param  int  $id  Role unique identifier.
+     * @param  array  $data  Associative array of role attributes to update:
+     *                       - guard_name: string (optional)
+     *                       - permissions: array<string> (optional)
      * @return Role The updated role instance.
      */
     public function update(int $id, array $data): object
     {
         $role = $this->find($id);
 
-        if (!empty($data['permissions'])) {
+        if (! empty($data['permissions'])) {
             $role->syncPermissions($data['permissions']);
         }
 
@@ -94,12 +95,13 @@ class RoleRepository implements RoleRepositoryInterface
     /**
      * Delete a role by its unique identifier.
      *
-     * @param int $id Role unique identifier.
+     * @param  int  $id  Role unique identifier.
      * @return bool True if the role was successfully deleted, false otherwise.
      */
     public function delete(int $id): bool
     {
         $role = $this->find($id);
+
         return $role ? $role->delete() : false;
     }
 
@@ -108,8 +110,8 @@ class RoleRepository implements RoleRepositoryInterface
      *
      * Typically used in the **CreateRole** use case to prevent duplicates.
      *
-     * @param string $name Role name to check.
-     * @param string $guard_name Guard name associated with the role.
+     * @param  string  $name  Role name to check.
+     * @param  string  $guard_name  Guard name associated with the role.
      * @return bool True if a role with the same name and guard exists, false otherwise.
      */
     public function exists(string $name, string $guard_name): bool
@@ -127,9 +129,9 @@ class RoleRepository implements RoleRepositoryInterface
      * Typically used in the **UpdateRole** use case to enforce uniqueness
      * without conflicting with the role being updated.
      *
-     * @param string $name Role name to check.
-     * @param string $guard_name Guard name associated with the role.
-     * @param int $exceptId Role ID to exclude from the check.
+     * @param  string  $name  Role name to check.
+     * @param  string  $guard_name  Guard name associated with the role.
+     * @param  int  $exceptId  Role ID to exclude from the check.
      * @return bool True if another role with the same name and guard exists, false otherwise.
      */
     public function existsExceptId(string $name, string $guard_name, int $exceptId): bool
@@ -148,7 +150,7 @@ class RoleRepository implements RoleRepositoryInterface
      * It does not throw exceptions; the responsibility of handling invalid
      * permissions belongs to the application use case (e.g., **UpdateRole**).
      *
-     * @param array<string> $permissions Array of permission names to validate.
+     * @param  array<string>  $permissions  Array of permission names to validate.
      * @return array{valid: array<string>, invalid: array<string>} Arrays containing valid and invalid permission names.
      */
     public function validatePermissions(array $permissions): array

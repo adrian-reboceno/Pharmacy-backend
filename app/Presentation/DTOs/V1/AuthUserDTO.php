@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/DTOs/V1/UserDTO.php
+
+// app/Presentation/DTOs/V1/UserDTO.php
 
 namespace App\Presentation\DTOs\V1;
 
@@ -16,39 +17,31 @@ class AuthUserDTO
 {
     /**
      * The unique identifier of the user.
-     *
-     * @var int
      */
     public int $id;
 
     /**
      * The full name of the user.
-     *
-     * @var string
      */
     public string $name;
 
     /**
      * The email address of the user.
-     *
-     * @var string
      */
     public string $email;
 
     /**
      * The role assigned to the user (if any).
-     *
-     * @var string|null
      */
     public ?string $role;
 
     /**
      * Create a new AuthUserDTO instance.
      *
-     * @param int         $id    The user’s unique identifier.
-     * @param string      $name  The user’s full name.
-     * @param string      $email The user’s email address.
-     * @param string|null $role  The user’s role (optional).
+     * @param  int  $id  The user’s unique identifier.
+     * @param  string  $name  The user’s full name.
+     * @param  string  $email  The user’s email address.
+     * @param  string|null  $role  The user’s role (optional).
      */
     public function __construct(int $id, string $name, string $email, ?string $role = null)
     {
@@ -61,8 +54,7 @@ class AuthUserDTO
     /**
      * Create a DTO instance from a domain User entity.
      *
-     * @param User $user The domain User entity.
-     *
+     * @param  User  $user  The domain User entity.
      * @return self A DTO representing the user.
      */
     public static function fromEntity(User $user): self
@@ -87,10 +79,10 @@ class AuthUserDTO
     public function toArray(): array
     {
         return [
-            'id'    => $this->id,
-            'name'  => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'email' => $this->email,
-            'role'  => $this->role,
+            'role' => $this->role,
         ];
     }
 }

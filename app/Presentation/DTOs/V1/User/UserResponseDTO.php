@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/DTOs/V1/User/UserResponseDTO.php
+
+// app/Presentation/DTOs/V1/User/UserResponseDTO.php
 
 namespace App\Presentation\DTOs\V1\User;
 
@@ -46,15 +47,15 @@ final class UserResponseDTO
     /**
      * Constructor.
      *
-     * @param string   $id    User identifier
-     * @param string   $name  User full name
-     * @param string   $email User email address
-     * @param string[] $roles List of role names
+     * @param  string  $id  User identifier
+     * @param  string  $name  User full name
+     * @param  string  $email  User email address
+     * @param  string[]  $roles  List of role names
      */
     public function __construct(string $id, string $name, string $email, array $roles)
     {
-        $this->id    = $id;
-        $this->name  = $name;
+        $this->id = $id;
+        $this->name = $name;
         $this->email = $email;
         $this->roles = $roles;
     }
@@ -71,12 +72,11 @@ final class UserResponseDTO
             roles: $user->roles()->names()
         );
     }
- 
+
     /**
      * Optional helper: build an array of DTO payloads from a list of domain users.
      *
-     * @param iterable<DomainUser> $users
-     *
+     * @param  iterable<DomainUser>  $users
      * @return array<int, array<string, mixed>>
      */
     public static function collection(iterable $users): array
@@ -103,8 +103,8 @@ final class UserResponseDTO
     public function toArray(): array
     {
         return [
-            'id'    => $this->id,
-            'name'  => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'email' => $this->email,
             'roles' => $this->roles,
         ];

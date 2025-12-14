@@ -1,5 +1,6 @@
 <?php
-# app/Application/User/UseCases/V1/DeleteUser.php
+
+// app/Application/User/UseCases/V1/DeleteUser.php
 
 namespace App\Application\User\UseCases\V1;
 
@@ -23,27 +24,27 @@ use Illuminate\Http\Response;
  * that deletion respects business rules and consistency boundaries.
  *
  * ──────────────────────────────────────────────────────────────
+ *
  * @layer Application
+ *
  * @pattern Command Use Case (DDD)
+ *
  * @version 1.0
+ *
  * @author AFLR
- * @package App\Application\User\UseCases\V1
- * ──────────────────────────────────────────────────────────────
  */
 final class DeleteUser
 {
     /**
      * Repository responsible for user persistence operations.
-     *
-     * @var UserRepositoryInterface
      */
     private readonly UserRepositoryInterface $repository;
 
     /**
      * Constructor.
      *
-     * @param UserRepositoryInterface $repository
-     *        Repository implementation handling data persistence and retrieval.
+     * @param  UserRepositoryInterface  $repository
+     *                                               Repository implementation handling data persistence and retrieval.
      */
     public function __construct(UserRepositoryInterface $repository)
     {
@@ -58,21 +59,20 @@ final class DeleteUser
      * the requested entity cannot be found. Otherwise, it proceeds to remove
      * the user using the repository abstraction.
      *
-     * @param int $id
-     *        The unique identifier of the user to delete.
-     *
+     * @param  int  $id
+     *                   The unique identifier of the user to delete.
      * @return bool
-     *         Returns `true` if the user was successfully deleted, otherwise `false`.
+     *              Returns `true` if the user was successfully deleted, otherwise `false`.
      *
      * @throws \RuntimeException
-     *         Thrown when the user with the specified ID does not exist.
+     *                           Thrown when the user with the specified ID does not exist.
      *
      * ──────────────────────────────────────────────
      * Example usage:
      * ──────────────────────────────────────────────
      * ```php
      * $useCase = new DeleteUser($userRepository);
-     * 
+     *
      * try {
      *     $deleted = $useCase->handle(5);
      *     if ($deleted) {
@@ -95,7 +95,7 @@ final class DeleteUser
         $user = $this->repository->find($id);
 
         // Throw an exception if the user does not exist.
-        if (!$user) {
+        if (! $user) {
             throw new \RuntimeException(
                 "The User with ID {$id} does not exist and cannot be deleted. Please verify.",
                 Response::HTTP_NOT_FOUND // 404

@@ -1,17 +1,18 @@
 <?php
-# app/Presentation/Http/Controllers/V1/AuthController.php
+
+// app/Presentation/Http/Controllers/V1/AuthController.php
 
 namespace App\Presentation\Http\Controllers\V1;
 
+use App\Application\Auth\Services\JwtAuthService;
+use App\Application\Auth\UseCases\V1\LoginUser;
 use App\Http\Controllers\Controller;
+use App\Infrastructure\Services\ApiResponseService;
+use App\Presentation\DTOs\V1\AuthUserDTO as UserDTO;
+use App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException;
 use App\Presentation\Http\Requests\V1\LoginRequest;
 use App\Presentation\Http\Requests\V1\LogoutRequest;
 use App\Presentation\Http\Requests\V1\RefreshTokenRequest;
-use App\Application\Auth\Services\JwtAuthService;
-use App\Presentation\DTOs\V1\AuthUserDTO as UserDTO;
-use App\Infrastructure\Services\ApiResponseService;
-use App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException;
-use App\Application\Auth\UseCases\V1\LoginUser;
 
 /**
  * Controller: AuthController
@@ -24,6 +25,7 @@ use App\Application\Auth\UseCases\V1\LoginUser;
 class AuthController extends Controller
 {
     protected JwtAuthService $jwtService;
+
     protected ApiResponseService $apiResponse;
 
     public function __construct(JwtAuthService $jwtService, ApiResponseService $apiResponse)
@@ -39,9 +41,8 @@ class AuthController extends Controller
      * LoginUser use case, and responds with token details, user data,
      * roles, and permissions. Returns an error if credentials are invalid.
      *
-     * @param LoginRequest $request   Validated login request containing 'email' and 'password'.
-     * @param LoginUser    $loginUser Use case handling the login process.
-     *
+     * @param  LoginRequest  $request  Validated login request containing 'email' and 'password'.
+     * @param  LoginUser  $loginUser  Use case handling the login process.
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(LoginRequest $request, LoginUser $loginUser)
@@ -80,13 +81,13 @@ class AuthController extends Controller
      *
      * Invalidates the current JWT token and clears the user session.
      *
-     * @param LogoutRequest $request Validated logout request.
-     *
+     * @param  LogoutRequest  $request  Validated logout request.
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout(LogoutRequest $request)
     {
         $this->jwtService->logout();
+
         return $this->apiResponse->success([], 'Logout successful');
     }
 
@@ -95,8 +96,7 @@ class AuthController extends Controller
      *
      * Issues a new token and returns updated user, roles, and permissions.
      *
-     * @param RefreshTokenRequest $request Validated refresh token request.
-     *
+     * @param  RefreshTokenRequest  $request  Validated refresh token request.
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh(RefreshTokenRequest $request)

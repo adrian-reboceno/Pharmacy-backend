@@ -1,5 +1,6 @@
 <?php
-# src/Application/User/UseCases/V1/UpdateUser.php
+
+// src/Application/User/UseCases/V1/UpdateUser.php
 
 namespace App\Application\User\UseCases\V1;
 
@@ -31,8 +32,7 @@ final class UpdateUser
      */
     public function __construct(
         private readonly UserRepositoryInterface $repository
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the user update process.
@@ -45,18 +45,16 @@ final class UpdateUser
      *     change using domain Value Objects.
      *  4. Persist the updated User via the repository.
      *
-     * @param UpdateUserDTO $dto
-     *        DTO containing the user ID and the fields to update.
-     *
+     * @param  UpdateUserDTO  $dto
+     *                              DTO containing the user ID and the fields to update.
      * @return User
-     *         Updated User entity.
+     *              Updated User entity.
      *
      * @throws NotFoundException
-     *         When no user with the given ID exists.
-     *
+     *                           When no user with the given ID exists.
      * @throws InvalidUserValueException
-     *         When any provided value (name, email, password, roles)
-     *         violates domain rules enforced by the value objects.
+     *                                   When any provided value (name, email, password, roles)
+     *                                   violates domain rules enforced by the value objects.
      *
      * @example
      *
@@ -69,7 +67,6 @@ final class UpdateUser
      * );
      *
      * $user = $updateUser->execute($dto);
-     * 
      */
     public function execute(UpdateUserDTO $dto): User
     {

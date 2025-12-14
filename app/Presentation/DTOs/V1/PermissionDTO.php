@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/DTOs/V1/PermissionDTO.php
+
+// app/Presentation/DTOs/V1/PermissionDTO.php
 
 namespace App\Presentation\DTOs\V1;
 
@@ -19,31 +20,21 @@ class PermissionDTO
 {
     /**
      * Permission unique identifier.
-     *
-     * @var int
      */
     public int $id;
 
     /**
      * Permission name.
-     *
-     * @var string
      */
     public string $name;
 
     /**
      * Guard name associated with the permission (e.g., 'api', 'web').
-     *
-     * @var string
      */
     public string $guard_name;
 
     /**
      * PermissionDTO constructor.
-     *
-     * @param int    $id
-     * @param string $name
-     * @param string $guard_name
      */
     public function __construct(int $id, string $name, string $guard_name)
     {
@@ -54,9 +45,6 @@ class PermissionDTO
 
     /**
      * Create a PermissionDTO instance from a Permission model.
-     *
-     * @param Permission $permission
-     * @return self
      */
     public static function fromModel(Permission $permission): self
     {
@@ -75,8 +63,8 @@ class PermissionDTO
     public function toArray(): array
     {
         return [
-            'id'         => $this->id,
-            'name'       => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'guard_name' => $this->guard_name,
         ];
     }

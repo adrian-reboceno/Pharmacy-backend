@@ -1,5 +1,6 @@
 <?php
-# app/Infrastructure/User/Repositories/UserRepository.php
+
+// app/Infrastructure/User/Repositories/UserRepository.php
 
 namespace App\Infrastructure\User\Repositories;
 
@@ -80,8 +81,8 @@ final class UserRepository implements UserRepositoryInterface
 
         // If the user already exists, try to load it; otherwise create a new model.
         $model = $id !== null
-            ? EloquentUser::find($id) ?? new EloquentUser()
-            : new EloquentUser();
+            ? EloquentUser::find($id) ?? new EloquentUser
+            : new EloquentUser;
 
         // Map Domain -> Eloquent
         $model = UserMapper::toEloquent($user, $model);

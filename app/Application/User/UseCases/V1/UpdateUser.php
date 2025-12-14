@@ -1,11 +1,12 @@
 <?php
-# app/Application/User/UseCases/V1/UpdateUser.php
+
+// app/Application/User/UseCases/V1/UpdateUser.php
 
 namespace App\Application\User\UseCases\V1;
 
 use App\Application\User\DTOs\V1\UpdateUserDTO;
-use App\Domain\User\Repositories\UserRepositoryInterface;
 use App\Domain\User\Entities\User;
+use App\Domain\User\Repositories\UserRepositoryInterface;
 use Illuminate\Http\Response;
 
 /**
@@ -14,7 +15,7 @@ use Illuminate\Http\Response;
  * ──────────────────────────────────────────────────────────────
  *
  * @purpose
- * Handles the update process of an existing User entity.  
+ * Handles the update process of an existing User entity.
  * This use case is responsible for orchestrating user data updates
  * based on validated input from the DTO layer and delegating persistence
  * to the domain repository.
@@ -23,27 +24,27 @@ use Illuminate\Http\Response;
  * the target user exists before applying any modifications.
  *
  * ──────────────────────────────────────────────────────────────
+ *
  * @layer Application
+ *
  * @pattern Command Use Case (DDD)
+ *
  * @version 1.0
+ *
  * @author AFLR
- * @package App\Application\User\UseCases\V1
- * ──────────────────────────────────────────────────────────────
  */
 final class UpdateUser
 {
     /**
      * Repository abstraction for persisting and retrieving User entities.
-     *
-     * @var UserRepositoryInterface
      */
     private readonly UserRepositoryInterface $repository;
 
     /**
      * Constructor.
      *
-     * @param UserRepositoryInterface $repository
-     *        Repository responsible for updating user domain entities.
+     * @param  UserRepositoryInterface  $repository
+     *                                               Repository responsible for updating user domain entities.
      */
     public function __construct(UserRepositoryInterface $repository)
     {
@@ -58,29 +59,27 @@ final class UpdateUser
      * the `UpdateUserDTO`. If the user cannot be found, a runtime
      * exception is thrown.
      *
-     * @param int $id
-     *        The unique identifier of the user to update.
-     *
-     * @param UpdateUserDTO $dto
-     *        A Data Transfer Object containing the updated user data.
-     *
+     * @param  int  $id
+     *                   The unique identifier of the user to update.
+     * @param  UpdateUserDTO  $dto
+     *                              A Data Transfer Object containing the updated user data.
      * @return User
-     *         Returns the updated domain User entity.
+     *              Returns the updated domain User entity.
      *
      * @throws \RuntimeException
-     *         Thrown when no user with the given ID exists.
+     *                           Thrown when no user with the given ID exists.
      *
      * @example
      * ```php
      * $useCase = new UpdateUser($userRepository);
-     * 
+     *
      * $dto = new UpdateUserDTO(
      *     name: 'John Doe',
      *     email: 'john.doe@example.com',
      *     password: 'new_secure_password',
      *     roles: ['admin']
      * );
-     * 
+     *
      * try {
      *     $updatedUser = $useCase->handle(42, $dto);
      *     echo "User updated: " . $updatedUser->name()->value();
@@ -103,7 +102,7 @@ final class UpdateUser
         $user = $this->repository->find($id);
 
         // Validate that the user exists
-        if (!$user) {
+        if (! $user) {
             throw new \RuntimeException(
                 "User with ID {$id} not found.",
                 Response::HTTP_NOT_FOUND // 404

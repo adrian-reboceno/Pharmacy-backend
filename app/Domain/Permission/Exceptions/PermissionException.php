@@ -2,10 +2,9 @@
 
 namespace App\Domain\Permission\Exceptions;
 
-
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Http\JsonResponse;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
+
 class PermissionException extends Exception
 {
     public function __construct(string $message, int $code)

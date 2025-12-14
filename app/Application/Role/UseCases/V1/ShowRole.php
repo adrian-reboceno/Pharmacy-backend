@@ -1,5 +1,6 @@
 <?php
-# app/Application/Role/UseCases/V1/ShowRole.php
+
+// app/Application/Role/UseCases/V1/ShowRole.php
 
 namespace App\Application\Role\UseCases\V1;
 
@@ -37,15 +38,13 @@ class ShowRole
 {
     /**
      * Role repository for domain persistence operations.
-     *
-     * @var RoleRepositoryInterface
      */
     protected RoleRepositoryInterface $repo;
 
     /**
      * Constructor.
      *
-     * @param RoleRepositoryInterface $repo Repository handling role persistence.
+     * @param  RoleRepositoryInterface  $repo  Repository handling role persistence.
      */
     public function __construct(RoleRepositoryInterface $repo)
     {
@@ -55,11 +54,10 @@ class ShowRole
     /**
      * Executes the retrieval of a role by its unique identifier.
      *
-     * @param int $id Unique identifier of the role to retrieve.
+     * @param  int  $id  Unique identifier of the role to retrieve.
+     * @return RoleDTO Data Transfer Object representing the requested role.
      *
      * @throws \RuntimeException If no role with the given ID exists.
-     *
-     * @return RoleDTO Data Transfer Object representing the requested role.
      */
     public function handle(int $id): RoleDTO
     {
@@ -67,7 +65,7 @@ class ShowRole
         $role = $this->repo->find($id);
 
         // Throw an exception if the role does not exist
-        if (!$role) {
+        if (! $role) {
             throw new \RuntimeException(
                 "The role with ID {$id} does not exist. Please verify.",
                 Response::HTTP_NOT_FOUND // 404

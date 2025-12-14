@@ -1,5 +1,6 @@
 <?php
-# app/Presentation/Http/Requests/V1/RefreshTokenRequest.php
+
+// app/Presentation/Http/Requests/V1/RefreshTokenRequest.php
 
 namespace App\Presentation\Http\Requests\V1;
 
@@ -17,8 +18,6 @@ use Illuminate\Foundation\Http\FormRequest;
  *
  * Optionally, you may include a `refresh_token` field in the validation
  * rules if your application requires it explicitly.
- *
- * @package App\Presentation\Http\Requests\V1
  */
 class RefreshTokenRequest extends FormRequest
 {
@@ -26,8 +25,6 @@ class RefreshTokenRequest extends FormRequest
      * Determine if the user is authorized to make this request.
      *
      * By default, any authenticated user can refresh their token.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {

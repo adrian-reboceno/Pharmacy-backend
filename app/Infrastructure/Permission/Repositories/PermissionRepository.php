@@ -1,11 +1,12 @@
 <?php
-# app/Infrastructure/Permission/Repositories/PermissionRepository.php
+
+// app/Infrastructure/Permission/Repositories/PermissionRepository.php
 
 namespace App\Infrastructure\Permission\Repositories;
 
 use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Permission\Models\Permission;
 
 /**
  * Eloquent implementation of the PermissionRepositoryInterface.
@@ -36,7 +37,7 @@ class PermissionRepository implements PermissionRepositoryInterface
     /**
      * Finds a permission by its unique identifier.
      *
-     * @param int $id Unique identifier of the permission.
+     * @param  int  $id  Unique identifier of the permission.
      * @return Permission|null Permission instance if found, null otherwise.
      */
     public function find(int $id): ?object
@@ -47,7 +48,7 @@ class PermissionRepository implements PermissionRepositoryInterface
     /**
      * Creates a new permission.
      *
-     * @param array $data Associative array containing permission attributes.
+     * @param  array  $data  Associative array containing permission attributes.
      * @return Permission The newly created permission instance.
      */
     public function create(array $data): object
@@ -58,26 +59,28 @@ class PermissionRepository implements PermissionRepositoryInterface
     /**
      * Updates an existing permission by its ID.
      *
-     * @param int   $id   Unique identifier of the permission to update.
-     * @param array $data Associative array of updated permission attributes.
+     * @param  int  $id  Unique identifier of the permission to update.
+     * @param  array  $data  Associative array of updated permission attributes.
      * @return Permission The updated permission instance.
      */
     public function update(int $id, array $data): object
     {
         $permission = $this->find($id);
         $permission->update($data);
+
         return $permission;
     }
 
     /**
      * Deletes a permission by its unique identifier.
      *
-     * @param int $id Unique identifier of the permission to delete.
+     * @param  int  $id  Unique identifier of the permission to delete.
      * @return bool True if the permission was successfully deleted, false otherwise.
      */
     public function delete(int $id): bool
     {
         $permission = $this->find($id);
+
         return $permission ? $permission->delete() : false;
     }
 
@@ -86,16 +89,16 @@ class PermissionRepository implements PermissionRepositoryInterface
      *
      * Typically used in the **CreatePermission** use case to prevent duplicates.
      *
-     * @param string $name       Permission name to check.
-     * @param string $guard_name Guard name associated with the permission.
+     * @param  string  $name  Permission name to check.
+     * @param  string  $guard_name  Guard name associated with the permission.
      * @return bool True if a permission with the same name and guard exists, false otherwise.
      */
     public function exists(string $name, string $guard_name): bool
     {
         return $this->query()
-                    ->where('name', $name)
-                    ->where('guard_name', $guard_name)
-                    ->exists();
+            ->where('name', $name)
+            ->where('guard_name', $guard_name)
+            ->exists();
     }
 
     /**
@@ -105,17 +108,17 @@ class PermissionRepository implements PermissionRepositoryInterface
      * Typically used in the **UpdatePermission** use case to ensure uniqueness
      * without conflicting with the current permission being updated.
      *
-     * @param string $name       Permission name to check.
-     * @param string $guard_name Guard name associated with the permission.
-     * @param int    $exceptId   Permission ID to exclude from the check.
+     * @param  string  $name  Permission name to check.
+     * @param  string  $guard_name  Guard name associated with the permission.
+     * @param  int  $exceptId  Permission ID to exclude from the check.
      * @return bool True if another permission with the same name and guard exists, false otherwise.
      */
     public function existsExceptId(string $name, string $guard_name, int $exceptId): bool
     {
         return $this->query()
-                    ->where('name', $name)
-                    ->where('guard_name', $guard_name)
-                    ->where('id', '!=', $exceptId)
-                    ->exists();
+            ->where('name', $name)
+            ->where('guard_name', $guard_name)
+            ->where('id', '!=', $exceptId)
+            ->exists();
     }
 }

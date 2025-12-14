@@ -3,7 +3,7 @@
 
 namespace App\Presentation\DTOs\V1\User;
 
-use Illuminate\Support\Collection;
+use App\Domain\User\Entities\User as DomainUser;
 
 /**
  * UserResourceCollectionDTO
@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
  * where pagination is not required.
  *
  * Responsibilities:
- *  - Transform a Laravel Collection of users into an array suitable for API responses.
+ *  - Transform a collection of Domain User entities into an array suitable for API responses.
  *  - Include the total count of users in the response.
  *  - Delegate individual user transformation to UserResponseDTO.
  */
@@ -23,21 +23,27 @@ final class UserResourceCollectionDTO
     /**
      * Convert a collection of users to a structured response array.
      *
-     * This method:
-     *  1. Maps each user in the collection using UserResponseDTO.
-     *  2. Returns the transformed data along with the total count.
+     * @param iterable<DomainUser> $users A collection/array of domain User entities.
      *
-     * @param Collection $users A collection of user models or domain entities.
      * @return array{
-     *     data: array,   // Transformed list of users
-     *     count: int     // Total number of users in the collection
+     *     data: array<int, array<string, mixed>>, // Transformed list of users
+     *     count: int                              // Total number of users in the collection
      * }
      */
-    public static function fromCollection(Collection $users): array
+    public static function fromUsers(iterable $users): array
     {
+        $data  = [];
+        $count = 0;
+
+        foreach ($users as $user) {
+            /** @var DomainUser $user */
+            $data[] = UserResponseDTO::fromEntity($user)->toArray();
+            $count++;
+        }
+
         return [
-            'data' => UserResponseDTO::collection($users),
-            'count' => $users->count(),
+            'data'  => $data,
+            'count' => $count,
         ];
     }
 }

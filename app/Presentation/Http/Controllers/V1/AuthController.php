@@ -52,7 +52,7 @@ class AuthController extends Controller
 
             return $this->apiResponse->success($data, 'Login successful');
         } catch (InvalidCredentialsException $e) {
-            return $this->apiResponse->error($e->getMessage(), [], 401);
+            return $this->apiResponse->error($e->getMessage(), 401);
         }
     }
 

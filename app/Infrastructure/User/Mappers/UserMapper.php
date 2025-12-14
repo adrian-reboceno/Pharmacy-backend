@@ -4,13 +4,12 @@
 namespace App\Infrastructure\User\Mappers;
 
 use App\Domain\User\Entities\User as DomainUser;
+use App\Domain\User\ValueObjects\UserEmail;
 use App\Domain\User\ValueObjects\UserId;
 use App\Domain\User\ValueObjects\UserName;
-use App\Domain\User\ValueObjects\UserEmail;
 use App\Domain\User\ValueObjects\UserPassword;
 use App\Domain\User\ValueObjects\UserRoles;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Model;
+use App\Infrastructure\User\Models\User as EloquentUser;
 
 /**
  * UserMapper
@@ -19,54 +18,48 @@ use Illuminate\Database\Eloquent\Model;
  * Domain User entities. This class acts as a bridge between
  * the infrastructure layer (database/Eloquent) and the
  * domain layer (pure business entities).
- *
- * Mapping ensures that domain invariants are preserved
- * and that the Domain layer remains decoupled from
- * any framework-specific implementations.
  */
 final class UserMapper
 {
     /**
      * Convert an Eloquent User model to a Domain User entity.
      *
-     * This method wraps all attributes of the Eloquent model into
-     * their corresponding Value Objects defined in the Domain layer.
-     *
-     * @param Model $model The Eloquent User model instance.
-     * @return DomainUser The corresponding Domain User entity.
+     * @param EloquentUser $model The Eloquent User model instance.
      */
-    public static function toDomain(Model $model): DomainUser
+    public static function toDomain(EloquentUser $model): DomainUser
     {
         return new DomainUser(
-            new UserId($model->id),
-            new UserName($model->name),
-            new UserEmail($model->email),
-            new UserPassword($model->password),
-            new UserRoles($model->roles->pluck('name')->toArray())
+            id: new UserId($model->id),
+            name: new UserName($model->name),
+            email: new UserEmail($model->email),
+            // Password in DB is already hashed
+            password: UserPassword::fromHash($model->password),
+            // Using Spatie's getRoleNames()
+            roles: new UserRoles($model->getRoleNames()->toArray())
         );
     }
 
     /**
-     * Convert a LengthAwarePaginator of Eloquent Users
-     * into a LengthAwarePaginator of Domain User entities.
+     * Convert a Domain User entity to an Eloquent User model.
      *
-     * This allows paginated results from the database to be
-     * seamlessly transformed into domain objects while
-     * preserving pagination metadata.
-     *
-     * @param LengthAwarePaginator $paginator Eloquent paginator.
-     * @return LengthAwarePaginator Domain paginator with User entities.
+     * If an existing model instance is provided, it will be updated;
+     * otherwise, a new model will be created.
      */
-    public static function toDomainPaginator(LengthAwarePaginator $paginator): LengthAwarePaginator
+    public static function toEloquent(DomainUser $user, ?EloquentUser $model = null): EloquentUser
     {
-        $items = $paginator->getCollection()->map(fn($model) => self::toDomain($model));
+        $model ??= new EloquentUser();
 
-        return new LengthAwarePaginator(
-            $items,
-            $paginator->total(),
-            $paginator->perPage(),
-            $paginator->currentPage(),
-            ['path' => $paginator->path()]
-        );
+        $data = $user->toArray();
+
+        // Only set the ID if present in the domain entity
+        if ($data['id'] !== null) {
+            $model->id = $data['id'];
+        }
+
+        $model->name     = $data['name'];
+        $model->email    = $data['email'];
+        $model->password = $data['password']; // already hashed
+
+        return $model;
     }
 }

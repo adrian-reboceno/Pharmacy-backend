@@ -5,179 +5,103 @@ namespace App\Infrastructure\User\Repositories;
 
 use App\Domain\User\Entities\User as DomainUser;
 use App\Domain\User\Repositories\UserRepositoryInterface;
-//use App\Infrastructure\User\Models\User;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
+use App\Domain\User\ValueObjects\UserEmail;
+use App\Domain\User\ValueObjects\UserId;
 use App\Infrastructure\User\Mappers\UserMapper;
+use App\Infrastructure\User\Models\User as EloquentUser;
 
 /**
  * Eloquent implementation of UserRepositoryInterface.
  *
  * This repository bridges the Domain layer and Eloquent ORM,
- * mapping database models to domain entities.
+ * mapping database models to domain entities using UserMapper.
  */
-class UserRepository implements UserRepositoryInterface
+final class UserRepository implements UserRepositoryInterface
 {
     /**
-     * Find a User by email.
-     *
-     * @param string $email
-     * @return DomainUser|null
+     * Find a User by its unique identifier.
      */
-    public function findByEmail(string $email): ?DomainUser
+    public function findById(UserId $id): ?DomainUser
     {
-        $model = User::where('email', $email)->first();
+        $model = EloquentUser::find($id->value());
 
-        return $model ? $this->mapToDomain($model) : null;
-    }
-
-    /**
-     * Get all roles of a User.
-     *
-     * @param DomainUser $user
-     * @return string[]
-     */
-    public function getUserRoles(DomainUser $user): array
-    {
-        $model = User::find($user->id()->value());
-        return $model ? $model->roles()->pluck('name')->toArray() : [];
-    }
-
-    /**
-     * Get all permissions of a User.
-     *
-     * @param DomainUser $user
-     * @return string[]
-     */
-    public function getUserPermissions(DomainUser $user): array
-    {
-        $model = User::find($user->id()->value());
-        return $model ? $model->getAllPermissions()->pluck('name')->toArray() : [];
-    }
-
-    /**
-     * Return an Eloquent query builder.
-     *
-     * @return Builder
-     */
-    public function query(): Builder
-    {
-        return User::query();
-    }
-
-    /**
-     * Find a User by ID.
-     *
-     * @param int $id
-     * @return DomainUser|null
-     */
-    public function find(int $id): ?DomainUser
-    {
-        $model = User::with('roles')->find($id);
         return $model ? UserMapper::toDomain($model) : null;
     }
-    public function all(): Collection
-    {
-        return UserMapper::toDomainCollection(User::with('roles')->get());
-    }
 
-    public function paginate(int $perPage = 15): LengthAwarePaginator
+    /**
+     * Find a User by email.
+     */
+    public function findByEmail(UserEmail $email): ?DomainUser
     {
-        return UserMapper::toDomainPaginator(User::with('roles')->paginate($perPage));
+        $model = EloquentUser::where('email', $email->value())->first();
+
+        return $model ? UserMapper::toDomain($model) : null;
     }
 
     /**
-     * Create a new User.
+     * Paginate Users.
      *
-     * @param array $data
-     * @return DomainUser
+     * @return DomainUser[]
      */
-    public function create(array $data): DomainUser
+    public function paginate(int $page, int $perPage): array
     {
-        if (isset($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
-        }
+        $paginator = EloquentUser::query()
+            ->orderBy('id', 'asc')
+            ->paginate(
+                perPage: $perPage,
+                page: $page
+            );
 
-        $model = User::create($data);
+        $items = $paginator->items();
 
-        if (!empty($data['roles'])) {
-            $model->syncRoles($data['roles']);
-        }
-
-        return $this->mapToDomain($model);
-    }
-
-    /**
-     * Update a User entity.
-     *
-     * @param DomainUser $user
-     * @param array $data
-     * @return DomainUser
-     */
-    public function update(DomainUser $user, array $data): DomainUser
-    {
-        $model = User::find($user->id()->value());
-
-        if (!$model) {
-            throw new \RuntimeException('User not found.');
-        }
-
-        if (isset($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
-        }
-
-        $model->update($data);
-
-        if (isset($data['roles'])) {
-            $model->syncRoles($data['roles']);
-        }
-
-        return $this->mapToDomain($model);
-    }
-
-    /**
-     * Update a User by ID.
-     */
-    public function updateById(int $id, array $data): DomainUser
-    {
-        $user = $this->find($id);
-        if (!$user) throw new \RuntimeException('User not found.');
-        return $this->update($user, $data);
-    }
-
-    /**
-     * Delete a User entity.
-     */
-    public function delete(DomainUser $user): bool
-    {
-        $model = User::find($user->id()->value());
-        return $model ? $model->delete() : false;
-    }
-
-    /**
-     * Delete a User by ID.
-     */
-    public function deleteById(int $id): bool
-    {
-        $user = $this->find($id);
-        return $user ? $this->delete($user) : false;
-    }
-
-    /**
-     * Map Eloquent model to Domain User entity.
-     *
-     * @param User $model
-     * @return DomainUser
-     */
-    private function mapToDomain(User $model): DomainUser
-    {
-        return new DomainUser(
-            new \App\Domain\User\ValueObjects\UserId($model->id),
-            new \App\Domain\User\ValueObjects\UserName($model->name),
-            new \App\Domain\User\ValueObjects\UserEmail($model->email),
-            new \App\Domain\User\ValueObjects\UserPassword($model->password, true),
-            new \App\Domain\User\ValueObjects\UserRoles($model->roles()->pluck('name')->toArray())
+        return array_map(
+            static fn (EloquentUser $model): DomainUser => UserMapper::toDomain($model),
+            $items
         );
+    }
+
+    /**
+     * Get the total number of Users.
+     */
+    public function count(): int
+    {
+        return EloquentUser::count();
+    }
+
+    /**
+     * Persist a User entity.
+     *
+     * Creates a new user or updates an existing one, depending
+     * on whether the entity has an identifier.
+     */
+    public function save(DomainUser $user): DomainUser
+    {
+        $id = $user->id()?->value();
+
+        // If the user already exists, try to load it; otherwise create a new model.
+        $model = $id !== null
+            ? EloquentUser::find($id) ?? new EloquentUser()
+            : new EloquentUser();
+
+        // Map Domain -> Eloquent
+        $model = UserMapper::toEloquent($user, $model);
+        $model->save();
+
+        // Sync roles using Spatie (if any)
+        $roles = $user->roles()->names();
+        if (! empty($roles)) {
+            $model->syncRoles($roles);
+        }
+
+        // Return fresh Domain entity
+        return UserMapper::toDomain($model);
+    }
+
+    /**
+     * Delete a User by its identifier.
+     */
+    public function delete(UserId $id): void
+    {
+        EloquentUser::whereKey($id->value())->delete();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+
 use App\Domain\Auth\Repositories\AuthRepositoryInterface;
 use App\Infrastructure\Auth\Repositories\AuthUserRepository;
 
@@ -23,8 +24,6 @@ class AppServiceProvider extends ServiceProvider
      * This method binds interfaces to their concrete implementations,
      * ensuring that the Dependency Injection Container can resolve 
      * the appropriate classes throughout the application.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -37,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         // Bind Role repository
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
 
-        // Bind domain interfaces to infrastructure implementations
+        // Bind User repository
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 
@@ -46,8 +45,6 @@ class AppServiceProvider extends ServiceProvider
      *
      * This method is called after all services have been registered.
      * It can be used to configure or initialize services as needed.
-     *
-     * @return void
      */
     public function boot(): void
     {

@@ -3,39 +3,38 @@
 
 namespace App\Presentation\DTOs\V1\User;
 
-use Illuminate\Pagination\LengthAwarePaginator;
-use App\Infrastructure\User\Mappers\UserMapper;
+use App\Domain\User\Entities\User as DomainUser;
+use App\Shared\Application\Pagination\PaginatedResult;
 
 /**
  * UserListResponseDTO
  *
  * Data Transfer Object (DTO) for returning a paginated list of users
- * in the presentation layer. This class transforms paginated Eloquent
- * results into a structured format suitable for API responses, including
- * both user data and pagination metadata.
+ * in the presentation layer. This class transforms a paginated result
+ * of Domain User entities into a structured format suitable for API
+ * responses, including both user data and pagination metadata.
  *
  * Responsibilities:
- *  - Map each Eloquent User model to a Domain User entity.
  *  - Convert Domain User entities to UserResponseDTOs.
  *  - Provide pagination metadata in a structured array.
  */
 final class UserListResponseDTO
 {
     /**
-     * @var array The list of users as an array of UserResponseDTOs.
+     * @var array<int, array<string, mixed>> The list of users as array payloads.
      */
     public array $data;
 
     /**
-     * @var array Pagination metadata (current page, per page, total, last page).
+     * @var array<string, int> Pagination metadata (current page, per page, total, last page).
      */
     public array $meta;
 
     /**
      * Constructor: Initialize the DTO with user data and pagination metadata.
      *
-     * @param array $data List of users.
-     * @param array $meta Pagination metadata.
+     * @param array<int, array<string, mixed>> $data
+     * @param array<string, int>               $meta
      */
     public function __construct(array $data, array $meta)
     {
@@ -44,27 +43,24 @@ final class UserListResponseDTO
     }
 
     /**
-     * Transform a paginated Eloquent collection into a UserListResponseDTO.
+     * Build a UserListResponseDTO from a PaginatedResult of Domain User entities.
      *
-     * This method:
-     *  1. Maps each Eloquent User model to a Domain User entity using UserMapper.
-     *  2. Converts each Domain User entity to a UserResponseDTO.
-     *  3. Extracts pagination metadata for API response.
-     *
-     * @param LengthAwarePaginator $paginator Paginated Eloquent users.
-     * @return self DTO containing user data and pagination metadata.
+     * @param PaginatedResult<DomainUser> $paginatedResult
      */
-    public static function fromPaginator(LengthAwarePaginator $paginator): self
+    public static function fromPaginatedResult(PaginatedResult $paginatedResult): self
     {
-        $data = $paginator->getCollection()
-            ->map(fn($model) => UserResponseDTO::fromEntity(UserMapper::toDomain($model))->toArray())
-            ->toArray();
+        $items = $paginatedResult->items();
+
+        $data = array_map(
+            static fn (DomainUser $user): array => UserResponseDTO::fromEntity($user)->toArray(),
+            $items
+        );
 
         $meta = [
-            'current_page' => $paginator->currentPage(),
-            'per_page' => $paginator->perPage(),
-            'total' => $paginator->total(),
-            'last_page' => $paginator->lastPage(),
+            'current_page' => $paginatedResult->page(),
+            'per_page'     => $paginatedResult->perPage(),
+            'total'        => $paginatedResult->total(),
+            'last_page'    => $paginatedResult->lastPage(),
         ];
 
         return new self($data, $meta);
@@ -74,8 +70,8 @@ final class UserListResponseDTO
      * Convert the DTO to an array suitable for JSON responses.
      *
      * @return array{
-     *     data: array,
-     *     meta: array
+     *     data: array<int, array<string, mixed>>,
+     *     meta: array<string, int>
      * }
      */
     public function toArray(): array

@@ -1,5 +1,6 @@
 <?php
 # App/Infrastructure/Services/ApiResponseService.php
+
 namespace App\Infrastructure\Services;
 
 use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
@@ -8,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Throwable;
 
 /**
  * Service: ApiResponseService
@@ -20,12 +22,6 @@ class ApiResponseService
 {
     /**
      * Transform input data into an array suitable for JSON response.
-     *
-     * Handles Eloquent models, collections, paginators, and generic arrays/objects.
-     *
-     * @param mixed $data Input data (model, collection, paginator, or array).
-     *
-     * @return array Transformed data as array.
      */
     protected function transformData(mixed $data): array
     {
@@ -49,15 +45,6 @@ class ApiResponseService
 
     /**
      * Return a standardized success JSON response.
-     *
-     * If the data is paginated, pagination metadata is included.
-     *
-     * @param mixed  $data    The response data (default: empty array).
-     * @param string $message Response message (default: 'Success').
-     * @param int    $code    HTTP status code (default: 200 OK).
-     * @param array  $headers Optional HTTP headers.
-     *
-     * @return JsonResponse Standardized success response.
      */
     public function success(
         mixed $data = [],
@@ -87,35 +74,45 @@ class ApiResponseService
     }
 
     /**
-     * Return a standardized error JSON response from a Throwable.
+     * Return a standardized error JSON response.
      *
-     * Determines HTTP status code based on exception type, including
-     * ModelNotFoundException and RuntimeException.
-     *
-     * @param \Throwable $e The exception or error that occurred.
-     *
-     * @return JsonResponse Standardized error response.
+     * Accepts either a Throwable or a string message.
      */
-    public function error(\Throwable $e): JsonResponse
+    public function error(Throwable|string $e, int $code = Response::HTTP_INTERNAL_SERVER_ERROR): JsonResponse
     {
-        $code = Response::HTTP_INTERNAL_SERVER_ERROR;
-        $message = 'Internal error';
+        // Default values
+        $message = 'Internal server error';
+        $errors = [];
 
-        if ($e instanceof ModelNotFoundException) {
-            $code = Response::HTTP_NOT_FOUND;
-            $message = $e->getMessage() ?: 'Resource not found';
-        } elseif ($e instanceof \RuntimeException) {
-            $code = $e->getCode() === 409 ? Response::HTTP_CONFLICT : $code;
-            $code = $e->getCode() === 204 ? Response::HTTP_NO_CONTENT : $code;
-            $code = $e->getCode() === 404 ? Response::HTTP_NOT_FOUND : $code;
-            $message = $e->getMessage();
+        // Handle Throwable
+        if ($e instanceof Throwable) {
+            if ($e instanceof ModelNotFoundException) {
+                $code = Response::HTTP_NOT_FOUND;
+                $message = $e->getMessage() ?: 'Resource not found';
+            } elseif ($e instanceof \RuntimeException && $e->getCode()) {
+                $code = $e->getCode();
+                $message = $e->getMessage();
+            } else {
+                $message = $e->getMessage() ?: $message;
+            }
+
+            if (config('app.debug')) {
+                $errors = [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTrace(),
+                ];
+            }
+        } else {
+            // Handle plain string
+            $message = $e;
         }
 
         return response()->json([
             'status'      => 'error',
-            'http_status' => Response::$statusTexts[$code] ?? 'unknown',
+            'http_status' => Response::$statusTexts[$code] ?? 'Unknown',
             'message'     => $message,
-            'errors'      => [],
+            'errors'      => $errors,
         ], $code);
     }
 }

@@ -20,62 +20,81 @@ use App\Domain\User\Entities\User as DomainUser;
 final class UserResponseDTO
 {
     /**
-     * @var int The unique identifier of the user.
+     * The unique identifier of the user.
+     *
+     * Using string to support both numeric IDs and UUIDs.
      */
-    public int $id;
+    public string $id;
 
     /**
-     * @var string The user's full name.
+     * The user's full name.
      */
     public string $name;
 
     /**
-     * @var string The user's email address.
+     * The user's email address.
      */
     public string $email;
 
     /**
-     * @var array List of role names assigned to the user.
+     * List of role names assigned to the user.
+     *
+     * @var string[]
      */
     public array $roles;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param int $id
-     * @param string $name
-     * @param string $email
-     * @param array $roles
+     * @param string   $id    User identifier
+     * @param string   $name  User full name
+     * @param string   $email User email address
+     * @param string[] $roles List of role names
      */
-    public function __construct(int $id, string $name, string $email, array $roles)
+    public function __construct(string $id, string $name, string $email, array $roles)
     {
-        $this->id = $id;
-        $this->name = $name;
+        $this->id    = $id;
+        $this->name  = $name;
         $this->email = $email;
         $this->roles = $roles;
     }
 
     /**
      * Create a UserResponseDTO from a domain User entity.
-     *
-     * @param DomainUser $user
-     * @return self
      */
     public static function fromEntity(DomainUser $user): self
     {
         return new self(
-            $user->id()->value(),
-            $user->name()->value(),
-            $user->email()->value(),
-            $user->roles()->names()
+            id: (string) $user->id()->value(),
+            name: $user->name()->value(),
+            email: $user->email()->value(),
+            roles: $user->roles()->names()
         );
+    }
+ 
+    /**
+     * Optional helper: build an array of DTO payloads from a list of domain users.
+     *
+     * @param iterable<DomainUser> $users
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function collection(iterable $users): array
+    {
+        $data = [];
+
+        foreach ($users as $user) {
+            $data[] = self::fromEntity($user)->toArray();
+        }
+
+        return $data;
     }
 
     /**
      * Convert the DTO to an array suitable for JSON responses.
      *
      * @return array{
-     *     id: int,
+     *     id: string,
      *     name: string,
      *     email: string,
      *     roles: string[]
@@ -84,8 +103,8 @@ final class UserResponseDTO
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'name' => $this->name,
+            'id'    => $this->id,
+            'name'  => $this->name,
             'email' => $this->email,
             'roles' => $this->roles,
         ];

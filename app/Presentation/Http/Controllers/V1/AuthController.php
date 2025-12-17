@@ -4,85 +4,57 @@
 
 namespace App\Presentation\Http\Controllers\V1;
 
-use App\Application\Auth\Services\JwtAuthService;
+use App\Application\Auth\DTOs\V1\LoginUserDTO;
 use App\Application\Auth\UseCases\V1\LoginUser;
+use App\Application\Auth\Services\JwtAuthService;
+use App\Domain\Auth\Exceptions\InvalidCredentialsException;
 use App\Http\Controllers\Controller;
+use App\Infrastructure\Auth\Services\AuthResponseService;
 use App\Infrastructure\Services\ApiResponseService;
-use App\Presentation\DTOs\V1\AuthUserDTO as UserDTO;
-use App\Presentation\Exceptions\V1\Auth\InvalidCredentialsException;
 use App\Presentation\Http\Requests\V1\LoginRequest;
 use App\Presentation\Http\Requests\V1\LogoutRequest;
 use App\Presentation\Http\Requests\V1\RefreshTokenRequest;
 
-/**
- * Controller: AuthController
- *
- * Handles user authentication operations including login, retrieving
- * authenticated user info, logout, and refreshing JWT tokens.
- * Delegates authentication logic to the JwtAuthService and LoginUser use case,
- * and formats responses through ApiResponseService.
- */
 class AuthController extends Controller
 {
-    protected JwtAuthService $jwtService;
-
-    protected ApiResponseService $apiResponse;
-
-    public function __construct(JwtAuthService $jwtService, ApiResponseService $apiResponse)
-    {
-        $this->jwtService = $jwtService;
-        $this->apiResponse = $apiResponse;
-    }
+    public function __construct(
+        private readonly JwtAuthService $jwtService,
+        private readonly ApiResponseService $apiResponse,
+        private readonly AuthResponseService $authResponse,
+    ) {}
 
     /**
-     * Authenticate a user and return a JWT token.
-     *
-     * Accepts email and password credentials, validates them through the
-     * LoginUser use case, and responds with token details, user data,
-     * roles, and permissions. Returns an error if credentials are invalid.
-     *
-     * @param  LoginRequest  $request  Validated login request containing 'email' and 'password'.
-     * @param  LoginUser  $loginUser  Use case handling the login process.
-     * @return \Illuminate\Http\JsonResponse
+     * POST /api/v1/auth/login
      */
     public function login(LoginRequest $request, LoginUser $loginUser)
     {
         try {
-            $credentials = $request->only(['email', 'password']);
-            $data = $loginUser->execute($credentials);
+            $dto    = LoginUserDTO::fromArray($request->validated());
+            $result = $loginUser->execute($dto); // LoginResultDTO
 
-            return $this->apiResponse->success($data, 'Login successful');
+            $payload = $this->authResponse->buildLoginPayload($result);
+
+            return $this->apiResponse->success($payload, 'Login successful');
         } catch (InvalidCredentialsException $e) {
             return $this->apiResponse->error($e->getMessage(), 401);
         }
     }
 
     /**
-     * Retrieve the currently authenticated user information.
-     *
-     * Returns user data as a DTO, along with roles and permissions.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * GET /api/v1/auth/me
      */
     public function me()
     {
-        $user = $this->jwtService->user();
-        $userDTO = UserDTO::fromEntity($user);
+        // JwtAuthService debe devolver App\Domain\User\Entities\User
+        $domainUser = $this->jwtService->user();
 
-        return $this->apiResponse->success([
-            'user' => $userDTO->toArray(),
-            'roles' => $user->role ? [$user->role] : [],
-            'permissions' => $user->permissions,
-        ], 'Authenticated user');
+        $payload = $this->authResponse->buildUserProfilePayload($domainUser);
+
+        return $this->apiResponse->success($payload, 'Authenticated user');
     }
 
     /**
-     * Log out the authenticated user.
-     *
-     * Invalidates the current JWT token and clears the user session.
-     *
-     * @param  LogoutRequest  $request  Validated logout request.
-     * @return \Illuminate\Http\JsonResponse
+     * POST /api/v1/auth/logout
      */
     public function logout(LogoutRequest $request)
     {
@@ -92,19 +64,30 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh the JWT token for the authenticated user.
-     *
-     * Issues a new token and returns updated user, roles, and permissions.
-     *
-     * @param  RefreshTokenRequest  $request  Validated refresh token request.
-     * @return \Illuminate\Http\JsonResponse
+     * POST /api/v1/auth/refresh
      */
     public function refresh(RefreshTokenRequest $request)
     {
+        // Que JwtAuthService::refreshToken devuelva:
+        // [
+        //   'user'         => DomainUser,
+        //   'access_token' => '...',
+        //   'token_type'   => 'bearer',
+        //   'expires_in'   => 3600,
+        // ]
         $data = $this->jwtService->refreshToken();
-        $userDTO = UserDTO::fromEntity($data['user']);
-        $data['user'] = $userDTO->toArray();
 
-        return $this->apiResponse->success($data, 'Token refreshed');
+        $profile = $this->authResponse->buildUserProfilePayload($data['user']);
+
+        $response = [
+            'access_token' => $data['access_token'],
+            'token_type'   => $data['token_type'],
+            'expires_in'   => $data['expires_in'],
+            'user'         => $profile['user'],
+            'roles'        => $profile['roles'],
+            'permissions'  => $profile['permissions'],
+        ];
+
+        return $this->apiResponse->success($response, 'Token refreshed');
     }
 }

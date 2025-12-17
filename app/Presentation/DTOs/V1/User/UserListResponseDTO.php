@@ -1,6 +1,5 @@
 <?php
-
-// app/Presentation/DTOs/V1/User/UserListResponseDTO.php
+# app/Presentation/DTOs/V1/User/UserListResponseDTO.php
 
 namespace App\Presentation\DTOs\V1\User;
 
@@ -10,33 +9,13 @@ use App\Shared\Application\Pagination\PaginatedResult;
 /**
  * UserListResponseDTO
  *
- * Data Transfer Object (DTO) for returning a paginated list of users
- * in the presentation layer. This class transforms a paginated result
- * of Domain User entities into a structured format suitable for API
- * responses, including both user data and pagination metadata.
- *
- * Responsibilities:
- *  - Convert Domain User entities to UserResponseDTOs.
- *  - Provide pagination metadata in a structured array.
+ * DTO para devolver una lista paginada de usuarios en la capa de presentación.
  */
 final class UserListResponseDTO
 {
-    /**
-     * @var array<int, array<string, mixed>> The list of users as array payloads.
-     */
     public array $data;
-
-    /**
-     * @var array<string, int> Pagination metadata (current page, per page, total, last page).
-     */
     public array $meta;
 
-    /**
-     * Constructor: Initialize the DTO with user data and pagination metadata.
-     *
-     * @param  array<int, array<string, mixed>>  $data
-     * @param  array<string, int>  $meta
-     */
     public function __construct(array $data, array $meta)
     {
         $this->data = $data;
@@ -44,36 +23,32 @@ final class UserListResponseDTO
     }
 
     /**
-     * Build a UserListResponseDTO from a PaginatedResult of Domain User entities.
-     *
-     * @param  PaginatedResult<DomainUser>  $paginatedResult
+     * Construye el DTO a partir de un PaginatedResult<DomainUser>.
      */
-    public static function fromPaginatedResult(PaginatedResult $paginatedResult): self
+    public static function fromPaginatedResult(PaginatedResult $result): self
     {
-        $items = $paginatedResult->items();
+        // 1) Obtener items (DomainUser[]) usando los getters de PaginatedResult
+        $items = $result->items();   // <— OJO: método, no propiedad
 
+        // 2) Mapear DomainUser → UserResponseDTO → array
         $data = array_map(
-            static fn (DomainUser $user): array => UserResponseDTO::fromEntity($user)->toArray(),
+            static fn (DomainUser $user) => UserResponseDTO::fromEntity($user)->toArray(),
             $items
         );
 
+        // 3) Meta usando los getters
         $meta = [
-            'current_page' => $paginatedResult->page(),
-            'per_page' => $paginatedResult->perPage(),
-            'total' => $paginatedResult->total(),
-            'last_page' => $paginatedResult->lastPage(),
+            'current_page' => $result->page(),
+            'per_page'     => $result->perPage(),
+            'total'        => $result->total(),
+            'last_page'    => $result->lastPage(),
         ];
 
         return new self($data, $meta);
     }
 
     /**
-     * Convert the DTO to an array suitable for JSON responses.
-     *
-     * @return array{
-     *     data: array<int, array<string, mixed>>,
-     *     meta: array<string, int>
-     * }
+     * @return array{data: array, meta: array}
      */
     public function toArray(): array
     {

@@ -4,6 +4,7 @@ namespace App\Presentation\Http\Controllers\V1;
 
 use App\Application\Permission\DTOs\V1\CreatePermissionDTO;
 use App\Application\Permission\DTOs\V1\UpdatePermissionDTO;
+use App\Application\Permission\DTOs\V1\ListPermissionsDTO;
 use App\Application\Permission\UseCases\V1\CreatePermission;
 use App\Application\Permission\UseCases\V1\DeletePermission;
 use App\Application\Permission\UseCases\V1\ListPermissions;
@@ -11,56 +12,27 @@ use App\Application\Permission\UseCases\V1\ShowPermission;
 use App\Application\Permission\UseCases\V1\UpdatePermission;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Services\ApiResponseService;
+use App\Presentation\DTOs\V1\Permission\PermissionResponseDTO;
+use App\Presentation\DTOs\V1\Permission\PermissionListResponseDTO;
 use App\Presentation\Http\Requests\V1\Permission\PermissionIndexRequest;
 use App\Presentation\Http\Requests\V1\Permission\PermissionStoreRequest;
 use App\Presentation\Http\Requests\V1\Permission\PermissionUpdateRequest;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controllers\Middleware;
 
-/**
- * Controller responsible for handling HTTP requests related to Permissions.
- *
- * This controller receives incoming API requests and delegates business logic
- * to the corresponding Use Cases.
- *
- * Principles applied:
- * - **SRP (Single Responsibility Principle):** Only handles HTTP request/response for permissions.
- * - **DIP (Dependency Inversion Principle):** Depends on abstractions (Use Cases) rather than concrete implementations.
- *
- * Common routes handled:
- * - GET /permissions             -> index
- * - GET /permissions/{id}        -> show
- * - POST /permissions            -> store
- * - PUT/PATCH /permissions/{id}  -> update
- * - DELETE /permissions/{id}     -> destroy
- */
 class PermissionController extends Controller
 {
-    /**
-     * Constructor.
-     *
-     * Injects the required Use Cases and the API response service.
-     *
-     * @param  ApiResponseService  $api  Service for standardized API responses
-     * @param  ListPermissions  $list  Use Case to list permissions
-     * @param  ShowPermission  $show  Use Case to retrieve a single permission
-     * @param  CreatePermission  $create  Use Case to create a permission
-     * @param  UpdatePermission  $update  Use Case to update a permission
-     * @param  DeletePermission  $delete  Use Case to delete a permission
-     */
     public function __construct(
         protected ApiResponseService $api,
-        protected ListPermissions $list,
-        protected ShowPermission $show,
-        protected CreatePermission $create,
-        protected UpdatePermission $update,
-        protected DeletePermission $delete
+        private readonly ListPermissions $list,
+        private readonly ShowPermission $show,
+        private readonly CreatePermission $create,
+        private readonly UpdatePermission $update,
+        private readonly DeletePermission $delete,
     ) {}
 
     /**
      * Define route authorization middleware.
-     *
-     * @return array Array of middleware definitions
      */
     public static function middleware(): array
     {
@@ -73,36 +45,42 @@ class PermissionController extends Controller
         ];
     }
 
-    /**
-     * List all permissions with optional pagination.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // ─────────────────────────────────────────────
+    // GET /api/v1/permissions
+    // ─────────────────────────────────────────────
     public function index(PermissionIndexRequest $request)
     {
-        $perPage = (int) $request->query('per_page', 10);
-        $paginator = $this->list->handle($perPage);
+        // 1) Construir DTO de aplicación (page, per_page, filtros, etc.)
+        $dto = ListPermissionsDTO::fromArray($request->validated());
 
+        // 2) Ejecutar caso de uso (devuelve PaginatedResult<Permission>)
+        $result = $this->list->execute($dto);
+
+        // 3) Mapear a DTO de presentación
+        $responseDto = PermissionListResponseDTO::fromPaginatedResult($result);
+
+        // 4) Responder
         return $this->api->success(
-            $paginator,
-            message: 'Permissions list retrieved successfully'
+            $responseDto->toArray(),
+            'Permissions list retrieved successfully'
         );
     }
 
-    /**
-     * Retrieve a single permission by its ID.
-     *
-     * @param  int  $id  Permission ID
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // ─────────────────────────────────────────────
+    // GET /api/v1/permissions/{id}
+    // ─────────────────────────────────────────────
     public function show(int $id)
     {
         try {
-            $permission = $this->show->handle($id);
+            // 1) el caso de uso devuelve Domain\Permission\Entities\Permission
+            $permission = $this->show->execute($id);
+
+            // 2) lo mapeas a DTO de respuesta
+            $responseDto = PermissionResponseDTO::fromEntity($permission);
 
             return $this->api->success(
-                $permission,
-                'Permission retrieved successfully',
+                $responseDto->toArray(),
+                'Permission found successfully',
                 Response::HTTP_OK
             );
         } catch (\Throwable $e) {
@@ -110,19 +88,17 @@ class PermissionController extends Controller
         }
     }
 
-    /**
-     * Create a new permission.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // ─────────────────────────────────────────────
+    // POST /api/v1/permissions
+    // ─────────────────────────────────────────────
     public function store(PermissionStoreRequest $request)
     {
         try {
-            $dto = new CreatePermissionDTO($request->validated());
-            $permission = $this->create->handle($dto);
+            $dto        = CreatePermissionDTO::fromArray($request->validated());
+            $permission = $this->create->execute($dto);
 
             return $this->api->success(
-                $permission,
+                PermissionResponseDTO::fromEntity($permission)->toArray(),
                 'Permission created successfully',
                 Response::HTTP_CREATED
             );
@@ -131,43 +107,40 @@ class PermissionController extends Controller
         }
     }
 
-    /**
-     * Update an existing permission by ID.
-     *
-     * @param  int  $id  Permission ID
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // ─────────────────────────────────────────────
+    // PUT /api/v1/permissions/{id}
+    // ─────────────────────────────────────────────
     public function update(PermissionUpdateRequest $request, int $id)
     {
         try {
-            $dto = new UpdatePermissionDTO($request->validated());
-            $permission = $this->update->handle($id, $dto);
+            // si tu UpdatePermissionDTO no lleva id, se lo inyectamos
+            $data = array_merge($request->validated(), ['id' => $id]);
+            $dto  = UpdatePermissionDTO::fromArray($data);
+
+            $permission = $this->update->execute( $dto);
 
             return $this->api->success(
-                $permission,
-                message: 'Permission updated successfully',
-                code: Response::HTTP_OK
+                PermissionResponseDTO::fromEntity($permission)->toArray(),
+                'Permission updated successfully',
+                Response::HTTP_OK
             );
         } catch (\Throwable $e) {
             return $this->api->error($e);
         }
     }
 
-    /**
-     * Delete a permission by ID.
-     *
-     * @param  int  $id  Permission ID
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // ─────────────────────────────────────────────
+    // DELETE /api/v1/permissions/{id}
+    // ─────────────────────────────────────────────
     public function destroy(int $id)
     {
         try {
-            $this->delete->handle($id);
+            $this->delete->execute($id);
 
             return $this->api->success(
-                data: [],
-                message: 'Permission deleted successfully',
-                code: Response::HTTP_OK
+                [],
+                'Permission deleted successfully',
+                Response::HTTP_OK
             );
         } catch (\Throwable $e) {
             return $this->api->error($e);

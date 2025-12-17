@@ -1,60 +1,33 @@
 <?php
-
-// src/Application/User/DTOs/V1/ListUsersDTO.php
+# src/Application/User/DTOs/V1/ListUsersDTO.php
 
 namespace App\Application\User\DTOs\V1;
 
 /**
  * Data Transfer Object: ListUsersDTO
  *
- * Represents the input parameters used to list Users,
- * typically for pagination.
+ * Representa los parámetros de paginación para listar usuarios
+ * en la capa de Aplicación.
  */
 final class ListUsersDTO
 {
-    /**
-     * @param  int  $page  Current page number (1-based).
-     * @param  int  $perPage  Number of items per page.
-     */
     public function __construct(
         public readonly int $page = 1,
-        public readonly int $perPage = 20
-    ) {}
-
-    /**
-     * Create a new DTO instance from an associative array.
-     *
-     * @param  array<string,mixed>  $data
-     */
-    public static function fromArray(array $data): self
-    {
-        $page = isset($data['page']) ? (int) $data['page'] : 1;
-        $perPage = isset($data['per_page']) ? (int) $data['per_page'] : 20;
-
-        if ($page < 1) {
-            $page = 1;
-        }
-
-        if ($perPage < 1) {
-            $perPage = 20;
-        }
-
-        return new self(
-            page: $page,
-            perPage: $perPage
-        );
+        public readonly int $perPage = 15,
+    ) {
     }
 
     /**
-     * Convert the DTO into a plain array representation.
+     * Crea el DTO a partir de un array (por ejemplo, request->validated()).
      *
-     * @return array<string,int>
+     * @param  array  $data
+     * @return self
      */
-    public function toArray(): array
+    public static function fromArray(array $data): self
     {
-        return [
-            'page' => $this->page,
-            'per_page' => $this->perPage,
-        ];
+        return new self(
+            page: (int)($data['page'] ?? 1),
+            perPage: (int)($data['per_page'] ?? 15),
+        );
     }
 }

@@ -1,124 +1,97 @@
 <?php
 
-// app/Infrastructure/Permission/Repositories/PermissionRepository.php
-
 namespace App\Infrastructure\Permission\Repositories;
 
+use App\Domain\Permission\Entities\Permission as DomainPermission;
 use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\Permission\Models\Permission;
+use App\Domain\Permission\ValueObjects\PermissionId;
+use App\Domain\Permission\ValueObjects\PermissionName;
+use App\Domain\Permission\ValueObjects\PermissionGuardName;
+use App\Infrastructure\Permission\Models\Permission; // Eloquent (Spatie)
 
-/**
- * Eloquent implementation of the PermissionRepositoryInterface.
- *
- * This repository provides persistence operations for permissions using
- * the Spatie\Permission `Permission` model. It bridges the domain layer
- * with the infrastructure layer, ensuring that higher-level modules
- * depend only on abstractions.
- *
- * Applied principles:
- * - **SRP (Single Responsibility Principle):** Responsible only for permission persistence operations.
- * - **DIP (Dependency Inversion Principle):** Implements the domain-defined interface
- *   (`PermissionRepositoryInterface`), allowing the application layer to remain decoupled
- *   from the underlying database implementation.
- */
 class PermissionRepository implements PermissionRepositoryInterface
 {
     /**
-     * Returns a query builder for permissions.
-     *
-     * @return Builder Query builder instance for permissions.
+     * Buscar un permiso por ID (Value Object).
      */
-    public function query(): Builder
+    public function findById(PermissionId $id): ?DomainPermission
     {
-        return Permission::query();
+        $model = Permission::find($id->value());
+
+        return $model ? $this->toDomain($model) : null;
     }
 
     /**
-     * Finds a permission by its unique identifier.
-     *
-     * @param  int  $id  Unique identifier of the permission.
-     * @return Permission|null Permission instance if found, null otherwise.
+     * Buscar un permiso por nombre (Value Object).
      */
-    public function find(int $id): ?object
+    public function findByName(PermissionName $name): ?DomainPermission
     {
-        return Permission::find($id);
+        $model = Permission::where('name', $name->value())->first();
+
+        return $model ? $this->toDomain($model) : null;
     }
 
     /**
-     * Creates a new permission.
+     * Paginación simple que devuelve un array de DomainPermission.
      *
-     * @param  array  $data  Associative array containing permission attributes.
-     * @return Permission The newly created permission instance.
+     * @return DomainPermission[]
      */
-    public function create(array $data): object
+    public function paginate(int $page, int $perPage): array
     {
-        return Permission::create($data);
+        $paginator = Permission::orderBy('id', 'asc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return array_map(
+            fn ($model) => $this->toDomain($model),
+            $paginator->items()
+        );
     }
 
     /**
-     * Updates an existing permission by its ID.
-     *
-     * @param  int  $id  Unique identifier of the permission to update.
-     * @param  array  $data  Associative array of updated permission attributes.
-     * @return Permission The updated permission instance.
+     * Total de permisos.
      */
-    public function update(int $id, array $data): object
+    public function count(): int
     {
-        $permission = $this->find($id);
-        $permission->update($data);
-
-        return $permission;
+        return Permission::count();
     }
 
     /**
-     * Deletes a permission by its unique identifier.
-     *
-     * @param  int  $id  Unique identifier of the permission to delete.
-     * @return bool True if the permission was successfully deleted, false otherwise.
+     * Guardar un permiso de dominio (crear o actualizar).
      */
-    public function delete(int $id): bool
+    public function save(DomainPermission $permission): DomainPermission
     {
-        $permission = $this->find($id);
+        $id = $permission->id()?->value(); // si tu VO permite null
 
-        return $permission ? $permission->delete() : false;
+        if ($id !== null) {
+            $model = Permission::find($id) ?? new Permission();
+        } else {
+            $model = new Permission();
+        }
+
+        $model->name       = $permission->name()->value();
+        $model->guard_name = $permission->guardName()->value();
+        $model->save();
+
+        return $this->toDomain($model);
     }
 
     /**
-     * Checks if a permission with the given name and guard already exists.
-     *
-     * Typically used in the **CreatePermission** use case to prevent duplicates.
-     *
-     * @param  string  $name  Permission name to check.
-     * @param  string  $guard_name  Guard name associated with the permission.
-     * @return bool True if a permission with the same name and guard exists, false otherwise.
+     * Eliminar un permiso por ID.
      */
-    public function exists(string $name, string $guard_name): bool
+    public function delete(PermissionId $id): void
     {
-        return $this->query()
-            ->where('name', $name)
-            ->where('guard_name', $guard_name)
-            ->exists();
+        Permission::where('id', $id->value())->delete();
     }
 
     /**
-     * Checks if a permission with the given name and guard already exists,
-     * excluding a specific permission ID.
-     *
-     * Typically used in the **UpdatePermission** use case to ensure uniqueness
-     * without conflicting with the current permission being updated.
-     *
-     * @param  string  $name  Permission name to check.
-     * @param  string  $guard_name  Guard name associated with the permission.
-     * @param  int  $exceptId  Permission ID to exclude from the check.
-     * @return bool True if another permission with the same name and guard exists, false otherwise.
+     * Mapper Eloquent → Dominio.
      */
-    public function existsExceptId(string $name, string $guard_name, int $exceptId): bool
+    private function toDomain(Permission $model): DomainPermission
     {
-        return $this->query()
-            ->where('name', $name)
-            ->where('guard_name', $guard_name)
-            ->where('id', '!=', $exceptId)
-            ->exists();
+        return new DomainPermission(
+            new PermissionId($model->id),
+            new PermissionName($model->name),
+            new PermissionGuardName($model->guard_name)
+        );
     }
 }

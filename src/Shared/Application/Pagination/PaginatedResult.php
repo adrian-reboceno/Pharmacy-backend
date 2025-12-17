@@ -1,40 +1,71 @@
 <?php
-
-// src/Shared/Application/Pagination/PaginatedResult.php
+# src/Shared/Application/Pagination/PaginatedResult.php
 
 namespace App\Shared\Application\Pagination;
 
 /**
- * Value Object: PaginatedResult
- *
- * Represents a generic paginated result set for the Application layer.
+ * Generic pagination result for Application layer.
  *
  * @template T
  */
 final class PaginatedResult
 {
     /**
-     * @param  array<int,T>  $items
+     * @var array<int, mixed> Lista de items (por ejemplo, Domain Users)
      */
-    public function __construct(
-        public readonly array $items,
-        public readonly int $total,
-        public readonly int $page,
-        public readonly int $perPage
-    ) {}
+    private array $items;
 
     /**
-     * Convert to a plain array representation.
-     *
-     * @return array<string,mixed>
+     * @var int Total de registros en la fuente de datos.
      */
-    public function toArray(): array
+    private int $total;
+
+    /**
+     * @var int Página actual (1-based).
+     */
+    private int $page;
+
+    /**
+     * @var int Registros por página.
+     */
+    private int $perPage;
+
+    /**
+     * @param array<int, mixed> $items
+     */
+    public function __construct(array $items, int $total, int $page, int $perPage)
     {
-        return [
-            'items' => $this->items,
-            'total' => $this->total,
-            'page' => $this->page,
-            'per_page' => $this->perPage,
-        ];
+        $this->items   = $items;
+        $this->total   = $total;
+        $this->page    = $page;
+        $this->perPage = $perPage;
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    public function items(): array
+    {
+        return $this->items;
+    }
+
+    public function total(): int
+    {
+        return $this->total;
+    }
+
+    public function page(): int
+    {
+        return $this->page;
+    }
+
+    public function perPage(): int
+    {
+        return $this->perPage;
+    }
+
+    public function lastPage(): int
+    {
+        return (int) ceil($this->total / max($this->perPage, 1));
     }
 }

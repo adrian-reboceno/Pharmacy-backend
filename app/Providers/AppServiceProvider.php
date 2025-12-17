@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-use App\Domain\Auth\Repositories\AuthRepositoryInterface;
+
 use App\Domain\Permission\Repositories\PermissionRepositoryInterface;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
 use App\Domain\User\Repositories\UserRepositoryInterface;
@@ -20,12 +20,14 @@ use App\Infrastructure\User\Repositories\UserRepository;
 use App\Infrastructure\Auth\Services\JwtTokenManager;              // 👈 ya lo tenías
 use App\Infrastructure\Auth\Services\HttpJwtCurrentTokenProvider; // 👈 NUEVO
 
+
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         // Auth repository
-        $this->app->bind(AuthRepositoryInterface::class, AuthUserRepository::class);
+        //$this->app->bind(AuthRepositoryInterface::class, AuthUserRepository::class);
 
         // Permission repository
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);

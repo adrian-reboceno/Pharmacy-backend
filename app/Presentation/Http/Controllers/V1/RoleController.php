@@ -2,46 +2,35 @@
 
 namespace App\Presentation\Http\Controllers\V1;
 
+use App\Application\Role\DTOs\V1\ListRolesDTO;
 use App\Application\Role\DTOs\V1\CreateRoleDTO;
 use App\Application\Role\DTOs\V1\UpdateRoleDTO;
-use App\Application\Role\UseCases\V1\CreateRole;
-use App\Application\Role\UseCases\V1\DeleteRole;
 use App\Application\Role\UseCases\V1\ListRoles;
 use App\Application\Role\UseCases\V1\ShowRole;
+use App\Application\Role\UseCases\V1\CreateRole;
 use App\Application\Role\UseCases\V1\UpdateRole;
+use App\Application\Role\UseCases\V1\DeleteRole;
 use App\Http\Controllers\Controller;
 use App\Infrastructure\Services\ApiResponseService;
+use App\Presentation\DTOs\V1\Role\RoleResponseDTO;
+use App\Presentation\DTOs\V1\Role\RoleListResponseDTO;
 use App\Presentation\Http\Requests\V1\Role\RoleIndexRequest;
 use App\Presentation\Http\Requests\V1\Role\RoleStoreRequest;
 use App\Presentation\Http\Requests\V1\Role\RoleUpdateRequest;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controllers\Middleware;
 
-/**
- * Class RoleController
- *
- * Controller responsible for managing Roles via the API.
- * Provides endpoints for listing, viewing, creating, updating, and deleting roles.
- * Each action is delegated to its corresponding Use Case, keeping business logic
- * separated from the presentation layer.
- */
 class RoleController extends Controller
 {
-    /**
-     * Inject dependencies (Use Cases and API Response service).
-     */
     public function __construct(
+        private readonly ListRoles $list,
+        private readonly ShowRole $show,
+        private readonly CreateRole $create,
+        private readonly UpdateRole $update,
+        private readonly DeleteRole $delete,
         protected ApiResponseService $api,
-        protected ListRoles $list,
-        protected ShowRole $show,
-        protected CreateRole $create,
-        protected UpdateRole $update,
-        protected DeleteRole $delete
     ) {}
 
-    /**
-     * Define middleware permissions for each controller method.
-     */
     public static function middleware(): array
     {
         return [
@@ -53,44 +42,27 @@ class RoleController extends Controller
         ];
     }
 
-    /**
-     * GET /roles
-     *
-     * Retrieve a paginated list of roles.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     *
-     * Example usage:
-     * GET /api/v1/roles?per_page=15
-     */
+    // GET /api/v1/roles
     public function index(RoleIndexRequest $request)
     {
-        $perPage = (int) $request->query('per_page', 10);
-        $paginator = $this->list->handle($perPage);
+        $dto     = ListRolesDTO::fromArray($request->validated());
+        $result  = $this->list->execute($dto);
+        $payload = RoleListResponseDTO::fromPaginatedResult($result)->toArray();
 
         return $this->api->success(
-            $paginator,
-            message: 'Roles list retrieved successfully'
+            $payload,
+            'Role list retrieved successfully'
         );
     }
 
-    /**
-     * GET /roles/{id}
-     *
-     * Retrieve a single role by its ID.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     *
-     * Example usage:
-     * GET /api/v1/roles/5
-     */
+    // GET /api/v1/roles/{id}
     public function show(int $id)
     {
         try {
-            $role = $this->show->handle($id);
+            $role = $this->show->execute($id);
 
             return $this->api->success(
-                $role,
+                RoleResponseDTO::fromEntity($role)->toArray(),
                 'Role found successfully',
                 Response::HTTP_OK
             );
@@ -99,28 +71,15 @@ class RoleController extends Controller
         }
     }
 
-    /**
-     * POST /roles
-     *
-     * Create a new role from request data.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     *
-     * Example payload:
-     * {
-     *   "name": "Manager",
-     *   "guard_name": "api",
-     *   "permissions": [1,2,3]
-     * }
-     */
+    // POST /api/v1/roles
     public function store(RoleStoreRequest $request)
     {
         try {
-            $dto = new CreateRoleDTO($request->all());
-            $role = $this->create->handle($dto);
+            $dto  = CreateRoleDTO::fromArray($request->validated());
+            $role = $this->create->execute($dto);
 
             return $this->api->success(
-                $role,
+                RoleResponseDTO::fromEntity($role)->toArray(),
                 'Role created successfully',
                 Response::HTTP_CREATED
             );
@@ -129,55 +88,35 @@ class RoleController extends Controller
         }
     }
 
-    /**
-     * PUT/PATCH /roles/{id}
-     *
-     * Update an existing role by ID.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     *
-     * Example payload:
-     * {
-     *   "name": "Administrator",
-     *   "guard_name": "api",
-     *   "permissions": [1,2,3]
-     * }
-     */
+    // PUT /api/v1/roles/{id}
     public function update(RoleUpdateRequest $request, int $id)
     {
         try {
-            $dto = new UpdateRoleDTO($request->all());
-            $role = $this->update->handle($id, $dto);
+            $data = array_merge($request->validated(), ['id' => $id]);
+            $dto  = UpdateRoleDTO::fromArray($data);
+
+            $role = $this->update->execute($dto);
 
             return $this->api->success(
-                $role,
-                message: 'Role updated successfully',
-                code: Response::HTTP_OK
+                RoleResponseDTO::fromEntity($role)->toArray(),
+                'Role updated successfully',
+                Response::HTTP_OK
             );
         } catch (\Throwable $e) {
             return $this->api->error($e);
         }
     }
 
-    /**
-     * DELETE /roles/{id}
-     *
-     * Delete a role by ID.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     *
-     * Example usage:
-     * DELETE /api/v1/roles/4
-     */
+    // DELETE /api/v1/roles/{id}
     public function destroy(int $id)
     {
         try {
-            $this->delete->handle($id);
+            $this->delete->execute($id);
 
             return $this->api->success(
-                data: [],
-                message: 'Role deleted successfully',
-                code: Response::HTTP_OK
+                [],
+                'Role deleted successfully',
+                Response::HTTP_OK
             );
         } catch (\Throwable $e) {
             return $this->api->error($e);

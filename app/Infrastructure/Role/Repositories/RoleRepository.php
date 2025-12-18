@@ -1,169 +1,91 @@
 <?php
-
-// app/Infrastructure/Role/Repositories/RoleRepository.php
+# app/Infrastructure/Role/Repositories/RoleRepository.php
 
 namespace App\Infrastructure\Role\Repositories;
 
+use App\Domain\Role\Entities\Role as DomainRole;
 use App\Domain\Role\Repositories\RoleRepositoryInterface;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use App\Domain\Role\ValueObjects\RoleId;
+use App\Domain\Role\ValueObjects\RoleName;
+use App\Infrastructure\Role\Models\Role as EloquentRole;
+use App\Infrastructure\Role\Mappers\RoleMapper;
+use Illuminate\Support\Collection;
 
-/**
- * Eloquent implementation of the RoleRepositoryInterface.
- *
- * This repository provides persistence operations for roles using
- * the Spatie\Permission `Role` model. It acts as the bridge between
- * the domain layer and the database (infrastructure layer), ensuring
- * that higher-level modules depend only on abstractions.
- *
- * Applied principles:
- * - **SRP (Single Responsibility Principle):** Handles only persistence operations for roles.
- * - **DIP (Dependency Inversion Principle):** Implements the domain-defined
- *   `RoleRepositoryInterface`, allowing the application and domain layers
- *   to remain decoupled from the database.
- */
 class RoleRepository implements RoleRepositoryInterface
 {
     /**
-     * Get a query builder for roles.
-     *
-     * @return Builder Query builder instance for roles.
+     * Buscar rol por ID.
      */
-    public function query(): Builder
+    public function findById(RoleId $id): ?DomainRole
     {
-        return Role::query();
+        $model = EloquentRole::with('permissions')->find($id->value());
+
+        return $model ? RoleMapper::toDomain($model) : null;
     }
 
     /**
-     * Find a role by its unique identifier.
-     *
-     * @param  int  $id  Role unique identifier.
-     * @return Role|null The Role instance if found, null otherwise.
+     * Buscar rol por nombre.
      */
-    public function find(int $id): ?object
+    public function findByName(RoleName $name): ?DomainRole
     {
-        return Role::find($id);
+        $model = EloquentRole::with('permissions')
+            ->where('name', $name->value())
+            ->first();
+
+        return $model ? RoleMapper::toDomain($model) : null;
     }
 
     /**
-     * Create a new role.
-     *
-     * Also synchronizes permissions if they are provided.
-     *
-     * @param  array  $data  Associative array containing role attributes:
-     *                       - name: string (required)
-     *                       - guard_name: string (optional, defaults to 'api')
-     *                       - permissions: array<string> (optional)
-     * @return Role The newly created role instance.
+     * Paginado de roles (Devuelve array<DomainRole>).
      */
-    public function create(array $data): object
+    public function paginate(int $page, int $perPage): array
     {
-        $role = Role::create($data);
+        $paginator = EloquentRole::with('permissions')
+            ->orderBy('id', 'asc')
+            ->paginate($perPage, ['*'], 'page', $page);
 
-        if (! empty($data['permissions'])) {
-            $role->syncPermissions($data['permissions']);
+        return RoleMapper::toDomainCollection($paginator->getCollection());
+    }
+
+    /**
+     * Conteo total de roles.
+     */
+    public function count(): int
+    {
+        return EloquentRole::count();
+    }
+
+    /**
+     * Guardar rol de dominio (crear o actualizar).
+     */
+    public function save(DomainRole $role): DomainRole
+    {
+        $id = $role->id()?->value(); // asumiendo Role::id() puede ser null en nuevos
+
+        if ($id) {
+            $model = EloquentRole::find($id) ?? new EloquentRole();
+        } else {
+            $model = new EloquentRole();
         }
 
-        return $role;
-    }
+        $model->name       = $role->name()->value();
+        $model->guard_name = $role->guardName()->value();
+        $model->save();
 
-    /**
-     * Update an existing role by its ID.
-     *
-     * ⚠️ This method **does not allow updating the role name**.
-     * It only updates allowed attributes such as guard_name
-     * and synchronizes permissions if provided.
-     *
-     * @param  int  $id  Role unique identifier.
-     * @param  array  $data  Associative array of role attributes to update:
-     *                       - guard_name: string (optional)
-     *                       - permissions: array<string> (optional)
-     * @return Role The updated role instance.
-     */
-    public function update(int $id, array $data): object
-    {
-        $role = $this->find($id);
-
-        if (! empty($data['permissions'])) {
-            $role->syncPermissions($data['permissions']);
+        // Si la entidad expone un array de permisos (strings)
+        if (method_exists($role, 'permissions')) {
+            $permissions = $role->permissions(); // array de nombres
+            $model->syncPermissions($permissions);
         }
 
-        return $role;
+        return RoleMapper::toDomain($model);
     }
 
     /**
-     * Delete a role by its unique identifier.
-     *
-     * @param  int  $id  Role unique identifier.
-     * @return bool True if the role was successfully deleted, false otherwise.
+     * Eliminar rol por ID.
      */
-    public function delete(int $id): bool
+    public function delete(RoleId $id): void
     {
-        $role = $this->find($id);
-
-        return $role ? $role->delete() : false;
-    }
-
-    /**
-     * Check if a role with the given name and guard already exists.
-     *
-     * Typically used in the **CreateRole** use case to prevent duplicates.
-     *
-     * @param  string  $name  Role name to check.
-     * @param  string  $guard_name  Guard name associated with the role.
-     * @return bool True if a role with the same name and guard exists, false otherwise.
-     */
-    public function exists(string $name, string $guard_name): bool
-    {
-        return $this->query()
-            ->where('name', $name)
-            ->where('guard_name', $guard_name)
-            ->exists();
-    }
-
-    /**
-     * Check if a role with the given name and guard already exists,
-     * excluding a specific role ID.
-     *
-     * Typically used in the **UpdateRole** use case to enforce uniqueness
-     * without conflicting with the role being updated.
-     *
-     * @param  string  $name  Role name to check.
-     * @param  string  $guard_name  Guard name associated with the role.
-     * @param  int  $exceptId  Role ID to exclude from the check.
-     * @return bool True if another role with the same name and guard exists, false otherwise.
-     */
-    public function existsExceptId(string $name, string $guard_name, int $exceptId): bool
-    {
-        return $this->query()
-            ->where('name', $name)
-            ->where('guard_name', $guard_name)
-            ->where('id', '!=', $exceptId)
-            ->exists();
-    }
-
-    /**
-     * Validate a list of permission names against the database.
-     *
-     * This method separates permissions into valid and invalid sets.
-     * It does not throw exceptions; the responsibility of handling invalid
-     * permissions belongs to the application use case (e.g., **UpdateRole**).
-     *
-     * @param  array<string>  $permissions  Array of permission names to validate.
-     * @return array{valid: array<string>, invalid: array<string>} Arrays containing valid and invalid permission names.
-     */
-    public function validatePermissions(array $permissions): array
-    {
-        $validPermissions = Permission::whereIn('name', $permissions)
-            ->pluck('name')
-            ->toArray();
-
-        $invalidPermissions = array_diff($permissions, $validPermissions);
-
-        return [
-            'valid' => $validPermissions,
-            'invalid' => $invalidPermissions,
-        ];
+        EloquentRole::where('id', $id->value())->delete();
     }
 }

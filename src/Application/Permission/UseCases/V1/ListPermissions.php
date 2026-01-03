@@ -26,7 +26,7 @@ final class ListPermissions
     public function execute(ListPermissionsDTO $dto): PaginatedResult
     {
         $items = $this->repository->paginate($dto->page, $dto->perPage, $dto->name);
-        $total = $this->repository->count();
+        $total = $this->repository->count( $dto->name );
 
         return new PaginatedResult(
             items:   $items,

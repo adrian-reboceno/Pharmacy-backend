@@ -36,10 +36,12 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     // ------------------------
     Route::middleware('permission:manager-permissions')->prefix('v1/permissions')->group(function () {
         Route::get('/', [PermissionController::class, 'index']);
+        Route::get('/search', [PermissionController::class, 'search']);
         Route::post('/', [PermissionController::class, 'store']);
         Route::get('{id}', [PermissionController::class, 'show']);
         Route::put('{id}', [PermissionController::class, 'update']);
         Route::delete('{id}', [PermissionController::class, 'destroy']);
+
     });
 
     // ------------------------

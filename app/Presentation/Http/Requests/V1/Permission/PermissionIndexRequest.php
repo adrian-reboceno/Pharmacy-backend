@@ -37,6 +37,7 @@ class PermissionIndexRequest extends FormRequest
         return [
             'per_page' => 'sometimes|integer|min:1',
             'page' => 'sometimes|integer|min:1',
+            'name'      => ['sometimes', 'string', 'min:1'], // 👈 filtro por nombre (LIKE)
         ];
     }
 

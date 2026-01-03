@@ -16,7 +16,7 @@ interface PermissionRepositoryInterface
     /**
      * @return Permission[]
      */
-    public function paginate(int $page, int $perPage): array;
+    public function paginate(int $page, int $perPage, ?string $name = null): array;
 
     public function count(): int;
 

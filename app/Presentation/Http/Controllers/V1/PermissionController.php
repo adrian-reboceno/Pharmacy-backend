@@ -66,12 +66,24 @@ class PermissionController extends Controller
         );
     }
 
+    public function search(PermissionIndexRequest $request)
+    {
+        $dto    = ListPermissionsDTO::fromArray($request->validated());
+        $result = $this->list->execute($dto);
+        $responseDto = PermissionListResponseDTO::fromPaginatedResult($result);
+
+        return $this->api->success(
+            $responseDto->toArray(),
+            'Permissions list retrieved successfully'
+        );
+    }
     // ─────────────────────────────────────────────
     // GET /api/v1/permissions/{id}
     // ─────────────────────────────────────────────
     public function show(int $id)
     {
         try {
+            $id = (int) $id;
             // 1) el caso de uso devuelve Domain\Permission\Entities\Permission
             $permission = $this->show->execute($id);
 

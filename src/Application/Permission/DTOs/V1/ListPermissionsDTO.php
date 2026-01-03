@@ -7,7 +7,8 @@ final class ListPermissionsDTO
 {
     public function __construct(
         public int $page,
-        public int $perPage
+        public int $perPage,
+        public readonly ?string $name = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -15,6 +16,7 @@ final class ListPermissionsDTO
         return new self(
             page:    (int) ($data['page'] ?? 1),
             perPage: (int) ($data['per_page'] ?? 10),
+            name: $data['name'] ?? null,
         );
     }
 }

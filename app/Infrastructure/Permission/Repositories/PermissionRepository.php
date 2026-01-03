@@ -38,9 +38,9 @@ class PermissionRepository implements PermissionRepositoryInterface
      *
      * @return DomainPermission[]
      */
-    public function paginate(int $page, int $perPage): array
+    public function paginate(int $page, int $perPage, ?string $name = null): array
     {
-        $paginator = Permission::query()
+        $paginator = Permission::where('name', 'LIKE', "%{$name}%")
             ->orderBy('id')
             ->paginate(
                 perPage: $perPage,
@@ -56,9 +56,9 @@ class PermissionRepository implements PermissionRepositoryInterface
     /**
      * Total de permisos.
      */
-    public function count(): int
+    public function count(?string $name = null): int
     {
-        return Permission::count();
+        return Permission::where('name', 'LIKE', "%{$name}%")->count();
     }
 
     /**

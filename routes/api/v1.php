@@ -7,6 +7,7 @@ use App\Presentation\Http\Controllers\V1\AuthController;
 use App\Presentation\Http\Controllers\V1\PermissionController;
 use App\Presentation\Http\Controllers\V1\RoleController;
 use App\Presentation\Http\Controllers\V1\UserController;
+use App\Presentation\Http\Controllers\V1\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 // use App\Http\Controllers\Api\V1\Role\RoleController;
@@ -65,6 +66,15 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         Route::put('{id}', [UserController::class, 'update']);
         Route::delete('{id}', [UserController::class, 'destroy']);
     });
+
+    Route::middleware('permission:manager-catalogs')->prefix('v1/category')->group(function () {
+        Route::get('/', [CategoryController::class, 'index']);
+        Route::post('/', [CategoryController::class, 'store']);
+        Route::get('{id}', [CategoryController::class, 'show']);
+        Route::put('{id}', [CategoryController::class, 'update']);
+        Route::delete('{id}', [CategoryController::class, 'destroy']);
+    });
+
     /* Route::middleware('permission:manager-roles')->prefix('roles')->group(function () {
          Route::get('/', [RoleController::class, 'index']);
          Route::post('/', [RoleController::class, 'store']);

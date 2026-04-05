@@ -21,6 +21,8 @@ use App\Infrastructure\Auth\Services\JwtTokenManager;              // 👈 ya lo
 use App\Infrastructure\Auth\Services\HttpJwtCurrentTokenProvider; // 👈 NUEVO
 use App\Domain\Category\Repositories\CategoryRepositoryInterface;
 use App\Infrastructure\Category\Repositories\CategoryRepository;
+use App\Domain\Laboratory\Repositories\LaboratoryRepositoryInterface;
+use App\Infrastructure\Laboratory\Repositories\LaboratoryRepository;
 
 
 
@@ -42,6 +44,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Category repository
         $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
+
+        // Laboratory repository
+        $this->app->bind(LaboratoryRepositoryInterface::class, LaboratoryRepository::class);
 
         // Token manager (Domain → Infrastructure)
         $this->app->bind(TokenManagerInterface::class, JwtTokenManager::class);

@@ -19,6 +19,8 @@ use App\Infrastructure\User\Repositories\UserRepository;
 
 use App\Infrastructure\Auth\Services\JwtTokenManager;              // 👈 ya lo tenías
 use App\Infrastructure\Auth\Services\HttpJwtCurrentTokenProvider; // 👈 NUEVO
+use App\Domain\Category\Repositories\CategoryRepositoryInterface;
+use App\Infrastructure\Category\Repositories\CategoryRepository;
 
 
 
@@ -37,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
 
         // User repository
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+
+        // Category repository
+        $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
 
         // Token manager (Domain → Infrastructure)
         $this->app->bind(TokenManagerInterface::class, JwtTokenManager::class);

@@ -23,6 +23,8 @@ use App\Domain\Category\Repositories\CategoryRepositoryInterface;
 use App\Infrastructure\Category\Repositories\CategoryRepository;
 use App\Domain\Laboratory\Repositories\LaboratoryRepositoryInterface;
 use App\Infrastructure\Laboratory\Repositories\LaboratoryRepository;
+use App\Domain\Presentation\Repositories\PresentationRepositoryInterface;
+use App\Infrastructure\Presentation\Repositories\PresentationRepository;
 
 
 
@@ -47,6 +49,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Laboratory repository
         $this->app->bind(LaboratoryRepositoryInterface::class, LaboratoryRepository::class);
+
+        // Presentation repository
+        $this->app->bind(PresentationRepositoryInterface::class, PresentationRepository::class);
 
         // Token manager (Domain → Infrastructure)
         $this->app->bind(TokenManagerInterface::class, JwtTokenManager::class);

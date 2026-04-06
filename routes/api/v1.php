@@ -9,6 +9,7 @@ use App\Presentation\Http\Controllers\V1\RoleController;
 use App\Presentation\Http\Controllers\V1\UserController;
 use App\Presentation\Http\Controllers\V1\CategoryController;
 use App\Presentation\Http\Controllers\V1\LaboratoryController;
+use App\Presentation\Http\Controllers\V1\PresentationController;
 use Illuminate\Support\Facades\Route;
 
 // use App\Http\Controllers\Api\V1\Role\RoleController;
@@ -82,6 +83,14 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         Route::get('{id}', [LaboratoryController::class, 'show']);
         Route::put('{id}', [LaboratoryController::class, 'update']);
         Route::delete('{id}', [LaboratoryController::class, 'destroy']);
+    });
+
+    Route::middleware('permission:manager-catalogs')->prefix('v1/presentation')->group(function () {
+        Route::get('/', [PresentationController::class, 'index']);
+        Route::post('/', [PresentationController::class, 'store']);
+        Route::get('{id}', [PresentationController::class, 'show']);
+        Route::put('{id}', [PresentationController::class, 'update']);
+        Route::delete('{id}', [PresentationController::class, 'destroy']);
     });
 
     /* Route::middleware('permission:manager-roles')->prefix('roles')->group(function () {

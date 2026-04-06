@@ -71,6 +71,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'sales' => ['list', 'view', 'create', 'edit', 'delete', 'print', 'annular'],
             'returns' => ['list', 'view', 'create', 'edit', 'delete', 'print', 'authorize'],
             'report' => ['list', 'view', 'export', 'print'],
+            'presentation' => ['list', 'view', 'create', 'edit', 'delete', 'export', 'print'],
 
         ];
 

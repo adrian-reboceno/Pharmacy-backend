@@ -25,6 +25,8 @@ use App\Domain\Laboratory\Repositories\LaboratoryRepositoryInterface;
 use App\Infrastructure\Laboratory\Repositories\LaboratoryRepository;
 use App\Domain\Presentation\Repositories\PresentationRepositoryInterface;
 use App\Infrastructure\Presentation\Repositories\PresentationRepository;
+use App\Domain\PharmaceuticalForm\Repositories\PharmaceuticalFormRepositoryInterface;
+use App\Infrastructure\PharmaceuticalForm\Repositories\PharmaceuticalFormRepository;
 
 
 
@@ -52,6 +54,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Presentation repository
         $this->app->bind(PresentationRepositoryInterface::class, PresentationRepository::class);
+
+        // PharmaceuticalForm repository
+        $this->app->bind(PharmaceuticalFormRepositoryInterface::class, PharmaceuticalFormRepository::class);
 
         // Token manager (Domain → Infrastructure)
         $this->app->bind(TokenManagerInterface::class, JwtTokenManager::class);

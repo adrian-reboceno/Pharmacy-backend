@@ -1,7 +1,7 @@
 <?php
 # src/Application/UnitOfMeasure/DTOs/V1/ListUnitOfMeasuresDTO.php
 
-namespace Application\UnitOfMeasure\DTOs\V1;
+namespace App\Application\UnitOfMeasure\DTOs\V1;
 
 final class ListUnitOfMeasuresDTO
 {

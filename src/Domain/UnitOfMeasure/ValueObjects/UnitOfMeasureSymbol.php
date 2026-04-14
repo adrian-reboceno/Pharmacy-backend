@@ -1,7 +1,7 @@
 <?php
 # src/Domain/UnitOfMeasure/ValueObjects/UnitOfMeasureSymbol.php
 
-namespace Domain\UnitOfMeasure\ValueObjects;
+namespace App\Domain\UnitOfMeasure\ValueObjects;
 
 final class UnitOfMeasureSymbol
 {

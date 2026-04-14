@@ -1,9 +1,9 @@
 <?php
 # src/Application/UnitOfMeasure/UseCases/V1/ListUnitOfMeasure.php
 
-namespace Application\UnitOfMeasure\UseCases\V1;
+namespace App\Application\UnitOfMeasure\UseCases\V1;
 
-use App\Application\UnitOfMeasure\DTOs\V1\ListUnitOfMeasureDTO;
+use App\Application\UnitOfMeasure\DTOs\V1\ListUnitOfMeasuresDTO;
 use App\Domain\UnitOfMeasure\Repositories\UnitOfMeasureRepositoryInterface;
 use App\Shared\Application\Pagination\PaginatedResult;
 
@@ -13,7 +13,7 @@ final class ListUnitOfMeasure
         private readonly UnitOfMeasureRepositoryInterface $unitsOfMeasure
     ) {}
 
-    public function execute(ListUnitOfMeasureDTO $dto): PaginatedResult
+    public function execute(ListUnitOfMeasuresDTO $dto): PaginatedResult
     {
         $items = $this->unitsOfMeasure->paginate($dto->page, $dto->perPage, $dto->name);
         $total = $this->unitsOfMeasure->count($dto->name);

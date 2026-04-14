@@ -1,7 +1,7 @@
 <?php
 # src/Application/UnitOfMeasure/UseCases/V1/CreateUnitOfMeasure.php
 
-namespace Application\UnitOfMeasure\UseCases\V1;
+namespace App\Application\UnitOfMeasure\UseCases\V1;
 
 use App\Application\UnitOfMeasure\DTOs\V1\CreateUnitOfMeasureDTO;
 use App\Domain\UnitOfMeasure\Entities\UnitOfMeasure;

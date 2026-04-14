@@ -1,10 +1,12 @@
 <?php
 # src/Domain/UnitOfMeasure/Repositories/UnitOfMeasureRepositoryInterface.php
 
-namespace Domain\UnitOfMeasure\Repositories;
+namespace App\Domain\UnitOfMeasure\Repositories;
 
-use Domain\UnitOfMeasure\Entities\UnitOfMeasure;
-use Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureId;
+use App\Domain\UnitOfMeasure\Entities\UnitOfMeasure;
+use App\Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureId;
+use App\Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureName;
+use App\Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureSymbol;
 
 interface UnitOfMeasureRepositoryInterface
 {
@@ -12,12 +14,14 @@ interface UnitOfMeasureRepositoryInterface
 
     public function findByName(string $name): ?UnitOfMeasure;
 
+    public function findBySymbol(string $symbol): ?UnitOfMeasure;
+
     /**
      * @return UnitOfMeasure[]
      */
-    public function paginate(int $page, int $perPage, ?string $name = null): array;
+    public function paginate(int $page, int $perPage, ?string $name = null, ?string $symbol = null, ?bool $isActive = null): array;
 
-    public function count(?string $name = null): int;
+    public function count(?string $name = null, ?string $symbol = null, ?bool $isActive = null): int;
 
     public function save(UnitOfMeasure $unitOfMeasure): UnitOfMeasure;
 

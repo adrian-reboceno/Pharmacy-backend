@@ -1,12 +1,12 @@
 <?php
 # src/Domain/UnitOfMeasure/Entities/UnitOfMeasure.php
 
-namespace Domain\UnitOfMeasure\Entities;
+namespace App\Domain\UnitOfMeasure\Entities;
 
-use Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureId;
-use Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureName;
-use Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureSymbol;
-use Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureIsActive;
+use App\Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureId;
+use App\Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureName;
+use App\Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureSymbol;
+use App\Domain\UnitOfMeasure\ValueObjects\UnitOfMeasureIsActive;
 
 final class UnitOfMeasure
 {

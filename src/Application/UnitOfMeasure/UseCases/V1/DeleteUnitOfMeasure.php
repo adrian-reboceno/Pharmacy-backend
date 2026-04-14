@@ -1,7 +1,7 @@
 <?php
 # src/Application/UnitOfMeasure/UseCases/V1/DeleteUnitOfMeasure.php
 
-namespace Application\UnitOfMeasure\UseCases\V1;
+namespace App\Application\UnitOfMeasure\UseCases\V1;
 
 
 use App\Domain\UnitOfMeasure\Repositories\UnitOfMeasureRepositoryInterface;

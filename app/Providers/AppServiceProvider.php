@@ -27,6 +27,8 @@ use App\Domain\Presentation\Repositories\PresentationRepositoryInterface;
 use App\Infrastructure\Presentation\Repositories\PresentationRepository;
 use App\Domain\PharmaceuticalForm\Repositories\PharmaceuticalFormRepositoryInterface;
 use App\Infrastructure\PharmaceuticalForm\Repositories\PharmaceuticalFormRepository;
+use App\Domain\UnitOfMeasure\Repositories\UnitOfMeasureRepositoryInterface;
+use App\Infrastructure\UnitOfMeasure\Repositories\UnitOfMeasureRepository;
 
 
 
@@ -57,6 +59,9 @@ class AppServiceProvider extends ServiceProvider
 
         // PharmaceuticalForm repository
         $this->app->bind(PharmaceuticalFormRepositoryInterface::class, PharmaceuticalFormRepository::class);
+
+        // UnitOfMeasure repository
+        $this->app->bind(UnitOfMeasureRepositoryInterface::class, UnitOfMeasureRepository::class);
 
         // Token manager (Domain → Infrastructure)
         $this->app->bind(TokenManagerInterface::class, JwtTokenManager::class);

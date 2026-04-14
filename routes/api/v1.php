@@ -11,6 +11,7 @@ use App\Presentation\Http\Controllers\V1\CategoryController;
 use App\Presentation\Http\Controllers\V1\LaboratoryController;
 use App\Presentation\Http\Controllers\V1\PresentationController;
 use App\Presentation\Http\Controllers\V1\PharmaceuticalFormController;
+use App\Presentation\Http\Controllers\V1\UnitOfMeasureController;
 use Illuminate\Support\Facades\Route;
 
 // use App\Http\Controllers\Api\V1\Role\RoleController;
@@ -100,6 +101,14 @@ Route::middleware([JwtMiddleware::class])->group(function () {
         Route::get('{id}', [PharmaceuticalFormController::class, 'show']);
         Route::put('{id}', [PharmaceuticalFormController::class, 'update']);
         Route::delete('{id}', [PharmaceuticalFormController::class, 'destroy']);
+    });
+
+    Route::middleware('permission:manager-catalogs')->prefix('v1/unit-of-measure')->group(function () {
+        Route::get('/', [UnitOfMeasureController::class, 'index']);
+        Route::post('/', [UnitOfMeasureController::class, 'store']);
+        Route::get('{id}', [UnitOfMeasureController::class, 'show']);
+        Route::put('{id}', [UnitOfMeasureController::class, 'update']);
+        Route::delete('{id}', [UnitOfMeasureController::class, 'destroy']);
     });
 
     /* Route::middleware('permission:manager-roles')->prefix('roles')->group(function () {
